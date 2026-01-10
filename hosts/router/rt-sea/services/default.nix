@@ -1,0 +1,8 @@
+{ ... }:
+
+{
+  imports = [
+    ./dns.nix
+    ./firewall
+  ];
+}

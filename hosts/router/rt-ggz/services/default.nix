@@ -1,0 +1,9 @@
+{ ... }:
+
+{
+  imports = [
+    ./dhcp
+    ./dns
+    ./firewall
+  ];
+}

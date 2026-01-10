@@ -1,0 +1,30 @@
+# claude
+.claude/settings.local.json
+
+# direnv
+.direnv/
+.envrc.local
+
+# editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+._*
+
+# nix
+result
+result-*
+
+# temporary
+*.tmp
+*.bak
+*.log
+
+# python
+__pycache__/
+*.pyc

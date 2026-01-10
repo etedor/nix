@@ -1,0 +1,29 @@
+# default model
+model: ollama:llama3.3:70b
+# stream responses
+stream: true
+# save conversations
+save: true
+# keybindings (emacs or vi)
+keybindings: vi
+# text wrapping
+wrap: no
+wrap_code: false
+
+# ollama client
+clients:
+  - type: openai-compatible
+    name: ollama
+    api_base: http://localhost:11434/v1
+    models:
+      - name: llama3.3:70b
+        max_input_tokens: 128000
+      - name: llama3.2:3b
+        max_input_tokens: 128000
+      - name: deepseek-r1:70b
+        max_input_tokens: 128000
+        supports_reasoning: true
+      - name: qwen2.5-coder:32b
+        max_input_tokens: 128000
+      - name: mistral:7b
+        max_input_tokens: 32000
