@@ -6,6 +6,7 @@
 
   # for agenix and authorized_keys
   users.user0 = {
+    carbon = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPyQPzZjubGGsva59VOUWMdPWIkr74JaxlgVnKN09Xwe";
     duke = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOu8kbwE6phergM4akwVvxsiTyq/aJlWYOHYc7I4h8nA";
     garage = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN8qSz/2YMNtP72GK+z6duhXJMc2mlTKRVtpMt8uwUDV";
     machina = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExdNBsYVsnRrfYNggm9vOYAkeh+qpy02tNLP5zXugC5";
