@@ -48,6 +48,13 @@ nixos-rebuild dry-build --flake .#<hostname>
 
 ## Workflow
 
+**ALWAYS follow this workflow for any file changes, regardless of size:**
+
+1. Create a branch before making changes (never commit directly to master)
+2. Use the appropriate prefix: `feat/`, `fix/`, `chore/`, or `refactor/`
+3. Validate with a dry-run build before committing (see Validation section)
+4. Only push to remote when explicitly requested
+
 **Branching:**
 
 ```
