@@ -11,6 +11,7 @@ in
 {
   imports = [
     ./apps
+    ./desktop
     ./display.nix
     ./mounts.nix
   ];
