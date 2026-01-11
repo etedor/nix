@@ -12,6 +12,7 @@ in
 {
   imports = [
     ./apps
+    ./atuin.nix
     ./locale.nix
     ./services
     ./shell

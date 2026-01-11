@@ -8,10 +8,7 @@ let
   wg-mkclient = pkgs.writeShellScriptBin "wg-mkclient" (builtins.readFile ./bin/wg-mkclient.sh);
 in
 {
-  imports = [
-    ./atuin.nix
-    ./options
-  ];
+  imports = [ ./options ];
 
   environment.systemPackages = with pkgs; [
     conntrack-tools
