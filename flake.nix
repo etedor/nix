@@ -75,105 +75,79 @@
         in
         merge shared platform;
 
-      # common modules for nixos hosts
-      commonModules = [
-        ./modules/common
-        agenix.nixosModules.default
-        { environment.systemPackages = [ agenix.packages.x86_64-linux.default ]; }
-        quadlet-nix.nixosModules.quadlet
-        home-manager.nixosModules.home-manager
-      ];
-
-      # nixos host builder
+      # unified host builder
       mkHost =
         {
           name,
-          system ? "x86_64-linux",
           role,
-        }:
-        nixpkgs.lib.nixosSystem {
-          inherit system;
-          modules =
-            commonModules
-            ++ [
-              {
-                nixpkgs = {
-                  inherit overlays;
-                  config.allowUnfree = true;
-                };
-                _module.args.pkgs-unstable = import nixpkgs-unstable {
-                  inherit system overlays;
-                  config.allowUnfree = true;
-                };
-              }
-              ./hosts/${role}/${name}
-            ]
-            ++ nixpkgs.lib.optional (role == "router") ./modules/router
-            ++ nixpkgs.lib.optional (role == "server") ./modules/server;
-
-          specialArgs = {
-            inherit
-              inputs
-              globals
-              overlays
-              system
-              ;
-            secretsCommon = ./secrets/common;
-            secretsRole = ./secrets/${role};
-            secretsHost = ./secrets/${role}/${name};
-            mkModule = mkPlatformModule {
-              lib = nixpkgs.lib;
-              inherit system;
-            };
-          };
-        };
-
-      # darwin host builder
-      mkDarwinHost =
-        {
-          name,
-          system ? "aarch64-darwin",
-          role ? "darwin",
+          system ? if role == "darwin" then "aarch64-darwin" else "x86_64-linux",
         }:
         let
+          isDarwin = role == "darwin";
+
           pkgs = import nixpkgs {
             inherit system overlays;
             config.allowUnfree = true;
           };
+
           pkgs-unstable = import nixpkgs-unstable {
             inherit system overlays;
             config.allowUnfree = true;
           };
-        in
-        darwin.lib.darwinSystem {
-          inherit system;
-          modules = [
-            ./modules/common
-            agenix.darwinModules.default
-            { environment.systemPackages = [ agenix.packages.${system}.default ]; }
-            mac-app-util.darwinModules.default
-            home-manager.darwinModules.home-manager
-            ./hosts/darwin/${name}
-            ./modules/darwin
-          ];
 
-          specialArgs = {
-            inherit
-              inputs
-              globals
-              pkgs
-              pkgs-unstable
-              overlays
-              ;
-            secretsCommon = ./secrets/common;
-            secretsRole = ./secrets/${role};
-            secretsHost = ./secrets/${role}/${name};
-            mkModule = mkPlatformModule {
-              lib = nixpkgs.lib;
-              inherit system;
-            };
-          };
-        };
+          platformModules =
+            if isDarwin then
+              [
+                agenix.darwinModules.default
+                { environment.systemPackages = [ agenix.packages.${system}.default ]; }
+                mac-app-util.darwinModules.default
+                home-manager.darwinModules.home-manager
+                ./modules/darwin
+              ]
+            else
+              [
+                {
+                  nixpkgs = {
+                    inherit overlays;
+                    config.allowUnfree = true;
+                  };
+                  _module.args.pkgs-unstable = pkgs-unstable;
+                }
+                agenix.nixosModules.default
+                { environment.systemPackages = [ agenix.packages.${system}.default ]; }
+                quadlet-nix.nixosModules.quadlet
+                home-manager.nixosModules.home-manager
+              ];
+
+          roleModules =
+            if isDarwin then
+              [ ]
+            else
+              nixpkgs.lib.optional (role == "router") ./modules/router
+              ++ nixpkgs.lib.optional (role == "server") ./modules/server;
+
+          modules =
+            [ ./modules/common ./hosts/${role}/${name} ]
+            ++ platformModules
+            ++ roleModules;
+
+          specialArgs =
+            {
+              inherit inputs globals overlays system;
+              secretsCommon = ./secrets/common;
+              secretsRole = ./secrets/${role};
+              secretsHost = ./secrets/${role}/${name};
+              mkModule = mkPlatformModule {
+                lib = nixpkgs.lib;
+                inherit system;
+              };
+            }
+            // (if isDarwin then { inherit pkgs pkgs-unstable; } else { });
+        in
+        if isDarwin then
+          darwin.lib.darwinSystem { inherit system modules specialArgs; }
+        else
+          nixpkgs.lib.nixosSystem { inherit system modules specialArgs; };
 
     in
     {
@@ -193,9 +167,9 @@
       };
 
       darwinConfigurations = {
-        carbon = mkDarwinHost { name = "carbon"; };
-        garage = mkDarwinHost { name = "garage"; };
-        machina = mkDarwinHost { name = "machina"; };
+        carbon = mkHost { name = "carbon"; role = "darwin"; };
+        garage = mkHost { name = "garage"; role = "darwin"; };
+        machina = mkHost { name = "machina"; role = "darwin"; };
       };
 
       deploy.nodes = import ./.nix/deploy.nix { inherit self deploy-rs globals; };
