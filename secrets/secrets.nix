@@ -3,17 +3,20 @@ let
   user0 = builtins.attrValues keys.users.user0;
   hosts = keys.hosts;
   common = builtins.attrValues hosts;
+
+  darwin = [
+    hosts.carbon
+    hosts.garage
+    hosts.machina
+  ];
 in
 {
   "common/mailgun.age".publicKeys = user0 ++ common;
   "common/pushover.age".publicKeys = user0 ++ common;
   "common/smb-user0.age".publicKeys = user0 ++ common;
 
-  "darwin/atuin.age".publicKeys = user0 ++ [
-    hosts.carbon
-    hosts.garage
-    hosts.machina
-  ];
+  "darwin/atuin-key.age".publicKeys = user0 ++ darwin;
+  "darwin/atuin-session.age".publicKeys = user0 ++ darwin;
 
   "router/rt-ggz/kea-tsig-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
   "router/rt-ggz/knot-tsig-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
