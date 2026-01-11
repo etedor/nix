@@ -60,6 +60,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    system.activationScripts.preActivation.text = lib.mkBefore ''
+      if [ -f /etc/auto_master ] && [ ! -L /etc/auto_master ]; then
+        echo "backing up /etc/auto_master..."
+        mv /etc/auto_master /etc/auto_master.before-nix-darwin
+      fi
+    '';
+
     environment.etc."auto_master" = {
       text = ''
         #
