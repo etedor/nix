@@ -9,6 +9,11 @@ let
     hosts.garage
     hosts.machina
   ];
+
+  router = [
+    hosts.rt-ggz
+    hosts.rt-sea
+  ];
 in
 {
   "common/mailgun.age".publicKeys = user0 ++ common;
@@ -17,6 +22,9 @@ in
 
   "darwin/atuin-key.age".publicKeys = user0 ++ darwin;
   "darwin/atuin-session.age".publicKeys = user0 ++ darwin;
+
+  "router/atuin-key.age".publicKeys = user0 ++ router;
+  "router/atuin-session.age".publicKeys = user0 ++ router;
 
   "router/rt-ggz/kea-tsig-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
   "router/rt-ggz/knot-tsig-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];

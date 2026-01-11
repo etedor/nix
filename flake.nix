@@ -119,6 +119,7 @@
               system
               ;
             secretsCommon = ./secrets/common;
+            secretsRole = ./secrets/${role};
             secretsHost = ./secrets/${role}/${name};
             mkModule = mkPlatformModule {
               lib = nixpkgs.lib;
