@@ -35,11 +35,18 @@ in
       "01-lo0" = {
         name = "lo0";
         address = [ rt-sea.interfaces.lo0 ];
+        networkConfig = {
+          DNS = rt-sea.interfaces.lo0;
+          Domains = "~.";
+        };
       };
       "02-ens3" = {
         name = "ens3";
         networkConfig = {
           DHCP = "yes";
+        };
+        dhcpV4Config = {
+          UseDNS = false;
         };
       };
     };
