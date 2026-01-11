@@ -22,5 +22,6 @@ in
     sync_address = "https://atuin.${globals.zone}";
     key_path = config.age.secrets.atuin-key.path;
     session_path = config.age.secrets.atuin-session.path;
+    filter_mode = "global";
   };
 }
