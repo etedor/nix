@@ -49,13 +49,16 @@
     sliceConfig = { };
   };
 
-  # reload netavark firewall rules after nftables restarts (e.g., nixos-rebuild)
+  # reload netavark firewall rules after nftables restarts or reloads
   # upstream provides this but nixpkgs doesn't install it
   # https://github.com/containers/netavark/issues/1258
-  systemd.services.nftables.serviceConfig.ExecStartPost = lib.mkAfter [
-    (pkgs.writeShellScript "netavark-firewall-reload" ''
+  systemd.services.nftables.serviceConfig = let
+    reloadScript = pkgs.writeShellScript "netavark-firewall-reload" ''
       export PATH="${pkgs.nftables}/bin:$PATH"
       ${pkgs.netavark}/bin/netavark firewall-reload
-    '')
-  ];
+    '';
+  in {
+    ExecStartPost = lib.mkAfter [ reloadScript ];
+    ExecReload = lib.mkAfter [ reloadScript ];
+  };
 }
