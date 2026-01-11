@@ -8,7 +8,6 @@
 let
   cfg = config.et42.device.autofs;
 
-  # generate auto_nfs entries from mount config
   autoNfsEntries = lib.concatStringsSep "\n" (
     lib.mapAttrsToList (
       name: mount:
@@ -21,10 +20,7 @@ let
     ) cfg.mounts
   );
 
-  # get unique parent directories for mount points
-  parentDirs = lib.unique (
-    lib.mapAttrsToList (name: mount: builtins.dirOf mount.mountPoint) cfg.mounts
-  );
+  mountDirs = lib.mapAttrsToList (name: mount: mount.mountPoint) cfg.mounts;
 in
 {
   options.et42.device.autofs = {
@@ -86,7 +82,7 @@ in
 
     system.activationScripts.postActivation.text = lib.mkAfter ''
       echo "creating autofs mount directories..."
-      ${lib.concatMapStringsSep "\n" (dir: "mkdir -p ${dir}") parentDirs}
+      ${lib.concatMapStringsSep "\n" (dir: "mkdir -p ${dir}") mountDirs}
       echo "reloading automount..."
       automount -vc 2>/dev/null || true
     '';
