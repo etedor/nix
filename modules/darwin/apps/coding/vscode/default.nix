@@ -36,7 +36,7 @@ in
 
           editor = {
             fontFamily = "'Font Awesome', 'FiraCode Nerd Font', 'monospace'";
-            fontSize = 15;
+            fontSize = 12;
             fontLigatures = true;
 
             formatOnSave = true;
