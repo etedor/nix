@@ -1,13 +1,13 @@
 {
   config,
+  globals,
   specialArgs,
   ...
 }:
 
 let
-  peers = config.et42.router.peers;
-  rt-ggz = peers.rt-ggz;
-  rt-sea = peers.rt-sea;
+  rt-ggz = globals.routers.rt-ggz;
+  rt-sea = globals.routers.rt-sea;
 in
 {
   age.secrets = {

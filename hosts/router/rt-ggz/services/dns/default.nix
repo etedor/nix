@@ -5,10 +5,9 @@
 }:
 
 let
-  peers = config.et42.router.peers;
-  rt-ggz = peers.rt-ggz;
-  rt-sea = peers.rt-sea;
-  trust10 = config.et42.router.networks.ggz.trust10;
+  rt-ggz = globals.routers.rt-ggz;
+  rt-sea = globals.routers.rt-sea;
+  trust10 = globals.networks.ggz.trust10;
 
   rt-ggz-nsd = "${rt-ggz.interfaces.lo0}:5354";
   rt-ggz-unbound = "${rt-ggz.interfaces.lo0}:5353";

@@ -5,8 +5,8 @@
 }:
 
 let
-  rt-ggz = config.et42.router.peers.rt-ggz;
-  rt-sea = config.et42.router.peers.rt-sea;
+  rt-ggz = globals.routers.rt-ggz;
+  rt-sea = globals.routers.rt-sea;
   lo0 = rt-sea.interfaces.lo0;
 
   rt-ggz-knot = "${rt-ggz.interfaces.lo0}:5354";

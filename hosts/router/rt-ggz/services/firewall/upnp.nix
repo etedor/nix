@@ -1,10 +1,10 @@
 {
-  config,
+  globals,
   ...
 }:
 
 let
-  net = config.et42.router.networks;
+  net = globals.networks;
 
   extIntf = "wan0";
   intIntf = [ "vlan8" ];

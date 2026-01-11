@@ -1,17 +1,13 @@
-{
-  config,
-  globals,
-  ...
-}:
+{ config, globals, ... }:
 
 let
-  net = config.et42.router.networks;
-  filterForward = import ./rules/filter-forward.nix { inherit config globals net; };
+  net = globals.networks;
+  filterForward = import ./rules/filter-forward.nix { inherit globals net; };
   filterInput = import ./rules/filter-input.nix { inherit config net; };
   manglePostrouting = import ./rules/mangle-postrouting.nix { };
   manglePrerouting = import ./rules/mangle-prerouting.nix { inherit net; };
   mangleForward = import ./rules/mangle-forward.nix { };
-  natDnat = import ./rules/nat-dnat.nix { inherit config globals net; };
+  natDnat = import ./rules/nat-dnat.nix { inherit globals net; };
   natMasquerade = import ./rules/nat-masquerade.nix { inherit net; };
   rawPrerouting = import ./rules/raw-prerouting.nix { inherit net; };
 in

@@ -1,5 +1,8 @@
 {
-  config,
+  net,
+  rt-sea,
+  wg,
+  zone,
   ...
 }:
 
@@ -10,11 +13,6 @@ let
     "wg2"
   ];
   zoneUntrust = [ "ens3" ];
-
-  wg = config.et42.router.wireguard;
-  rt-sea = config.et42.router.peers.rt-sea;
-
-  net = config.et42.router.networks;
 in
 {
   rules = [

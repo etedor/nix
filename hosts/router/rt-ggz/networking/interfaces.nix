@@ -5,7 +5,7 @@
 }:
 
 let
-  rt-ggz = config.et42.router.peers.rt-ggz;
+  rt-ggz = globals.routers.rt-ggz;
   vlanNames = config.et42.router.vlan.names;
 in
 {

@@ -1,12 +1,11 @@
 {
-  config,
   globals,
   mkModule,
   ...
 }:
 
 let
-  ntp = config.et42.hosts.ntp;
+  ntp = globals.hosts.ntp;
 in
 mkModule {
   shared = {

@@ -1,14 +1,12 @@
 {
-  config,
   globals,
   pkgs,
   ...
 }:
 
 let
-  peers = config.et42.router.peers;
-  rt-ggz = peers.rt-ggz;
-  rt-sea = peers.rt-sea;
+  rt-ggz = globals.routers.rt-ggz;
+  rt-sea = globals.routers.rt-sea;
 
   network = import ./network.nix;
   classes = import ./classes.nix;
@@ -25,7 +23,7 @@ in
       rt-sea.interfaces.lo0
     ];
     domainName = globals.zone;
-    ntpServer = config.et42.hosts.ntp.ip;
+    ntpServer = globals.hosts.ntp.ip;
 
     authorizedRelayAgents = [
       "10.0.12.1"

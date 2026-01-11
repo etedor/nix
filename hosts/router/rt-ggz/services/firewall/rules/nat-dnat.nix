@@ -1,11 +1,11 @@
 {
-  config,
+  globals,
   net,
   ...
 }:
 
 let
-  ntp = config.et42.hosts.ntp;
+  ntp = globals.hosts.ntp;
 
   iotIntercept = {
     iifs = [ "vlan8" ];

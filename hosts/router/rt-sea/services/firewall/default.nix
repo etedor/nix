@@ -1,12 +1,13 @@
 {
   config,
+  globals,
   ...
 }:
 
 let
   wg = config.et42.router.wireguard;
-  rt-sea = config.et42.router.peers.rt-sea;
-  net = config.et42.router.networks;
+  rt-sea = globals.routers.rt-sea;
+  net = globals.networks;
 
   zone = {
     trust = [
@@ -18,7 +19,6 @@ let
   filterForward = import ./rules/filter-forward.nix { inherit net; };
   filterInput = import ./rules/filter-input.nix {
     inherit
-      config
       net
       rt-sea
       wg

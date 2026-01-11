@@ -8,7 +8,6 @@
     ./miniupnpd.nix
     ./nftables.nix
     ./nsd.nix
-    ./router.nix
     ./unbound.nix
     ./wireguard
   ];

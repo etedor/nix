@@ -1,12 +1,11 @@
 {
-  config,
+  globals,
   ...
 }:
 
 let
-  peers = config.et42.router.peers;
-  rt-ggz = peers.rt-ggz;
-  rt-sea = peers.rt-sea;
+  rt-ggz = globals.routers.rt-ggz;
+  rt-sea = globals.routers.rt-sea;
 
   rfc1918PL = "RFC1918_V4";
   rfc1918RM = "RFC1918_V4";

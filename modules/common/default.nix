@@ -12,7 +12,6 @@ in
 {
   imports = [
     ./apps
-    ./hosts.nix
     ./locale.nix
     ./services
     ./shell

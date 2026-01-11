@@ -1,12 +1,12 @@
 {
-  config,
+  globals,
   net,
   ...
 }:
 
 let
-  ntp = config.et42.hosts.ntp;
-  rt-sea = config.et42.router.peers.rt-sea;
+  ntp = globals.hosts.ntp;
+  rt-sea = globals.routers.rt-sea;
 in
 {
   rules = [

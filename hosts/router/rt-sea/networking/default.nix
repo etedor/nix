@@ -1,11 +1,10 @@
 {
-  config,
   globals,
   ...
 }:
 
 let
-  rt-sea = config.et42.router.peers.rt-sea;
+  rt-sea = globals.routers.rt-sea;
 in
 {
   imports = [
