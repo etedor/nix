@@ -119,6 +119,7 @@
               system
               ;
             secretsCommon = ./secrets/common;
+            secretsRole = ./secrets/${role};
             secretsHost = ./secrets/${role}/${name};
             mkModule = mkPlatformModule {
               lib = nixpkgs.lib;
@@ -132,6 +133,7 @@
         {
           name,
           system ? "aarch64-darwin",
+          role ? "darwin",
         }:
         let
           pkgs = import nixpkgs {
@@ -164,7 +166,8 @@
               overlays
               ;
             secretsCommon = ./secrets/common;
-            secretsHost = ./secrets/darwin/${name};
+            secretsRole = ./secrets/${role};
+            secretsHost = ./secrets/${role}/${name};
             mkModule = mkPlatformModule {
               lib = nixpkgs.lib;
               inherit system;
