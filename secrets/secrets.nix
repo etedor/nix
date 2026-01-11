@@ -14,6 +14,10 @@ let
     hosts.rt-ggz
     hosts.rt-sea
   ];
+
+  server = [
+    hosts.duke
+  ];
 in
 {
   "common/mailgun.age".publicKeys = user0 ++ common;
@@ -25,6 +29,9 @@ in
 
   "router/atuin-key.age".publicKeys = user0 ++ router;
   "router/atuin-session.age".publicKeys = user0 ++ router;
+
+  "server/atuin-key.age".publicKeys = user0 ++ server;
+  "server/atuin-session.age".publicKeys = user0 ++ server;
 
   "router/rt-ggz/kea-tsig-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
   "router/rt-ggz/knot-tsig-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
