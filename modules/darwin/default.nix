@@ -10,6 +10,7 @@
 {
   imports = [
     ./apps
+    ./atuin.nix
     ./fonts.nix
     ./input.nix
     ./mounts.nix

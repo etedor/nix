@@ -1,5 +1,5 @@
 let
-  keys = import ../keys.nix;
+  keys = import ../.nix/keys.nix;
   user0 = builtins.attrValues keys.users.user0;
   hosts = keys.hosts;
   common = builtins.attrValues hosts;
@@ -8,6 +8,12 @@ in
   "common/mailgun.age".publicKeys = user0 ++ common;
   "common/pushover.age".publicKeys = user0 ++ common;
   "common/smb-user0.age".publicKeys = user0 ++ common;
+
+  "darwin/atuin.age".publicKeys = user0 ++ [
+    hosts.carbon
+    hosts.garage
+    hosts.machina
+  ];
 
   "router/rt-ggz/kea-tsig-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
   "router/rt-ggz/knot-tsig-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
