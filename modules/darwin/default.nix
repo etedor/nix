@@ -12,6 +12,7 @@
     ./apps
     ./fonts.nix
     ./input.nix
+    ./mounts.nix
     ./options
     ./options/wallpaper.nix
   ];
