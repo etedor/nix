@@ -1,5 +1,5 @@
 let
-  keys = import ../keys.nix;
+  keys = import ../.nix/keys.nix;
   user0 = builtins.attrValues keys.users.user0;
   hosts = keys.hosts;
   common = builtins.attrValues hosts;
