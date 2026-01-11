@@ -9,6 +9,7 @@
     ./deploy.nix
     ./desktop
     ./display.nix
+    ./mounts.nix
   ];
 
   networking.computerName = "Machina";
