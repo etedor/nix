@@ -2,12 +2,19 @@
   config,
   globals,
   lib,
+  pkgs,
   ...
 }:
 
 let
   user0 = globals.users 0;
   cfg = config.et42.device.hammerspoon;
+
+  spoonInstall = pkgs.fetchzip {
+    url = "https://github.com/Hammerspoon/Spoons/raw/master/Spoons/SpoonInstall.spoon.zip";
+    sha256 = "0889563ii7y77r3vi8d2wsrf17cm8fb6v1x2r97hdfyd77iivzfx";
+    stripRoot = false;
+  };
 
   # generate init.lua using SpoonInstall
   initLua = ''
@@ -68,6 +75,7 @@ in
 
     home-manager.users.${user0.name}.home.file = {
       ".hammerspoon/init.lua".text = initLua;
+      ".hammerspoon/Spoons/SpoonInstall.spoon".source = "${spoonInstall}/SpoonInstall.spoon";
     };
   };
 }
