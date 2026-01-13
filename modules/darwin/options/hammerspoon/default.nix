@@ -24,8 +24,6 @@ let
         ctrl+alt+cmd     hammerspoon meta
 
       custom bindings:
-        ctrl+alt+1-9          switch to workspace N
-
         ctrl+alt+arrow        tile (adapts to screen aspect ratio)
         ctrl+alt+arrow+arrow  tile quarter/sixth (perpendicular)
         ctrl+alt+f            fill
@@ -44,7 +42,6 @@ let
 
     hs.alert.show("Hammerspoon loaded")
     ${lib.optionalString cfg.modules.reload ''require("reload")''}
-    ${lib.optionalString cfg.modules.workspaces ''require("workspaces")''}
     ${lib.optionalString cfg.modules.tiling ''require("tiling")''}
     ${lib.optionalString cfg.modules.focusSpatial ''require("focus-spatial")''}
     ${lib.optionalString cfg.modules.focusCluster ''require("focus-cluster")''}
@@ -54,7 +51,6 @@ let
 
   luaFiles = lib.flatten [
     (lib.optional cfg.modules.reload "reload.lua")
-    (lib.optional cfg.modules.workspaces "workspaces.lua")
     (lib.optional cfg.modules.tiling "tiling.lua")
     (lib.optional cfg.modules.focusSpatial "focus-spatial.lua")
     (lib.optional cfg.modules.focusCluster "focus-cluster.lua")
@@ -83,11 +79,6 @@ in
         type = lib.types.bool;
         default = true;
         description = "ctrl+alt+cmd+R to reload config";
-      };
-      workspaces = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "ctrl+alt+1-9 workspace switching";
       };
       tiling = lib.mkOption {
         type = lib.types.bool;

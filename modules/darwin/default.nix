@@ -15,5 +15,6 @@
     ./mounts.nix
     ./options
     ./options/wallpaper.nix
+    ./spaces.nix
   ];
 }
