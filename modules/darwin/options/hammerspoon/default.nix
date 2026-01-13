@@ -11,7 +11,7 @@ let
   cfg = config.et42.device.hammerspoon;
 
   spoonInstall = pkgs.fetchzip {
-    url = "https://github.com/Hammerspoon/Spoons/raw/master/Spoons/SpoonInstall.spoon.zip";
+    url = "https://github.com/Hammerspoon/Spoons/raw/30b4f6013d48bd000a8ddecff23e5a8cce40c73c/Spoons/SpoonInstall.spoon.zip";
     sha256 = "sha256-VIlJT9IQ39cYcR3PaaMtkBIH6ndErPqhHGOKybOp9/s=";
     stripRoot = false;
   };
