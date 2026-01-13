@@ -127,12 +127,6 @@ in
           source = ./${f};
         };
       }) luaFiles
-    )
-    // lib.optionalAttrs cfg.modules.displayToggle {
-      ".hammerspoon/toggle-input.sh" = {
-        source = ./toggle-input.sh;
-        executable = true;
-      };
-    };
+    );
   };
 }
