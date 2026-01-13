@@ -12,7 +12,7 @@ let
 
   spoonInstall = pkgs.fetchzip {
     url = "https://github.com/Hammerspoon/Spoons/raw/master/Spoons/SpoonInstall.spoon.zip";
-    sha256 = "0889563ii7y77r3vi8d2wsrf17cm8fb6v1x2r97hdfyd77iivzfx";
+    sha256 = "sha256-VIlJT9IQ39cYcR3PaaMtkBIH6ndErPqhHGOKybOp9/s=";
     stripRoot = false;
   };
 
