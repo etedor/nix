@@ -20,7 +20,7 @@ let
       hotkey logic:
         ctrl+alt         window tiling
         cmd              window focus
-        ctrl+cmd         cluster cycling
+        shift+cmd        cluster cycling
         ctrl+alt+cmd     hammerspoon meta
 
       custom bindings:
@@ -30,10 +30,10 @@ let
         ctrl+alt+arrow+arrow  tile quarter/sixth (perpendicular)
         ctrl+alt+f            fill
         ctrl+alt+c            center
-        ctrl+alt+t            toggle float on top
+        ctrl+alt+t            float on top (app-specific)
 
         cmd+←/→/↑/↓           focus window (spatial)
-        ctrl+cmd+↑/↓          cycle overlapping cluster
+        shift+cmd+↑/↓         cycle overlapping cluster
 
         cmd+tab               toggle last two windows
         cmd+`                 toggle ghostty ↔ last app
@@ -102,7 +102,7 @@ in
       focusCluster = lib.mkOption {
         type = lib.types.bool;
         default = true;
-        description = "ctrl+cmd+up/down cluster cycling";
+        description = "shift+cmd+up/down cluster cycling";
       };
       switcher = lib.mkOption {
         type = lib.types.bool;

@@ -48,8 +48,8 @@ local function findWindowIndex(list, win)
 	return 1
 end
 
--- ctrl+cmd+up/down: cycle overlapping cluster
-hs.hotkey.bind({ "ctrl", "cmd" }, "up", function()
+-- shift+cmd+up/down: cycle overlapping cluster
+hs.hotkey.bind({ "shift", "cmd" }, "up", function()
 	local win = hs.window.focusedWindow()
 	if not win then
 		return
@@ -62,7 +62,7 @@ hs.hotkey.bind({ "ctrl", "cmd" }, "up", function()
 	end
 end)
 
-hs.hotkey.bind({ "ctrl", "cmd" }, "down", function()
+hs.hotkey.bind({ "shift", "cmd" }, "down", function()
 	local win = hs.window.focusedWindow()
 	if not win then
 		return
