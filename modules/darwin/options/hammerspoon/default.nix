@@ -11,35 +11,6 @@ let
 
   # generate init.lua using SpoonInstall
   initLua = ''
-    --[[
-      macos system hotkeys:
-        ctrl+←/→         adjacent workspace
-        ctrl+↑           mission control
-        ctrl+↓           app exposé
-
-      hotkey logic:
-        ctrl+alt         window tiling
-        cmd              window focus
-        shift+cmd        cluster cycling
-        ctrl+alt+cmd     hammerspoon meta
-
-      custom bindings:
-        ctrl+alt+arrow        tile (adapts to screen aspect ratio)
-        ctrl+alt+arrow+arrow  tile quarter/sixth (perpendicular)
-        ctrl+alt+f            fill
-        ctrl+alt+c            center
-        ctrl+alt+t            float on top (app-specific)
-
-        cmd+←/→/↑/↓           focus window (spatial)
-        shift+cmd+↑/↓         cycle overlapping cluster
-
-        cmd+tab               toggle last two windows
-        cmd+`                 toggle ghostty ↔ last app
-
-        ctrl+alt+cmd+r        reload config
-        ctrl+alt+cmd+i        toggle monitor input
-    ]]
-
     hs.loadSpoon("SpoonInstall")
 
     spoon.SpoonInstall.repos.windowmanager = {
