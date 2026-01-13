@@ -20,18 +20,26 @@ cmdTap = hs.eventtap.new({ hs.eventtap.event.types.keyDown }, function(e)
 		return true
 	end
 
-	-- cmd+`: focus most recent Ghostty window
+	-- cmd+`: toggle ghostty ↔ last app
 	if chars == "`" and flags:containExactly({ "cmd" }) then
 		local focused = hs.window.focusedWindow()
 		if focused and focused:application():name() == "Ghostty" then
-			return true -- already on Ghostty, do nothing
-		end
-
-		local ghosttyWins = ghosttyFilter:getWindows(hs.window.filter.sortByFocusedLast)
-		if #ghosttyWins > 0 then
-			ghosttyWins[1]:focus()
+			-- on ghostty: switch to last non-ghostty window
+			local wins = hs.window.orderedWindows()
+			for _, w in ipairs(wins) do
+				if w:application():name() ~= "Ghostty" and w:isStandard() then
+					w:focus()
+					return true
+				end
+			end
 		else
-			hs.application.launchOrFocus("Ghostty")
+			-- not on ghostty: switch to ghostty
+			local ghosttyWins = ghosttyFilter:getWindows(hs.window.filter.sortByFocusedLast)
+			if #ghosttyWins > 0 then
+				ghosttyWins[1]:focus()
+			else
+				hs.application.launchOrFocus("Ghostty")
+			end
 		end
 		return true
 	end

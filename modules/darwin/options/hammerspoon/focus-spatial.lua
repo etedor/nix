@@ -1,16 +1,28 @@
 -- cmd+arrows: pure spatial nav
 hs.hotkey.bind({ "cmd" }, "up", function()
-	hs.window.focusedWindow():focusWindowNorth(nil, true, true)
+	local win = hs.window.focusedWindow()
+	if win then
+		win:focusWindowNorth(nil, true, true)
+	end
 end)
 
 hs.hotkey.bind({ "cmd" }, "down", function()
-	hs.window.focusedWindow():focusWindowSouth(nil, true, true)
+	local win = hs.window.focusedWindow()
+	if win then
+		win:focusWindowSouth(nil, true, true)
+	end
 end)
 
 hs.hotkey.bind({ "cmd" }, "right", function()
-	hs.window.focusedWindow():focusWindowEast(nil, true, true)
+	local win = hs.window.focusedWindow()
+	if win then
+		win:focusWindowEast(nil, true, true)
+	end
 end)
 
 hs.hotkey.bind({ "cmd" }, "left", function()
-	hs.window.focusedWindow():focusWindowWest(nil, true, true)
+	local win = hs.window.focusedWindow()
+	if win then
+		win:focusWindowWest(nil, true, true)
+	end
 end)

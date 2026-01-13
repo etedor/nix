@@ -30,13 +30,13 @@ let
         ctrl+alt+arrow+arrow  tile quarter/sixth (perpendicular)
         ctrl+alt+f            fill
         ctrl+alt+c            center
-        ctrl+alt+t            float on top
+        ctrl+alt+t            toggle float on top
 
         cmd+←/→/↑/↓           focus window (spatial)
         ctrl+cmd+↑/↓          cycle overlapping cluster
 
         cmd+tab               toggle last two windows
-        cmd+`                 focus ghostty
+        cmd+`                 toggle ghostty ↔ last app
 
         ctrl+alt+cmd+r        reload config
         ctrl+alt+cmd+i        toggle monitor input

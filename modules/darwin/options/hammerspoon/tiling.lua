@@ -261,13 +261,11 @@ hs.hotkey.bind({ "ctrl", "alt" }, "f", function()
 	})
 end)
 
--- float on top
+-- float on top (toggle)
 hs.hotkey.bind({ "ctrl", "alt" }, "t", function()
 	local win = hs.window.focusedWindow()
 	if win then
-		local app = win:application()
-		if app then
-			app:selectMenuItem({ "Window", "Float on Top" })
-		end
+		local current = win:isTopmost()
+		win:setTopmost(not current)
 	end
 end)
