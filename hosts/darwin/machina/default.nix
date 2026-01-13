@@ -16,6 +16,6 @@
 
   et42.device.hammerspoon = {
     padding = 10;
-    modules.displayToggle = true;
+    enableInputToggle = true;
   };
 }

@@ -9,7 +9,7 @@ let
   user0 = globals.users 0;
   cfg = config.et42.device.hammerspoon;
 
-  # generate init.lua content based on enabled modules
+  # generate init.lua using SpoonInstall
   initLua = ''
     --[[
       macos system hotkeys:
@@ -40,23 +40,29 @@ let
         ctrl+alt+cmd+i        toggle monitor input
     ]]
 
-    hs.alert.show("Hammerspoon loaded")
-    ${lib.optionalString cfg.modules.reload ''require("reload")''}
-    ${lib.optionalString cfg.modules.tiling ''require("tiling")''}
-    ${lib.optionalString cfg.modules.focusSpatial ''require("focus-spatial")''}
-    ${lib.optionalString cfg.modules.focusCluster ''require("focus-cluster")''}
-    ${lib.optionalString cfg.modules.switcher ''require("switcher")''}
-    ${lib.optionalString cfg.modules.displayToggle ''require("display-toggle")''}
-  '';
+    hs.loadSpoon("SpoonInstall")
 
-  luaFiles = lib.flatten [
-    (lib.optional cfg.modules.reload "reload.lua")
-    (lib.optional cfg.modules.tiling "tiling.lua")
-    (lib.optional cfg.modules.focusSpatial "focus-spatial.lua")
-    (lib.optional cfg.modules.focusCluster "focus-cluster.lua")
-    (lib.optional cfg.modules.switcher "switcher.lua")
-    (lib.optional cfg.modules.displayToggle "display-toggle.lua")
-  ];
+    spoon.SpoonInstall.repos.windowmanager = {
+      url = "https://github.com/etedor/hammerspoon",
+      desc = "window management spoon",
+      branch = "master"
+    }
+
+    spoon.SpoonInstall.use_syncinstall = true
+
+    spoon.SpoonInstall:updateRepo("windowmanager")
+
+    spoon.SpoonInstall:andUse("WindowManager", {
+      repo = "windowmanager",
+      start = true,
+      config = {
+        padding = ${toString cfg.padding},
+        ultrawideThreshold = ${toString cfg.ultrawideThreshold},
+        terminalApp = "${cfg.terminalApp}",
+        enableInputToggle = ${if cfg.enableInputToggle then "true" else "false"},
+      }
+    })
+  '';
 in
 {
   options.et42.device.hammerspoon = {
@@ -74,37 +80,15 @@ in
       default = 2.0;
       description = "aspect ratio threshold for ultrawide detection (21:9 ≈ 2.33, 16:9 ≈ 1.78)";
     };
-    modules = {
-      reload = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "ctrl+alt+cmd+R to reload config";
-      };
-      tiling = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "ctrl+alt+arrows adaptive tiling (auto-detects ultrawide)";
-      };
-      focusSpatial = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "cmd+arrows spatial focus";
-      };
-      focusCluster = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "shift+cmd+up/down cluster cycling";
-      };
-      switcher = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "cmd+tab toggle, cmd+` ghostty";
-      };
-      displayToggle = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "ctrl+alt+cmd+i toggle monitor input";
-      };
+    terminalApp = lib.mkOption {
+      type = lib.types.str;
+      default = "Ghostty";
+      description = "terminal app for cmd+` toggle";
+    };
+    enableInputToggle = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "ctrl+alt+cmd+i toggle monitor input (requires m1ddc)";
     };
   };
 
@@ -113,20 +97,6 @@ in
 
     home-manager.users.${user0.name}.home.file = {
       ".hammerspoon/init.lua".text = initLua;
-      ".hammerspoon/settings.lua".text = ''
-        return {
-          padding = ${toString cfg.padding},
-          ultrawideThreshold = ${toString cfg.ultrawideThreshold},
-        }
-      '';
-    }
-    // lib.listToAttrs (
-      map (f: {
-        name = ".hammerspoon/${f}";
-        value = {
-          source = ./${f};
-        };
-      }) luaFiles
-    );
+    };
   };
 }
