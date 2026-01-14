@@ -11,12 +11,12 @@ in
 {
   homebrew.casks = [ "mouseless" ];
 
-  home-manager.users.${user0.name} = {
+  home-manager.users.${user0.name} = { config, ... }: {
     # source of truth in version control
     home.file.".config/mouseless/config.yaml".source = ./config.yaml;
 
     # copy to container on activation
-    home.activation.mouselessConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    home.activation.mouselessConfig = config.lib.dag.entryAfter [ "writeBoundary" ] ''
       CONTAINER_PATH="$HOME/Library/Containers/net.sonuscape.mouseless/Data/.mouseless/configs"
       if [ -d "$CONTAINER_PATH" ]; then
         $DRY_RUN_CMD mkdir -p "$CONTAINER_PATH"
