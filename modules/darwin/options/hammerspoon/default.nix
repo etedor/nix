@@ -36,6 +36,11 @@ let
       config = {
         padding = ${toString cfg.padding},
         ultrawideThreshold = ${toString cfg.ultrawideThreshold},
+        ultrawideLeftWidth = ${toString cfg.ultrawideLeftWidth},
+        ultrawideCenterWidth = ${toString cfg.ultrawideCenterWidth},
+        ultrawideRightWidth = ${toString cfg.ultrawideRightWidth},
+        standardLeftWidth = ${toString cfg.standardLeftWidth},
+        standardRightWidth = ${toString cfg.standardRightWidth},
         terminalApp = "${cfg.terminalApp}",
         enableInputToggle = ${if cfg.enableInputToggle then "true" else "false"},
       }
@@ -57,6 +62,31 @@ in
       type = lib.types.float;
       default = 2.0;
       description = "aspect ratio threshold for ultrawide detection (21:9 ≈ 2.33, 16:9 ≈ 1.78)";
+    };
+    ultrawideLeftWidth = lib.mkOption {
+      type = lib.types.float;
+      default = 0.30;
+      description = "ultrawide left column width (0.0-1.0)";
+    };
+    ultrawideCenterWidth = lib.mkOption {
+      type = lib.types.float;
+      default = 0.40;
+      description = "ultrawide center column width (0.0-1.0)";
+    };
+    ultrawideRightWidth = lib.mkOption {
+      type = lib.types.float;
+      default = 0.30;
+      description = "ultrawide right column width (0.0-1.0)";
+    };
+    standardLeftWidth = lib.mkOption {
+      type = lib.types.float;
+      default = 0.50;
+      description = "standard left column width (0.0-1.0)";
+    };
+    standardRightWidth = lib.mkOption {
+      type = lib.types.float;
+      default = 0.50;
+      description = "standard right column width (0.0-1.0)";
     };
     terminalApp = lib.mkOption {
       type = lib.types.str;
