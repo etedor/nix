@@ -1,5 +1,34 @@
 # NixOS Configuration
 
+## Development Approach
+
+Follow the **Explore-Plan-Code-Commit** pattern:
+
+1. **Explore**: Read files, understand existing configurations before proposing changes
+2. **Plan**: Consider impact across hosts, validate syntax
+3. **Code**: Make focused changes with clear intent
+4. **Commit**: Update documentation, validate with dry-run builds
+
+**Living Documentation**: Use the `#` key during sessions to auto-update this file with learned patterns.
+
+## Git Worktrees
+
+When working in a worktree context (additional directory ending in pattern like `nix-feat-name`):
+
+**CRITICAL**: Always `cd` into the worktree directory before running git commands. Bash commands execute in the original working directory by default.
+
+```bash
+# correct - commands run in worktree context
+cd ../nix-feat-name && git status
+cd ../nix-feat-name && nix flake check
+
+# incorrect - commands run in main directory
+git status
+nix flake check
+```
+
+When in doubt about which directory a command will execute in, explicitly specify the path.
+
 ## Project Structure
 
 - `hosts/darwin/<hostname>/` - macOS machine configurations
@@ -95,4 +124,18 @@ deploy .#<hostname>
 ```bash
 nix flake update           # all inputs
 nix flake update <input>   # single input (e.g., nixpkgs, private)
+```
+
+**Commit messages:**
+
+All commits include Claude Code attribution:
+
+```
+<terse description>
+
+<optional details>
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
