@@ -25,6 +25,7 @@ in
     casks = [
       "1password"
       "sonos"
+      "spotify"
       "wireshark"
     ];
 
