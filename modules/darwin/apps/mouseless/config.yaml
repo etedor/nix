@@ -1,4 +1,4 @@
-app_version: 0.4.3
+app_version: 0.5.0-preview.1
 behavior_configs:
 - base_move_speed: 5.0
   base_wheel_speed: 16.0
@@ -26,16 +26,16 @@ debug_options: {}
 display_input: none
 event_tap_location: hid_head
 grid_configs:
-- always_show_subgrid: false
+- always_show_subgrid: true
   grid_defn:
   - border_width: 0.0
     callback: build_cell_strings
-    keys: QWERT ASDFG ZXCVB YUIOP HJKL; NM,./
-    num_cells_x: 5
-    num_cells_y: 6
+    keys: QWERT YUIOP ASDFG HJKL; ZXCVB NM,./
+    num_cells_x: 10
+    num_cells_y: 3
   - border_width: 1.0
     callback: build_cell_strings
-    keys: ''
+    keys: QWERT ASDFG ZXCVB YUIOP HJKL; NM,./
     num_cells_x: 5
     num_cells_y: 6
   - border_width: 0.0
@@ -43,14 +43,14 @@ grid_configs:
     keys: ''
     num_cells_x: 2
     num_cells_y: 1
-  hold_subgrid_key_for_nudge: false
-  name: position_based_16_9
+  hold_subgrid_key_for_nudge: true
+  name: position_based_32_9
   nudges_per_cell: 4
   strategy: subgrid
   subgrid_dims:
-  - 8
-  - 3
-  subgrid_mouse_action_keys: QWER UIOP ASDF JKL; ZXCV M,./
+  - 2
+  - 2
+  subgrid_mouse_action_keys: 'UIOP '
 keyboard_layout:
   id: com.apple.keylayout.US
   name: U.S.
@@ -320,16 +320,16 @@ keymaps:
     right mouse button (w/o overlay): null
     show overlay: CommandLeft tap
     subgrid nudge down:
-    - D
+    - S
     - K
     subgrid nudge left:
-    - S
+    - A
     - J
     subgrid nudge right:
-    - F
+    - D
     - L
     subgrid nudge up:
-    - E
+    - W
     - I
     switch monitor left: ShiftLeft tap
     switch monitor right: ShiftRight tap
@@ -365,14 +365,37 @@ style_configs:
   - 1
   - 1
   - 0.2
-  background_rgba:
-  - 0.49
-  - 0.4
-  - 0
-  - 0.35
+  background_colors:
+  - - 0.88
+    - 0.68
+    - 0.51
+    - 0.25
+  - - 0.61
+    - 0.88
+    - 0.51
+    - 0.25
+  - - 0.51
+    - 0.72
+    - 0.88
+    - 0.25
+  bg_color_block_size: 5
+  bg_color_transforms_level_1:
+  - - hsla_add
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+  bg_color_transforms_level_2:
+  - - hsla_add
+    - 0
+    - 0
+    - 0
+    - 0
+  char_display: all
   char_spacing_cell_width_ratio: 0.5
   char_spacing_font_size_ratio: 0.5
   char_spacing_strategy: cell_width_relative
+  colorParamInput: none
   cursor_drag_rgba:
   - 0
   - 0.5
@@ -442,4 +465,5 @@ style_configs:
   - 0.06
   - 1
   text_y_offset: 0.0
+  use_bg_color_transforms: false
   window_opacity: 1.0
