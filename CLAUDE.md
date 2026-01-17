@@ -49,6 +49,34 @@ When in doubt about which directory a command will execute in, explicitly specif
 - Shell scripts: use `#!/usr/bin/env bash` shebang
 - User shell: fish (not bash)
 
+## Package Management
+
+**Darwin (macOS) package priority order:**
+
+1. **home-manager programs modules** - when available and declarative config desired
+   - Provides installation + declarative configuration
+   - Example: Firefox, fish, Ghostty, git, VSCode
+   - Check availability: search home-manager options for `programs.<name>`
+
+2. **nixpkgs** - CLI tools, dev tools, system utilities
+   - Use when home-manager module not available or config not needed
+   - Deterministic, version pinned to flake
+   - Example: fd, jq, python, ripgrep
+
+3. **homebrew casks** - GUI apps without home-manager support
+   - Native macOS .app bundles with vendor integration
+   - Better macOS integration (notifications, media keys, auto-updates)
+   - Example: 1Password, Discord, Spotify
+
+4. **homebrew.masApps** - Mac App Store exclusives
+   - Apps only distributed through Mac App Store
+   - Example: Amperfy, QuadStream, UpNote
+
+**NixOS package priority order:**
+
+1. **home-manager programs modules** - when declarative config desired
+2. **nixpkgs** - everything else (system and user packages)
+
 ## Validation
 
 A PostToolUse hook runs `nix flake check` after file edits to catch errors early.
