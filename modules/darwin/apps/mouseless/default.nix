@@ -9,7 +9,7 @@ let
   user0 = globals.users 0;
 in
 {
-  homebrew.casks = [ "mouseless" ];
+  homebrew.casks = [ "mouseless@preview" ];
 
   home-manager.users.${user0.name} = { config, ... }: {
     # source of truth in version control
