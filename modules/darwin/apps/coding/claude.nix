@@ -23,6 +23,11 @@ in
         source = ./format-file.sh;
       };
 
+      home.file.".claude/statusline.sh" = {
+        executable = true;
+        source = ./statusline.sh;
+      };
+
       home.activation.configureClaude =
         let
           claudeConfig = {
@@ -62,6 +67,11 @@ in
                   ];
                 }
               ];
+            };
+            statusLine = {
+              type = "command";
+              command = "$HOME/.claude/statusline.sh";
+              padding = 0;
             };
           };
           desired = builtins.toJSON hooksConfig;
