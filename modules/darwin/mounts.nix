@@ -18,7 +18,7 @@ in
       users = {
         server = duke;
         remotePath = "/pool0/users/${user0.name}";
-        mountPoint = "/Volumes/duke/users";
+        mountPoint = "/Volumes/duke/users/${user0.name}";
         options = opts;
       };
     };
