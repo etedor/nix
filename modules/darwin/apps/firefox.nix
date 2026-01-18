@@ -134,6 +134,9 @@ in
           "browser.ml.enable" = false;
           "browser.tabs.groups.smart.enabled" = false;
 
+          # media
+          "media.hardwaremediakeys.enabled" = false;
+
           # network
           "media.peerconnection.enabled" = false;
           "network.dns.disablePrefetch" = true;
