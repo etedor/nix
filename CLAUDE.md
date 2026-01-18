@@ -108,7 +108,7 @@ nixos-rebuild dry-build --flake .#<hostname>
 **ALWAYS follow this workflow for any file changes, regardless of size:**
 
 1. Pull latest changes: `git pull --ff-only`
-2. Create a branch before making changes (never commit directly to master)
+2. Create a branch before making changes (never commit directly to main)
 3. Use the appropriate prefix: `feat/`, `fix/`, `chore/`, or `refactor/`
 4. Validate with a dry-run build before committing (see Validation section)
 5. Only push to remote when explicitly requested
@@ -128,9 +128,9 @@ refactor/<name> code restructuring
 2. make changes (hook runs `nix flake check` after edits)
 3. test locally: `sudo darwin-rebuild switch --flake .#machina`
 4. commit: `git add . && git commit -m "<description>"`
-5. merge to master:
+5. merge to main:
    ```bash
-   git checkout master
+   git checkout main
    git merge <branch>
    git push
    git branch -d <branch>
