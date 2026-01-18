@@ -47,6 +47,7 @@ in
 
           window.zoomLevel = 0;
           explorer.decorations.colors = true;
+          explorer.excludeGitIgnore = true;
 
           workbench = {
             colorTheme = "Monokai Pro";
