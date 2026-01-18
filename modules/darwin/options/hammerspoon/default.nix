@@ -43,6 +43,7 @@ let
         standardRightWidth = ${toString cfg.standardRightWidth},
         terminalApp = "${cfg.terminalApp}",
         enableInputToggle = ${if cfg.enableInputToggle then "true" else "false"},
+        ultrawideSwapMode = "${cfg.ultrawideSwapMode}",
       }
     })
   '';
@@ -87,6 +88,11 @@ in
       type = lib.types.float;
       default = 0.50;
       description = "standard right column width (0.0-1.0)";
+    };
+    ultrawideSwapMode = lib.mkOption {
+      type = lib.types.enum [ "left-center" "center-right" ];
+      default = "left-center";
+      description = "which columns to swap with ctrl+alt+down";
     };
     terminalApp = lib.mkOption {
       type = lib.types.str;

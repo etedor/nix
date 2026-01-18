@@ -20,5 +20,6 @@
     ultrawideCenterWidth = 0.45;
     ultrawideRightWidth = 0.30;
     enableInputToggle = true;
+    ultrawideSwapMode = "center-right";
   };
 }
