@@ -16,8 +16,9 @@
 
   et42.device.hammerspoon = {
     padding = 10;
+    ultrawideLeftWidth = 0.25;
     ultrawideCenterWidth = 0.45;
-    ultrawideRightWidth = 0.25;
+    ultrawideRightWidth = 0.30;
     enableInputToggle = true;
   };
 }
