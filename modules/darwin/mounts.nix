@@ -3,7 +3,8 @@
 let
   user0 = globals.users 0;
   duke = "duke.${globals.zone}";
-  opts = [ "soft" "bg" "intr" "resvport" "nolocks" ];
+  mediaOpts = [ "soft" "bg" "intr" "resvport" "nolocks" ];
+  usersOpts = [ "soft" "bg" "intr" "resvport" ];
 in
 {
   et42.device.autofs = {
@@ -13,13 +14,13 @@ in
         server = duke;
         remotePath = "/pool0/media";
         mountPoint = "/Volumes/duke/media";
-        options = opts;
+        options = mediaOpts;
       };
       users = {
         server = duke;
         remotePath = "/pool0/users/${user0.name}";
         mountPoint = "/Volumes/duke/users/${user0.name}";
-        options = opts;
+        options = usersOpts;
       };
     };
   };
