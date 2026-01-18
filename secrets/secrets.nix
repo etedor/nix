@@ -47,6 +47,7 @@ in
   "server/duke/icecast.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/paperless.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/qobuz.age".publicKeys = user0 ++ [ hosts.duke ];
+  "server/duke/quadlink.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/smb-brother.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/restic-pass.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/restic-repo.age".publicKeys = user0 ++ [ hosts.duke ];

@@ -14,6 +14,7 @@
     mac-app-util.url = "github:hraban/mac-app-util";
     private.url = "git+ssh://git@github.com/etedor/nix-private";
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
+    quadlink.url = "github:etedor/quadlink";
   };
 
   outputs =
@@ -30,6 +31,7 @@
       nur,
       private,
       quadlet-nix,
+      quadlink,
       ...
     }@inputs:
     let
@@ -116,6 +118,7 @@
                 agenix.nixosModules.default
                 { environment.systemPackages = [ agenix.packages.${system}.default ]; }
                 quadlet-nix.nixosModules.quadlet
+                quadlink.nixosModules.default
                 home-manager.nixosModules.home-manager
               ];
 

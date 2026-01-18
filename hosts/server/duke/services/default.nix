@@ -7,6 +7,7 @@
     ./nginx.nix
     ./paperless.nix
     ./podman
+    ./quadlink.nix
     ./radio
     ./restic
     ./samba.nix
