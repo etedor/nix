@@ -9,6 +9,6 @@
     ./freshrss.nix
     ./navidrome
     ./paperless.nix
-    ./tidarr.nix
+    ./tidarr
   ];
 }

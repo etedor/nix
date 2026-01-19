@@ -49,8 +49,8 @@ in
 
       settings = {
         # core settings
-        directory = "/Volumes/duke/media/library/music";
-        library = "/Volumes/duke/users/${user0.name}/.config/beets/musiclibrary.blb";
+        directory = "/Users/${user0.name}/Volumes/duke/media/library/music";
+        library = "/Users/${user0.name}/Volumes/duke/users/.config/beets/musiclibrary.blb";
         threaded = true;
 
         # plugins configuration
