@@ -8,7 +8,7 @@
 {
   virtualisation.quadlet.containers.tidarr = {
     containerConfig = {
-      image = "docker.io/cstaelen/tidarr:1.1.5";
+      image = "docker.io/cstaelen/tidarr:0.4.6";
 
       networks = [ "10-bulk" ];
 
@@ -16,15 +16,13 @@
         PUID = "1000";
         PGID = "1000";
         TZ = globals.tz;
-        TIDDL_PATH = "/shared/.tiddl";
         REACT_APP_TIDAL_COUNTRY_CODE = "US";
         REACT_APP_TIDARR_DEFAULT_QUALITY_FILTER = "all";
       };
 
       volumes = [
-        "tidarr_config:/shared"
-        "${./config.toml}:/shared/.tiddl/config.toml:ro"
-        "/pool0/media/downloads/tidarr:/music"
+        "tidarr_config:/home/app/standalone/shared"
+        "/pool0/media/downloads/tidarr:/home/app/standalone/library"
       ];
 
       publishPorts = [

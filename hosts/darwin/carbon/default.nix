@@ -3,7 +3,10 @@
 { ... }:
 
 {
-  imports = [ ./desktop ];
+  imports = [
+    ./desktop
+    ./wireguard.nix
+  ];
 
   networking.computerName = "Carbon";
   networking.hostName = "carbon";

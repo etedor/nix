@@ -102,7 +102,7 @@ in
     listenPort = 5354;
     domainName = globals.zone;
     reverseZones = reverseZones;
-    staticHosts = import ./static-hosts.nix;
+    staticHosts = import ./static-hosts.nix { inherit globals; };
   };
 
   networking = {

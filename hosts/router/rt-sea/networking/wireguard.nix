@@ -1,21 +1,25 @@
 {
   config,
+  globals,
   specialArgs,
   ...
 }:
 
+let
+  net = globals.networks;
+in
 {
   age.secrets = {
     wg0-private-key = {
       file = "${specialArgs.secretsHost}/wg0-private-key.age";
       mode = "444";
     };
-    wg1-private-key = {
-      file = "${specialArgs.secretsHost}/wg1-private-key.age";
+    wg10-private-key = {
+      file = "${specialArgs.secretsHost}/wg10-private-key.age";
       mode = "444";
     };
-    wg2-private-key = {
-      file = "${specialArgs.secretsHost}/wg2-private-key.age";
+    wg11-private-key = {
+      file = "${specialArgs.secretsHost}/wg11-private-key.age";
       mode = "444";
     };
   };
@@ -43,40 +47,52 @@
           ];
         };
 
-        "11-wg1" = {
+        "20-wg10" = {
           netdevConfig = {
-            Name = "wg1";
+            Name = "wg10";
             Kind = "wireguard";
           };
           wireguardConfig = {
-            PrivateKeyFile = config.age.secrets.wg1-private-key.path;
-            ListenPort = 51821;
+            PrivateKeyFile = config.age.secrets.wg10-private-key.path;
+            ListenPort = 51830;
           };
           wireguardPeers = [
             {
               PublicKey = wg.publicKeys.pine.wg0;
-              AllowedIPs = [ "10.99.1.11/32" ];
+              AllowedIPs = [ "10.100.10.11/32" ];
             }
             {
+              PublicKey = wg.publicKeys.carbon.wg0;
+              AllowedIPs = [ "10.100.10.12/32" ];
+            }
+            {
+              # machina
               PublicKey = "NVBeFQ2Ws0UjfY88o+zgiOes5fKUDOqEd/F2IP6iMFY=";
-              AllowedIPs = [ "10.99.1.13/32" ];
+              AllowedIPs = [ "10.100.10.13/32" ];
             }
           ];
         };
 
-        "12-wg2" = {
+        "21-wg11" = {
           netdevConfig = {
-            Name = "wg2";
+            Name = "wg11";
             Kind = "wireguard";
           };
           wireguardConfig = {
-            PrivateKeyFile = config.age.secrets.wg2-private-key.path;
-            ListenPort = 51822;
+            PrivateKeyFile = config.age.secrets.wg11-private-key.path;
+            ListenPort = 51831;
           };
           wireguardPeers = [
             {
+              PublicKey = wg.publicKeys.rt-travel.wg0;
+              AllowedIPs = [
+                "10.100.11.11/32"
+                net.travel.lan
+              ];
+            }
+            {
               PublicKey = wg.publicKeys.jade.wg0;
-              AllowedIPs = [ "10.99.2.34/32" ];
+              AllowedIPs = [ "10.100.11.34/32" ];
             }
           ];
         };
@@ -85,15 +101,15 @@
       networks = {
         "10-wg0" = {
           matchConfig.Name = "wg0";
-          address = [ "10.99.0.0/31" ];
+          address = [ "10.100.0.0/31" ];
         };
-        "11-wg1" = {
-          matchConfig.Name = "wg1";
-          address = [ "10.99.1.1/24" ];
+        "20-wg10" = {
+          matchConfig.Name = "wg10";
+          address = [ "10.100.10.1/24" ];
         };
-        "12-wg2" = {
-          matchConfig.Name = "wg2";
-          address = [ "10.99.2.1/24" ];
+        "21-wg11" = {
+          matchConfig.Name = "wg11";
+          address = [ "10.100.11.1/24" ];
         };
       };
     };

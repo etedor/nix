@@ -10,13 +10,12 @@ let
   net = globals.networks;
 
   zone = {
-    trust = [
-      "wg0"
-      "wg1"
-    ];
+    p2p = [ "wg0" ];
+    peer-admin = [ "wg10" ];
+    peer-family = [ "wg11" ];
     untrust = [ "ens3" ];
   };
-  filterForward = import ./rules/filter-forward.nix { inherit net; };
+  filterForward = import ./rules/filter-forward.nix { inherit globals net zone; };
   filterInput = import ./rules/filter-input.nix {
     inherit
       net

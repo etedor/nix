@@ -6,29 +6,21 @@
   ...
 }:
 
-let
-  zoneTrust = [
-    "wg0"
-    "wg1"
-    "wg2"
-  ];
-  zoneUntrust = [ "ens3" ];
-in
 {
   rules = [
     {
       name = "BGP";
-      iifs = zoneTrust;
+      iifs = zone.p2p;
       dpts = [ 179 ];
       action = "accept";
       proto = "tcp";
     }
     {
-      name = "SSH";
-      iifs = zoneTrust;
+      name = "SSH from admin";
+      iifs = zone.p2p ++ zone.peer-admin;
       sips = [
         net.ggz.trust3
-        net.sea.wg1
+        net.sea.wg10
       ];
       dips = [ rt-sea.interfaces.lo0 ];
       dpts = [ 22 ];
@@ -37,14 +29,14 @@ in
     }
     {
       name = "WireGuard";
-      iifs = zoneUntrust;
+      iifs = zone.untrust;
       dpts = wg.listenPorts;
       action = "accept";
       proto = "udp";
     }
     {
       name = "DNS";
-      iifs = zoneTrust;
+      iifs = zone.p2p ++ zone.peer-admin ++ zone.peer-family;
       dips = [ rt-sea.interfaces.lo0 ];
       dpts = [
         53
@@ -55,7 +47,7 @@ in
     }
     {
       name = "DNS";
-      iifs = zoneTrust;
+      iifs = zone.p2p ++ zone.peer-admin ++ zone.peer-family;
       dips = [ rt-sea.interfaces.lo0 ];
       dpts = [
         53

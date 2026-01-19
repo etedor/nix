@@ -78,24 +78,23 @@ in
       log = true;
     }
 
-    # wg1 rules
     {
-      name = "wg1 to infra";
-      sips = [ net.sea.wg1 ];
+      name = "peer-admin to infra";
+      sips = [ net.sea.wg10 ];
       dips = [ net.ggz.infra ];
       action = "accept";
       log = true;
     }
     {
-      name = "wg1 to server";
-      sips = [ net.sea.wg1 ];
+      name = "peer-admin to server";
+      sips = [ net.sea.wg10 ];
       dips = [ net.ggz.server ];
       action = "accept";
       log = true;
     }
     {
-      name = "wg1 to rfc1918";
-      sips = [ net.sea.wg1 ];
+      name = "peer-admin to rfc1918";
+      sips = [ net.sea.wg10 ];
       dips = net.rfc1918;
       action = "drop";
       log = true;

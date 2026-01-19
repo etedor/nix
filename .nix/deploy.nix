@@ -12,9 +12,10 @@ let
     name:
     {
       remoteBuild ? true,
+      hostname ? "${name}.${zone}",
     }:
     {
-      hostname = "${name}.${zone}";
+      inherit hostname;
       sshOpts = [ "-A" ]; # forward SSH agent for sudo auth
       profiles.system = {
         sshUser = user0;

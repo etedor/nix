@@ -1,4 +1,27 @@
 {
+  wireguard = {
+    rt-ggz = {
+      wg0 = "q0iv3xaqimX9Y5YmLH0/iGq2uHEzzVdV8V0H8RC9vH4=";
+    };
+    rt-sea = {
+      wg0 = "hewTOjDLRD5ML+d3bsHb7RFDsRt9bNFxhoMfOrd0F0A=";
+      wg10 = "niKrQNH3U7QGSsqvxL+rK5UAZTHEADkYWAk/GHy1YHc=";
+      wg11 = "UTFPct/zmzcBdzP2whojDvhYyZ2Mu8vJQ02DedpqvF8=";
+    };
+    pine = {
+      wg0 = "xBNt1u2PhjNwRdZbGqPUYg89ZgXtK96CdzdgGHBkzgE=";
+    };
+    jade = {
+      wg0 = "dYW3muFz+5SalLTS+WyVPLZIqFAcGqf3LQX22GGXIlA=";
+    };
+    carbon = {
+      wg0 = "BFj2h8WFEB4k6iwEUlqTIbDCACpIeib+zBZP0st9N20=";
+    };
+    rt-travel = {
+      wg0 = "K3x4FcfB16JwPeO3UUML7PSLYtwAd8Ostp+QJxgl63k=";
+    };
+  };
+
   # for distributed builds
   builders = {
     machina = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMedB0Yoxfex9pL3kR/kXTw4BstybyhwLCHOjtcQRcYK";

@@ -1,6 +1,7 @@
 {
   lib,
   config,
+  globals,
   ...
 }:
 
@@ -40,7 +41,7 @@ in
     publicKeys = lib.mkOption {
       type = lib.types.attrs;
       description = "WireGuard public keys for routers and clients";
-      default = import ./keys.nix;
+      default = globals.keys.wireguard;
     };
   };
 }

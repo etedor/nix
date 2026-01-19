@@ -34,6 +34,7 @@ in
       Amperfy = 1530145038;
       QuadStream = 1051358039;
       UpNote = 1398373917;
+      WireGuard = 1451685025;
     };
   };
 }

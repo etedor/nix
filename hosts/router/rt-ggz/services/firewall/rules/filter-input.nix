@@ -34,7 +34,7 @@
       dpts = [ 22 ];
       sips = [
         net.ggz.trust3
-        net.sea.wg1
+        net.sea.wg10
       ];
       action = "accept";
     }

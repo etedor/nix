@@ -4,6 +4,7 @@
 }:
 
 let
+  net = globals.networks;
   rt-ggz = globals.routers.rt-ggz;
   rt-sea = globals.routers.rt-sea;
 
@@ -15,6 +16,10 @@ in
     enable = true;
 
     staticRoutes = [
+      {
+        network = net.travel.lan;
+        iface = "wg11";
+      }
       {
         network = "10.0.0.0/8";
         iface = "blackhole";

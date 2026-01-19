@@ -8,80 +8,50 @@
 let
   cfg = config.et42.device.autofs;
 
-  # generate mount entries based on fstype
-  mkMountEntry = name: mount:
-    let
-      fstype = mount.fstype or "nfs";
-      opts = lib.concatStringsSep "," (
-        [ "fstype=${fstype}" ] ++ mount.options
-      );
-      remote =
-        if fstype == "smbfs" then
-          "://${mount.user}@${mount.server}/${mount.share}"
-        else
-          "${mount.server}:${mount.remotePath}";
-    in
-    "${mount.mountPoint} -${opts} ${remote}";
-
-  autoEntries = lib.concatStringsSep "\n" (
-    lib.mapAttrsToList mkMountEntry cfg.mounts
+  autoNfsEntries = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (
+      name: mount:
+      let
+        opts = lib.concatStringsSep "," (
+          [ "fstype=nfs" ] ++ mount.options
+        );
+      in
+      "${mount.mountPoint} -${opts} ${mount.server}:${mount.remotePath}"
+    ) cfg.mounts
   );
 
   mountDirs = lib.mapAttrsToList (name: mount: mount.mountPoint) cfg.mounts;
 in
 {
   options.et42.device.autofs = {
-    enable = lib.mkEnableOption "autofs for network mounts";
+    enable = lib.mkEnableOption "autofs for NFS mounts";
 
     mounts = lib.mkOption {
       type = lib.types.attrsOf (
         lib.types.submodule {
           options = {
-            fstype = lib.mkOption {
-              type = lib.types.enum [ "nfs" "smbfs" ];
-              default = "nfs";
-              description = "Filesystem type (nfs or smbfs)";
-            };
             server = lib.mkOption {
               type = lib.types.str;
-              description = "Server hostname or IP";
+              description = "NFS server hostname or IP";
             };
-            # NFS options
             remotePath = lib.mkOption {
               type = lib.types.str;
-              default = "";
               description = "Remote path on NFS server";
-            };
-            # SMB options
-            share = lib.mkOption {
-              type = lib.types.str;
-              default = "";
-              description = "SMB share name";
-            };
-            user = lib.mkOption {
-              type = lib.types.str;
-              default = "";
-              description = "SMB username";
-            };
-            password = lib.mkOption {
-              type = lib.types.str;
-              default = "";
-              description = "SMB password (stored in /etc/auto_nfs, root-only readable)";
             };
             mountPoint = lib.mkOption {
               type = lib.types.str;
-              description = "Local mount point";
+              description = "Local mount point (under /System/Volumes/Data)";
             };
             options = lib.mkOption {
               type = lib.types.listOf lib.types.str;
-              default = [ ];
-              description = "Mount options";
+              default = [ "soft" "bg" "intr" ];
+              description = "NFS mount options";
             };
           };
         }
       );
       default = { };
-      description = "Network mounts to configure via autofs";
+      description = "NFS mounts to configure via autofs";
     };
   };
 
@@ -107,7 +77,7 @@ in
     };
 
     environment.etc."auto_nfs" = {
-      text = autoEntries;
+      text = autoNfsEntries;
     };
 
     system.activationScripts.postActivation.text = lib.mkAfter ''
