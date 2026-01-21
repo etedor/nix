@@ -8,6 +8,5 @@
     ./firefox.nix
     ./homebrew.nix
     ./mouseless
-    ./signal.nix
   ];
 }
