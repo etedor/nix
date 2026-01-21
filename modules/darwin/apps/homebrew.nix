@@ -24,6 +24,7 @@ in
 
     casks = [
       "1password"
+      "elgato-stream-deck"
       "pika"
       "sonos"
       "spotify"
