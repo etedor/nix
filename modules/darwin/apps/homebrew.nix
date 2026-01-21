@@ -27,6 +27,7 @@ in
       "elgato-stream-deck"
       "pika"
       "shortcat"
+      "signal"
       "sonos"
       "spotify"
       "wireshark"
