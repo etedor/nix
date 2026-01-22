@@ -1,5 +1,6 @@
 {
   config,
+  currentYear,
   globals,
   lib,
   pkgs,
@@ -8,7 +9,7 @@
 }:
 
 let
-  playlists = import ./playlists.nix { inherit config pkgs; };
+  playlists = import ./playlists.nix { inherit config currentYear; };
 
   setupPlaylistsDir = pkgs.writeShellScript "setup-playlists-dir.sh" ''
     mkdir -p /pool0/media/library/music/_playlists

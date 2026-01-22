@@ -86,6 +86,8 @@
         }:
         let
           isDarwin = role == "darwin";
+          secondsPerYear = 31556952;
+          currentYear = 1970 + (nixpkgs.lastModified / secondsPerYear);
 
           pkgs = import nixpkgs {
             inherit system overlays;
@@ -137,6 +139,7 @@
           specialArgs =
             {
               inherit inputs globals overlays system;
+              inherit currentYear;
               secretsCommon = ./secrets/common;
               secretsRole = ./secrets/${role};
               secretsHost = ./secrets/${role}/${name};
