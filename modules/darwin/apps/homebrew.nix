@@ -24,7 +24,6 @@ in
 
     casks = [
       "1password"
-      "elgato-stream-deck"
       "pika"
       "shortcat"
       "signal"
