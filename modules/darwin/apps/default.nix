@@ -7,7 +7,6 @@
     ./discord.nix
     ./firefox.nix
     ./homebrew.nix
-    ./mouseless
     ./signal.nix
   ];
 }
