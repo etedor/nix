@@ -26,6 +26,7 @@ in
       "1password"
       "elgato-stream-deck"
       "pika"
+      "shortcat"
       "sonos"
       "spotify"
       "wireshark"
