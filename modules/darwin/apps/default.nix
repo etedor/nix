@@ -8,5 +8,6 @@
     ./discord.nix
     ./firefox.nix
     ./homebrew.nix
+    ./menubar.nix
   ];
 }
