@@ -19,11 +19,11 @@ in
         "left"
         "right"
       ];
-      default = "right";
+      default = "bottom";
     };
     autohide = lib.mkOption {
       type = lib.types.bool;
-      default = false;
+      default = true;
     };
     persistentApps = lib.mkOption {
       type = lib.types.listOf lib.types.str;
@@ -35,7 +35,7 @@ in
     system.defaults.dock = {
       inherit (cfg) orientation autohide;
 
-      persistent-apps = lib.mkIf (cfg.persistentApps != [ ]) cfg.persistentApps;
+      persistent-apps = cfg.persistentApps;
 
       tilesize = 48;
       magnification = false;
