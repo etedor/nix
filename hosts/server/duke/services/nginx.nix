@@ -7,12 +7,15 @@
 
 let
   z = globals.zone;
+  nginx = config.et42.server.nginx;
+  mkAllow = ips: lib.concatMapStrings (ip: "allow ${ip};\n") ips;
+  telegram = [ "149.154.160.0/20" "91.108.4.0/22" ];
 in
 {
   users.users.nginx.extraGroups = [ "acme" ];
   services.nginx =
     let
-      mkVirtualHost = config.et42.server.nginx.mkVirtualHost;
+      mkVirtualHost = nginx.mkVirtualHost;
 
       pduExtraLocations = {
         "/favicon.ico" = {
@@ -57,8 +60,10 @@ in
       virtualHosts = lib.mkMerge [
         {
           "_" = {
+            forceSSL = true;
+            useACMEHost = globals.zone;
             locations."/" = {
-              return = "404";
+              return = "444";
             };
           };
         }
@@ -119,9 +124,42 @@ in
 
         (mkVirtualHost {
           subdomain = "ai";
-          proxyPass = "http://10.0.8.35:3000";
+          proxyPass = "http://10.0.8.32:3000";
           proxyWebsockets = true;
         })
+
+        # n8n - rfc1918 base, webhook also allows telegram
+        {
+          "n8n.${z}" = {
+            forceSSL = true;
+            useACMEHost = globals.zone;
+            extraConfig = ''
+              error_page 403 = @denied;
+            '';
+
+            locations."@denied" = {
+              return = "444";
+            };
+
+            locations."/" = {
+              proxyPass = "http://10.0.8.32:5678"; # TODO: use globals.hosts reference
+              proxyWebsockets = true;
+              extraConfig = ''
+                ${mkAllow nginx.rfc1918}
+                deny all;
+              '';
+            };
+
+            locations."/webhook/" = {
+              proxyPass = "http://10.0.8.32:5678"; # TODO: use globals.hosts reference
+              proxyWebsockets = true;
+              extraConfig = ''
+                ${mkAllow (nginx.rfc1918 ++ telegram)}
+                deny all;
+              '';
+            };
+          };
+        }
       ];
     };
 

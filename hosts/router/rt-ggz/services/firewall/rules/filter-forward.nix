@@ -77,6 +77,15 @@ in
       action = "accept";
       log = true;
     }
+    {
+      name = "rt-sea to duke https";
+      iifs = [ "wg0" ];
+      dips = [ "10.0.4.32" ]; # TODO: use globals.hosts reference
+      dpts = [ 443 ];
+      proto = "tcp";
+      action = "accept";
+      log = true;
+    }
 
     {
       name = "peer-admin to infra";
@@ -324,7 +333,6 @@ in
       action = "accept";
       log = true;
     }
-
     {
       name = "brother to paperless";
       sips = [ "10.0.11.16" ]; # TODO: use et42.hosts reference for brother printer
