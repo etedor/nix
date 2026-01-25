@@ -27,7 +27,10 @@ in
     };
     programs.btop = {
       enable = true;
-      settings.color_theme = "matcha-dark-sea";
+      settings = {
+        color_theme = "TTY";
+        theme_background = false;
+      };
     };
     programs.lsd = {
       enable = true;
