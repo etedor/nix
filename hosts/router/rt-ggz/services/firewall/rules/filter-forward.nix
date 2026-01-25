@@ -1,11 +1,17 @@
 {
   globals,
-  net,
   ...
 }:
 
 let
-  ntp = globals.hosts.ntp;
+  net = globals.networks;
+
+  hosts = globals.hosts;
+  brother = hosts.brother;
+  duke = hosts.duke;
+  home-assistant = hosts.home-assistant;
+  ntp = hosts.ntp;
+
   rt-sea = globals.routers.rt-sea;
 in
 {
@@ -25,15 +31,6 @@ in
       action = "accept";
     }
 
-    # allow ICMP from RFC1918 to RFC1918
-    {
-      name = "rfc1918 to rfc1918";
-      sips = net.rfc1918;
-      dips = net.rfc1918;
-      action = "accept";
-      proto = "icmp";
-    }
-
     # drop any to trust1-isolate
     {
       name = "any to trust1-isolate";
@@ -43,7 +40,7 @@ in
       log = true;
     }
 
-    # allow rfc1918 to ntp
+    # allow rfc1918 to services
     {
       name = "rfc1918 to ntp";
       sips = net.rfc1918;
@@ -56,18 +53,24 @@ in
     {
       name = "rfc1918 to dns";
       sips = net.rfc1918;
-      dips = net.rfc1918; # TODO: restrict to DNS servers only
-      dpts = [ 53 ];
-      proto = "udp";
+      dips = [ rt-sea.interfaces.lo0 ];
+      dpts = [
+        53
+        5353
+      ];
+      proto = [
+        "tcp"
+        "udp"
+      ];
       action = "accept";
       log = false;
     }
 
     # server rules
     {
-      name = "servers to any";
+      name = "servers to internet";
       sips = [ net.ggz.server ];
-      dips = [ "0.0.0.0/0" ];
+      dips = net.non-rfc1918;
       action = "accept";
     }
     {
@@ -78,9 +81,10 @@ in
       log = true;
     }
     {
-      name = "rt-sea to duke https";
+      name = "dnat to duke";
       iifs = [ "wg0" ];
-      dips = [ "10.0.4.32" ]; # TODO: use globals.hosts reference
+      sips = net.non-rfc1918;
+      dips = [ duke.ip ];
       dpts = [ 443 ];
       proto = "tcp";
       action = "accept";
@@ -88,119 +92,23 @@ in
     }
 
     {
-      name = "peer-admin to infra";
-      sips = [ net.sea.wg10 ];
-      dips = [ net.ggz.infra ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "peer-admin to server";
-      sips = [ net.sea.wg10 ];
-      dips = [ net.ggz.server ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "peer-admin to rfc1918";
-      sips = [ net.sea.wg10 ];
-      dips = net.rfc1918;
-      action = "drop";
-      log = true;
-    }
-
-    {
       name = "clients to home-assistant";
-      sips = [ "10.0.8.0/22" ];
-      dips = [ "10.0.8.16" ];
+      sips = [ "10.0.8.0/22" ]; # TODO: after bifurcation
+      dips = [ home-assistant.ip ];
       action = "accept";
       log = true;
     }
 
-    # trust3 rules
+    # admin rules
     {
-      name = "trust3 to trust3";
-      sips = [ net.ggz.trust3 ];
-      dips = [ net.ggz.trust3 ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "trust3 to trust2";
-      sips = [ net.ggz.trust3 ];
-      dips = [ net.ggz.trust2 ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "trust3 to trust1";
-      sips = [ net.ggz.trust3 ];
-      dips = [ net.ggz.trust1 ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "trust3 to trust0";
-      sips = [ net.ggz.trust3 ];
-      dips = [ net.ggz.trust0 ];
-      action = "accept";
-      log = true;
-    }
-
-    {
-      name = "trust3 to modems";
-      sips = [ net.ggz.trust3 ];
-      dips = [
-        "192.168.100.1"
-        "192.168.12.1"
-      ];
-      dpts = [
-        80
-        443
-      ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "trust3 to infra";
-      sips = [ net.ggz.trust3 ];
-      dips = [ net.ggz.infra ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "trust3 to server";
-      sips = [ net.ggz.trust3 ];
-      dips = [ net.ggz.server ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "trust3 to lab";
-      sips = [ net.ggz.trust3 ];
-      dips = [ net.ggz.lab ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "trust3 to rt-sea";
-      sips = [ net.ggz.trust3 ];
-      dips = [ rt-sea.interfaces.lo0 ];
-      action = "accept";
-      log = true;
-    }
-
-    {
-      name = "trust3 to rfc1918";
-      sips = [ net.ggz.trust3 ];
+      name = "admin to rfc1918";
+      sips = net.admin;
       dips = net.rfc1918;
       action = "accept";
-      log = true;
     }
     {
-      name = "trust3 to any";
-      sips = [ net.ggz.trust3 ];
-      dips = [ "0.0.0.0/0" ];
+      name = "admin to any";
+      sips = net.admin;
       action = "accept";
     }
 
@@ -233,45 +141,45 @@ in
     }
 
     {
-      name = "trust2 to trust2";
-      sips = [ net.ggz.trust2 ];
+      name = "family to trust2";
+      sips = net.family;
       dips = [ net.ggz.trust2 ];
       action = "accept";
       log = true;
     }
     {
-      name = "trust2 to trust1";
-      sips = [ net.ggz.trust2 ];
+      name = "family to trust1";
+      sips = net.family;
       dips = [ net.ggz.trust1 ];
       action = "accept";
       log = true;
     }
     {
-      name = "trust2 to trust0";
-      sips = [ net.ggz.trust2 ];
+      name = "family to trust0";
+      sips = net.family;
       dips = [ net.ggz.trust0 ];
       action = "accept";
       log = true;
     }
 
     {
-      name = "trust2 to server";
-      sips = [ net.ggz.trust2 ];
+      name = "family to server";
+      sips = net.family;
       dips = [ net.ggz.server ];
       action = "accept";
       log = true;
     }
 
     {
-      name = "trust2 to rfc1918";
-      sips = [ net.ggz.trust2 ];
+      name = "family to rfc1918";
+      sips = net.family;
       dips = net.rfc1918;
       action = "drop";
       log = true;
     }
     {
-      name = "trust2 to any";
-      sips = [ net.ggz.trust2 ];
+      name = "family to any";
+      sips = net.family;
       dips = [ "0.0.0.0/0" ];
       action = "accept";
     }
@@ -335,23 +243,23 @@ in
     }
     {
       name = "brother to paperless";
-      sips = [ "10.0.11.16" ]; # TODO: use et42.hosts reference for brother printer
-      dips = [ "10.0.4.32" ]; # TODO: use et42.hosts reference for paperless
+      sips = [ brother.ip ];
+      dips = [ duke.ip ];
       dpts = [ 445 ];
       action = "accept";
       log = true;
     }
     {
       name = "clients to brother";
-      sips = [ "10.0.8.0/22" ];
-      dips = [ "10.0.11.16" ]; # TODO: use et42.hosts reference
+      sips = net.admin ++ net.family;
+      dips = [ brother.ip ];
       action = "accept";
       log = true;
     }
     {
       name = "brother to clients";
-      sips = [ "10.0.11.16" ]; # TODO: use et42.hosts reference
-      dips = [ "10.0.8.0/22" ];
+      sips = [ brother.ip ];
+      dips = net.admin ++ net.family;
       action = "accept";
       log = true;
     }

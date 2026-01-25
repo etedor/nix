@@ -34,6 +34,7 @@ in
           netdevConfig = {
             Name = "wg0";
             Kind = "wireguard";
+            MTUBytes = "1420";
           };
           wireguardConfig = {
             PrivateKeyFile = config.age.secrets.wg0-private-key.path;
@@ -51,6 +52,7 @@ in
           netdevConfig = {
             Name = "wg10";
             Kind = "wireguard";
+            MTUBytes = "1420";
           };
           wireguardConfig = {
             PrivateKeyFile = config.age.secrets.wg10-private-key.path;
@@ -65,11 +67,6 @@ in
               PublicKey = wg.publicKeys.carbon.wg0;
               AllowedIPs = [ "10.100.10.12/32" ];
             }
-            {
-              # machina
-              PublicKey = "NVBeFQ2Ws0UjfY88o+zgiOes5fKUDOqEd/F2IP6iMFY=";
-              AllowedIPs = [ "10.100.10.13/32" ];
-            }
           ];
         };
 
@@ -77,6 +74,7 @@ in
           netdevConfig = {
             Name = "wg11";
             Kind = "wireguard";
+            MTUBytes = "1420";
           };
           wireguardConfig = {
             PrivateKeyFile = config.age.secrets.wg11-private-key.path;

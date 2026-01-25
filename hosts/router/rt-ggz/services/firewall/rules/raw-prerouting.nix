@@ -3,7 +3,6 @@
 }:
 
 {
-
   rules = [
     {
       name = "wan0 zone 1";

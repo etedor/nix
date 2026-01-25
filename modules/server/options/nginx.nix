@@ -4,18 +4,7 @@
   ...
 }:
 
-let
-  rfc1918 = [ "10.0.0.0/8" "172.16.0.0/12" "192.168.0.0/16" ];
-in
 {
-  options.et42.server.nginx = {
-    rfc1918 = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      default = rfc1918;
-      description = "RFC1918 private IP ranges.";
-    };
-  };
-
   options.et42.server.nginx.mkVirtualHost = lib.mkOption {
     type = lib.types.functionTo lib.types.attrs;
     description = "Function to generate an Nginx virtual host with defaults and additional custom locations.";
@@ -26,12 +15,15 @@ in
         proxyWebsockets ? false,
         faviconPath ? null,
         extraLocations ? { },
-        allowIPs ? rfc1918,
+        adminOnly ? true,
+        allowIPs ? (if adminOnly then globals.networks.admin else null),
         extraAllowIPs ? [],
         adminPath ? null,
         allowAdminIPs ? null,
         extraConfig ? "",
       }:
+      assert (!adminOnly) -> (allowIPs != null) ||
+        throw "allowIPs must be specified when adminOnly = false";
       let
         mkAccessControl =
           ips:

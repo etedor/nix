@@ -28,29 +28,27 @@ let
     in
     "limit ${logLimit} log prefix \"${prefix}\" comment \"${name} log\"";
 
+  # check if all items in list are negated (start with !)
+  isNegated = s: builtins.isString s && builtins.substring 0 1 s == "!";
+  stripNeg = s: builtins.substring 1 (builtins.stringLength s - 1) s;
+  allNegated = items: builtins.isList items && builtins.all isNegated items;
+
   # build nft match set from list
   mkSet =
     item:
     if builtins.isList item then
-      let
-        # check if we have a single negated item
-        singleNegatedItem =
-          builtins.length item == 1
-          && builtins.isString (builtins.head item)
-          && builtins.substring 0 1 (builtins.head item) == "!";
-
-        # process based on what we found
-        result =
-          if singleNegatedItem then
-            # for a negated item, use != syntax
-            "!= ${builtins.substring 1 (builtins.stringLength (builtins.head item) - 1) (builtins.head item)}"
-          else
-            # for normal sets, use { ... } syntax
-            "{ ${concatStringsSep ", " (builtins.map builtins.toString item)} }";
-      in
-      result
+      # normal set: { x, y, z }
+      "{ ${concatStringsSep ", " (builtins.map builtins.toString item)} }"
     else
       throw "mkSet only accepts a list, not ${builtins.typeOf item}!";
+
+  # build field match, handling negated sets: field != x field != y field != z
+  mkFieldMatch =
+    field: items:
+    if allNegated items then
+      concatStringsSep " " (builtins.map (s: "${field} != ${stripNeg s}") items)
+    else
+      "${field} ${mkSet items}";
 
   mkRule =
     attrs:
@@ -62,7 +60,9 @@ let
         !((attrs ? dpts || attrs ? spts) && !(attrs ? proto))
       ) "mkRule: ${name}: When specifying dpts or spts, you must also specify proto";
 
-      proto = attrs.proto or "ip";
+      proto = attrs.proto or null;
+      protoIsList = builtins.isList proto;
+      protoMatch = if protoIsList then mkSet proto else proto;
       baseMatch =
         let
           # build auto-generated match from sips/dips/iifs/oifs/ports/proto
@@ -71,11 +71,23 @@ let
               toMatch = [
                 (optionalString (attrs ? iifs) "iifname ${mkSet attrs.iifs}")
                 (optionalString (attrs ? oifs) "oifname ${mkSet attrs.oifs}")
-                (optionalString (attrs ? sips) "ip saddr ${mkSet attrs.sips}")
-                (optionalString (attrs ? dips) "ip daddr ${mkSet attrs.dips}")
+                (optionalString (attrs ? sips) (mkFieldMatch "ip saddr" attrs.sips))
+                (optionalString (attrs ? dips) (mkFieldMatch "ip daddr" attrs.dips))
               ]
               ++ (
                 if attrs ? proto then
+                  if protoIsList then
+                    # multiple protocols - use meta l4proto with th (transport header) for ports
+                    if attrs ? spts && attrs ? dpts then
+                      [ "meta l4proto ${protoMatch} th sport ${mkSet attrs.spts} th dport ${mkSet attrs.dpts}" ]
+                    else if attrs ? spts then
+                      [ "meta l4proto ${protoMatch} th sport ${mkSet attrs.spts}" ]
+                    else if attrs ? dpts then
+                      [ "meta l4proto ${protoMatch} th dport ${mkSet attrs.dpts}" ]
+                    else
+                      [ "meta l4proto ${protoMatch}" ]
+                  else
+                  # single protocol - use protocol-specific port matching
                   if attrs ? spts && attrs ? dpts then
                     [ "${proto} sport ${mkSet attrs.spts} ${proto} dport ${mkSet attrs.dpts}" ]
                   else if attrs ? spts then
@@ -139,8 +151,8 @@ let
       preroutingExprParts = [
         "iifname ${mkSet iifs}"
       ]
-      ++ (if sips != [ ] then [ "ip saddr ${mkSet sips}" ] else [ ])
-      ++ (if dips != [ ] then [ "ip daddr ${mkSet dips}" ] else [ ])
+      ++ (if sips != [ ] then [ (mkFieldMatch "ip saddr" sips) ] else [ ])
+      ++ (if dips != [ ] then [ (mkFieldMatch "ip daddr" dips) ] else [ ])
       ++ [ "${proto} dport ${toString pt}" ];
 
       preroutingExpr = concatStringsSep " " preroutingExprParts;
@@ -276,6 +288,12 @@ let
 
   defaultFilterForwardRules = [
     {
+      name = "icmp";
+      proto = "icmp";
+      action = "accept";
+    }
+
+    {
       name = "established related";
       expr = "ct state established,related";
       action = "accept";
@@ -290,12 +308,29 @@ let
 
   defaultFilterOutputRules = [ ];
 
+  defaultManglePostroutingRules =
+    mssClamp:
+    if mssClamp.enable then
+      [
+        {
+          name = "mss clamp";
+          expr = "tcp flags & (syn | rst) == syn tcp option maxseg size set ${mssClamp.mss}";
+          action = "continue";
+        }
+      ]
+    else
+      [ ];
+
   baseline =
     {
       filterCounters ? [ ],
       mangleCounters ? [ ],
       dnatRules ? [ ],
       masqRules ? [ ],
+      mssClamp ? {
+        enable = true;
+        mss = "rt mtu";
+      },
       extraRawPreRoutingRules ? [ ],
       extraManglePreRoutingRules ? [ ],
       extraManglePostRoutingRules ? [ ],
@@ -308,8 +343,6 @@ let
       extraNATPostRoutingRules ? [ ],
     }:
     ''
-      define RFC_1918 = { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 }
-
       table ip raw {
         chain prerouting {
           type filter hook prerouting priority -300;
@@ -334,17 +367,12 @@ let
 
         chain postrouting {
           type filter hook postrouting priority 100;
+          ${join (map mkRule (defaultManglePostroutingRules mssClamp))}
           ${join (map mkRule extraManglePostRoutingRules)}
         }
       }
 
       table inet filter {
-        set rfc1918 {
-          type ipv4_addr
-          flags interval
-          elements = { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 }
-        }
-
         ${optionalString (filterCounters != [ ]) (
           join (map (c: "counter ${c.name} { comment \"${c.comment or c.name}\" }") filterCounters)
         )}
@@ -435,6 +463,19 @@ in
       description = "Mangle forward rules.";
     };
 
+    mssClamp = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Enable MSS clamping in mangle forward chain.";
+      };
+      mss = lib.mkOption {
+        type = lib.types.str;
+        default = "rt mtu";
+        description = "MSS value to clamp to. Use 'rt mtu' for dynamic route MTU or a fixed value like '1380'.";
+      };
+    };
+
     extraFilterInputRules = lib.mkOption {
       type = lib.types.listOf lib.types.attrs;
       default = [ ];
@@ -505,6 +546,7 @@ in
     networking.nftables.ruleset = baseline {
       filterCounters = config.et42.router.nftables.filterCounters;
       mangleCounters = config.et42.router.nftables.mangleCounters;
+      mssClamp = config.et42.router.nftables.mssClamp;
       extraRawPreRoutingRules = config.et42.router.nftables.extraRawPreRoutingRules;
 
       extraManglePreRoutingRules = config.et42.router.nftables.extraManglePreRoutingRules;

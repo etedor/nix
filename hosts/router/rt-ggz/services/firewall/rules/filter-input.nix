@@ -1,8 +1,12 @@
 {
   config,
-  net,
+  globals,
   ...
 }:
+
+let
+  net = globals.networks;
+in
 {
   rules = [
     {
@@ -32,17 +36,7 @@
       name = "SSH";
       proto = "tcp";
       dpts = [ 22 ];
-      sips = [
-        net.ggz.trust3
-        net.sea.wg10
-      ];
-      action = "accept";
-    }
-    {
-      name = "SSH";
-      proto = "tcp";
-      dpts = [ 22 ];
-      sips = [ net.ggz.server ];
+      sips = net.admin;
       action = "accept";
     }
     {
@@ -56,17 +50,10 @@
 
     {
       name = "DNS";
-      proto = "tcp";
-      sips = net.rfc1918;
-      dpts = [
-        53
-        5354
+      proto = [
+        "tcp"
+        "udp"
       ];
-      action = "accept";
-    }
-    {
-      name = "DNS";
-      proto = "udp";
       sips = net.rfc1918;
       dpts = [
         53
@@ -81,6 +68,5 @@
       iifs = [ "vlan8" ];
       action = "accept";
     }
-
   ];
 }

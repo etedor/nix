@@ -1,5 +1,6 @@
 {
   config,
+  globals,
   lib,
   pkgs,
   ...
@@ -270,6 +271,8 @@ in
       (config.et42.server.nginx.mkVirtualHost {
         subdomain = "radio";
         proxyPass = "http://127.0.0.1:${toString config.et42.server.radio.port}";
+        adminOnly = false;
+        allowIPs = globals.networks.admin ++ globals.networks.family;
         adminPath = "/admin/";
         allowAdminIPs = config.et42.server.radio.adminIPs;
       })

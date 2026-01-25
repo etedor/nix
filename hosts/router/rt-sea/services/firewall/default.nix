@@ -5,28 +5,10 @@
 }:
 
 let
-  wg = config.et42.router.wireguard;
-  rt-sea = globals.routers.rt-sea;
-  net = globals.networks;
-
-  zone = {
-    p2p = [ "wg0" ];
-    peer-admin = [ "wg10" ];
-    peer-family = [ "wg11" ];
-    untrust = [ "ens3" ];
-  };
-  filterForward = import ./rules/filter-forward.nix { inherit globals net zone; };
-  filterInput = import ./rules/filter-input.nix {
-    inherit
-      net
-      rt-sea
-      wg
-      zone
-      ;
-  };
-  manglePostrouting = import ./rules/mangle-postrouting.nix { inherit wg; };
-  natDnat = import ./rules/nat-dnat.nix { inherit zone; };
-  natMasquerade = import ./rules/nat-masquerade.nix { inherit net; };
+  filterForward = import ./rules/filter-forward.nix { inherit globals; };
+  filterInput = import ./rules/filter-input.nix { inherit config globals; };
+  natDnat = import ./rules/nat-dnat.nix { inherit globals; };
+  natMasquerade = import ./rules/nat-masquerade.nix { inherit globals; };
 in
 {
   et42.router.nftables = {
@@ -35,7 +17,6 @@ in
     dnat = natDnat.rules;
     extraFilterForwardRules = filterForward.rules;
     extraFilterInputRules = filterInput.rules;
-    extraManglePostRoutingRules = manglePostrouting.rules;
     masq = natMasquerade.rules;
   };
 

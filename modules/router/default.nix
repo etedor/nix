@@ -112,4 +112,11 @@ in
 
   boot.kernel.sysctl."net.ipv4.ip_forward" = "1";
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = "1";
+
+  # prevent networkd from removing routes/rules created by FRR
+  systemd.network.config.networkConfig = {
+    ManageForeignRoutingPolicyRules = false;
+    ManageForeignRoutes = false;
+    ManageForeignNextHops = false;
+  };
 }

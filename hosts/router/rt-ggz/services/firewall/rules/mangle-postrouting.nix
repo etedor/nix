@@ -19,7 +19,7 @@
 #
 # mark layout:
 #   [ 31-26 | DSCP value ] [ 25 | unused ] [ 24 | valid flag ]
-#   [ 23-8 | reserved ] [ 7-4 | routing bits ] [ 3-0 | unused ]
+#   [ 23-4 | reserved ] [ 3-0 | PBR tunnel ID ]
 #
 # example:
 #   - ip DSCP CS1 (8) → ct mark = 0x21000000 | (ct mark & 0x00ffffff)

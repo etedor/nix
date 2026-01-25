@@ -1,7 +1,6 @@
 {
   config,
   globals,
-  lib,
   ...
 }:
 
@@ -11,11 +10,10 @@ let
 
   plRfc1918 = "PL-RFC1918_V4";
   rmRfc1918 = "RM-RFC1918_V4";
-
-  pbrMapName = "VPS-RETURN";
-  nhgName = "VPS-WG";
 in
 {
+  imports = [ ./pbr.nix ];
+
   et42.router.frr = {
     enable = true;
 
@@ -114,38 +112,6 @@ in
         }
       ];
     };
-  };
-
-  et42.router.nftables = {
-    extraManglePreRoutingRules = lib.mkBefore [
-      {
-        name = "restore-conntrack-mark-for-public";
-        expr = "ct mark & 0x10 == 0x10 ip daddr != $RFC_1918";
-        action = "meta mark set 0x10";
-      }
-    ];
-    extraMangleForwardRules = [
-      {
-        name = "mark-internet-via-wg";
-        expr = "iifname wg0 ip saddr != $RFC_1918 ct state new";
-        action = "ct mark set (ct mark & 0xff00000f | 0x10)"; # preserve DSCP bits (31-24) and set PBR routing bit (4)
-      }
-    ];
-  };
-
-  services.frr = {
-    pbrd.enable = true;
-    config = ''
-      nexthop-group ${nhgName}
-        nexthop ${rt-sea.interfaces.wg0}
-      !
-      pbr-map ${pbrMapName} seq 10
-        match mark 16
-        set nexthop-group ${nhgName}
-      !
-      interface vlan4
-        pbr-policy ${pbrMapName}
-    '';
   };
 
   systemd.services."failmon-wan0" = {

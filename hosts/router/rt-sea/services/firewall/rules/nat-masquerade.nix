@@ -1,16 +1,19 @@
 {
-  net,
+  # globals,
   ...
 }:
 
+# let
+#   net = globals.networks;
+# in
 {
   rules = [
-    {
-      name = "masquerade";
-      sips = net.rfc1918;
-      oifs = [
-        "ens3"
-      ];
-    }
+    # {
+    #   name = "masquerade";
+    #   sips = net.rfc1918;
+    #   oifs = [
+    #     "ens3"
+    #   ];
+    # }
   ];
 }

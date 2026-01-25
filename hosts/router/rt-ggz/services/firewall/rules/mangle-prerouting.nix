@@ -1,10 +1,14 @@
 {
-  net,
+  globals,
   ...
 }:
 
+let
+  net = globals.networks;
+in
+
 # ------------------------------------------------------------------------------
-# DSCP restoration for inbound return traffic (defense-in-depth)
+# DSCP restoration for inbound return traffic
 #
 # logic:
 #   - if a connection is established and has a DSCP value stored
@@ -15,11 +19,11 @@
 #   - this provides defense-in-depth: tc-ctinfo already restores DSCP
 #     at TC ingress (before CAKE), but this ensures DSCP is correct
 #     even if TC rules fail or are bypassed.
-#   - routing marks (bits 7-4, e.g., 0x10 for PBR) are not affected.
+#   - PBR tunnel ID (bits 3-0) is not affected.
 #
 # mark layout:
 #   [ 31-26 | DSCP value ] [ 25 | unused ] [ 24 | valid flag ]
-#   [ 23-8 | reserved ] [ 7-4 | routing bits ] [ 3-0 | unused ]
+#   [ 23-4 | reserved ] [ 3-0 | PBR tunnel ID ]
 #
 # example:
 #   - ct mark 0x21000000 → restore DSCP CS1 (bulk traffic)
@@ -58,7 +62,7 @@ in
     {
       name = "count game traffic";
       sips = [ net.ggz.trust2-upnp ];
-      dips = [ "!\$RFC_1918" ];
+      dips = net.non-rfc1918;
       expr = "ip dscp ef counter name game_traffic";
       action = "continue";
     }

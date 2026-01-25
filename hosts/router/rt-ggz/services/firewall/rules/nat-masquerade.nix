@@ -1,7 +1,11 @@
 {
-  net,
+  globals,
   ...
 }:
+
+let
+  net = globals.networks;
+in
 
 {
   rules = [

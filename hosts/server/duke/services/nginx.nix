@@ -7,15 +7,13 @@
 
 let
   z = globals.zone;
-  nginx = config.et42.server.nginx;
-  mkAllow = ips: lib.concatMapStrings (ip: "allow ${ip};\n") ips;
   telegram = [ "149.154.160.0/20" "91.108.4.0/22" ];
 in
 {
   users.users.nginx.extraGroups = [ "acme" ];
   services.nginx =
     let
-      mkVirtualHost = nginx.mkVirtualHost;
+      mkVirtualHost = config.et42.server.nginx.mkVirtualHost;
 
       pduExtraLocations = {
         "/favicon.ico" = {
@@ -128,7 +126,7 @@ in
           proxyWebsockets = true;
         })
 
-        # n8n - rfc1918 base, webhook also allows telegram
+        # n8n - admin base, webhook also allows telegram
         {
           "n8n.${z}" = {
             forceSSL = true;
@@ -145,7 +143,7 @@ in
               proxyPass = "http://10.0.8.32:5678"; # TODO: use globals.hosts reference
               proxyWebsockets = true;
               extraConfig = ''
-                ${mkAllow nginx.rfc1918}
+                ${lib.concatMapStrings (ip: "allow ${ip};\n") globals.networks.admin}
                 deny all;
               '';
             };
@@ -154,7 +152,7 @@ in
               proxyPass = "http://10.0.8.32:5678"; # TODO: use globals.hosts reference
               proxyWebsockets = true;
               extraConfig = ''
-                ${mkAllow (nginx.rfc1918 ++ telegram)}
+                ${lib.concatMapStrings (ip: "allow ${ip};\n") (globals.networks.admin ++ telegram)}
                 deny all;
               '';
             };

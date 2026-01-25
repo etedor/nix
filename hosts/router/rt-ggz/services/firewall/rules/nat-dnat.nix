@@ -1,11 +1,12 @@
 {
   globals,
-  net,
   ...
 }:
 
 let
+  net = globals.networks;
   ntp = globals.hosts.ntp;
+  rt-ggz = globals.routers.rt-ggz;
 
   iotIntercept = {
     iifs = [ "vlan8" ];
@@ -13,7 +14,7 @@ let
       net.ggz.trust1
       net.ggz.trust0
     ];
-    dips = [ "!$RFC_1918" ];
+    dips = net.non-rfc1918;
     log = true;
   };
 in
@@ -28,7 +29,7 @@ in
         dips
         log
         ;
-      ip = "10.127.0.1"; # TODO: use et42.hosts reference
+      ip = rt-ggz.interfaces.lo0;
       pt = 53;
       proto = "udp";
     }
@@ -41,7 +42,7 @@ in
         dips
         log
         ;
-      ip = "10.127.0.1"; # TODO: use et42.hosts reference
+      ip = rt-ggz.interfaces.lo0;
       pt = 53;
       proto = "tcp";
     }
@@ -55,7 +56,7 @@ in
         net.ggz.trust1
         net.ggz.trust0
       ];
-      dips = [ "!$RFC_1918" ];
+      dips = net.non-rfc1918;
       ip = ntp.ip;
       pt = 123;
       proto = "udp";

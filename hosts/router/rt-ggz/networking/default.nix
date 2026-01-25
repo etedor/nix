@@ -8,7 +8,7 @@
     ./interfaces.nix
     ./multicast.nix
     ./qos
-    ./routing.nix
+    ./routing
     ./tuning.nix
     ./vlans.nix
     ./wan-failover

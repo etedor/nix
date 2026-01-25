@@ -52,6 +52,8 @@
     (config.et42.server.nginx.mkVirtualHost {
       subdomain = "jf";
       proxyPass = "http://127.0.0.1:8096";
+      adminOnly = false;
+      allowIPs = globals.networks.admin ++ globals.networks.family;
     })
   ];
 

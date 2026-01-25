@@ -27,6 +27,7 @@ in
           netdevConfig = {
             Name = "wg0";
             Kind = "wireguard";
+            MTUBytes = "1420";
           };
           wireguardConfig = {
             PrivateKeyFile = config.age.secrets.wg0-private-key.path;

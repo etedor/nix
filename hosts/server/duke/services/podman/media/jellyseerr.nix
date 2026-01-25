@@ -40,6 +40,8 @@
     (config.et42.server.nginx.mkVirtualHost {
       subdomain = "requests";
       proxyPass = "http://127.0.0.1:5055";
+      adminOnly = false;
+      allowIPs = globals.networks.admin ++ globals.networks.family;
     })
   ];
 }
