@@ -342,7 +342,7 @@
     exclusionGroup = "vlan8";
   }
   {
-    name = "vlan8-trust1-isolate";
+    name = "vlan10-trust1-isolate";
     memberOf = [
       "bosch"
       "daikin"
@@ -356,39 +356,39 @@
       "work"
     ];
     exclusive = false;
-    exclusionGroup = "vlan8";
+    exclusionGroup = "vlan10";
   }
   {
-    name = "vlan8-trust1-lifx";
+    name = "vlan10-trust1-lifx";
     memberOf = [
       "lifx"
     ];
     exclusive = false;
-    exclusionGroup = "vlan8";
+    exclusionGroup = "vlan10";
   }
   {
-    name = "vlan8-trust0-services";
+    name = "vlan10-trust0-services";
     memberOf = [
       "brother"
     ];
     exclusive = false;
-    exclusionGroup = "vlan8";
+    exclusionGroup = "vlan10";
   }
   {
-    name = "vlan8-trust0-wemo";
+    name = "vlan10-trust0-wemo";
     memberOf = [
       "wemo"
     ];
     exclusive = false;
-    exclusionGroup = "vlan8";
+    exclusionGroup = "vlan10";
   }
   {
-    name = "vlan8-trust0-kasa";
+    name = "vlan10-trust0-kasa";
     memberOf = [
       "kasa"
     ];
     exclusive = false;
-    exclusionGroup = "vlan8";
+    exclusionGroup = "vlan10";
   }
 
   {
@@ -413,7 +413,7 @@
     exclusionGroup = "vlan8";
   }
   {
-    name = "vlan8-trust1";
+    name = "vlan10-trust1";
     memberOf = [
       "bambu-labs"
       "cafe"
@@ -421,10 +421,10 @@
       "rainbird"
     ];
     exclusive = true;
-    exclusionGroup = "vlan8";
+    exclusionGroup = "vlan10";
   }
   {
-    name = "vlan8-trust0";
+    name = "vlan10-trust0";
     memberOf = [
       "tv-office"
       "tv-playroom"
@@ -433,7 +433,13 @@
       "Things"
     ];
     exclusive = true;
-    exclusionGroup = "vlan8";
+    exclusionGroup = "vlan10";
+  }
+  {
+    name = "vlan10";
+    interface = "vlan10";
+    exclusive = true;
+    exclusionGroup = "vlan10";
   }
   {
     name = "vlan8-trust2";

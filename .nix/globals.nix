@@ -4,11 +4,12 @@ let
   ggz = {
     infra = "10.0.2.0/24";
     server = "10.0.4.0/24";
+    clients = "10.0.8.0/23";
     trust3 = "10.0.8.0/24";
     trust2 = "10.0.9.0/24";
     trust2-upnp = "10.0.9.32/27";
     trust2-sonos = "10.0.9.64/27";
-    trust10 = "10.0.10.0/23";
+    things = "10.0.10.0/23";
     trust1 = "10.0.10.0/24";
     trust1-isolate = "10.0.10.32/27";
     trust0 = "10.0.11.0/24";
@@ -49,6 +50,10 @@ in
       home-assistant = {
         name = "home-assistant.${private.zone}";
         ip = "10.0.8.16";
+      };
+      machina = {
+        name = "machina.${private.zone}";
+        ip = "10.0.8.32";
       };
       ntp = {
         name = "ntp.${private.zone}";

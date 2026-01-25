@@ -1,7 +1,7 @@
 { lib, ... }:
 
 let
-  multicastVlans = [ 8 ];
+  multicastVlans = [ 8 10 ];
 
   frrVlanConfig = lib.concatMapStringsSep "\n" (vlan: ''
     interface vlan${toString vlan}

@@ -70,6 +70,8 @@ in
           subdomain = "ha";
           proxyPass = "http://docker-home.${z}:8123";
           proxyWebsockets = true;
+          adminOnly = false;
+          allowIPs = globals.networks.admin ++ globals.networks.family;
         })
 
         (mkVirtualHost {

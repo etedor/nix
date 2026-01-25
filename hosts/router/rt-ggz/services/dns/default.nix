@@ -7,7 +7,7 @@
 let
   rt-ggz = globals.routers.rt-ggz;
   rt-sea = globals.routers.rt-sea;
-  trust10 = globals.networks.ggz.trust10;
+  things = globals.networks.ggz.things;
 
   rt-ggz-nsd = "${rt-ggz.interfaces.lo0}:5354";
   rt-ggz-unbound = "${rt-ggz.interfaces.lo0}:5353";
@@ -79,7 +79,7 @@ in
         "local"
       ];
 
-      "${trust10}" = [
+      "${things}" = [
         "default"
         "doh"
         "local"

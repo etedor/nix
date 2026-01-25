@@ -46,7 +46,7 @@
     };
 
     vlan8 = {
-      subnet = "10.0.8.0/22";
+      subnet = "10.0.8.0/23";
       router = "10.0.8.1";
       description = "Clients";
       pools = [
@@ -72,39 +72,47 @@
         }
         {
           pool = "10.0.9.192 - 10.0.9.254";
-          client-classes = [ "vlan8-trust2" ]; # trust2
+          client-classes = [ "vlan8-trust2" ];
         }
+      ];
+    };
+
+    vlan10 = {
+      subnet = "10.0.10.0/23";
+      router = "10.0.10.1";
+      description = "Things";
+      pools = [
         {
           pool = "10.0.10.16 - 10.0.10.31";
-          client-classes = [ "vlan8-trust1-services" ];
+          client-classes = [ "vlan10-trust1-services" ];
         }
         {
           pool = "10.0.10.32 - 10.0.10.63";
-          client-classes = [ "vlan8-trust1-isolate" ];
+          client-classes = [ "vlan10-trust1-isolate" ];
         }
         {
           pool = "10.0.10.64 - 10.0.10.95";
-          client-classes = [ "vlan8-trust1-lifx" ];
+          client-classes = [ "vlan10-trust1-lifx" ];
         }
         {
           pool = "10.0.10.192 - 10.0.10.254";
-          client-classes = [ "vlan8-trust1" ];
+          client-classes = [ "vlan10-trust1" ];
         }
         {
           pool = "10.0.11.16 - 10.0.11.31";
-          client-classes = [ "vlan8-trust0-services" ];
+          client-classes = [ "vlan10-trust0-services" ];
         }
         {
           pool = "10.0.11.32 - 10.0.11.63";
-          client-classes = [ "vlan8-trust0-wemo" ];
+          client-classes = [ "vlan10-trust0-wemo" ];
         }
         {
           pool = "10.0.11.64 - 10.0.11.95";
-          client-classes = [ "vlan8-trust0-kasa" ];
+          client-classes = [ "vlan10-trust0-kasa" ];
         }
         {
           pool = "10.0.11.192 - 10.0.11.254";
-          client-classes = [ "vlan8-trust0" ];
+          client-classes = [ "vlan10-trust0" ];
         }
       ];
     };

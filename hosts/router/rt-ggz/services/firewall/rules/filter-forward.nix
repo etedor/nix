@@ -10,6 +10,7 @@ let
   brother = hosts.brother;
   duke = hosts.duke;
   home-assistant = hosts.home-assistant;
+  machina = hosts.machina;
   ntp = hosts.ntp;
 
   rt-sea = globals.routers.rt-sea;
@@ -90,11 +91,36 @@ in
       action = "accept";
       log = true;
     }
+    {
+      name = "duke to machina";
+      sips = [ duke.ip ];
+      dips = [ machina.ip ];
+      dpts = [ 5678 ];
+      proto = "tcp";
+      action = "accept";
+      log = true;
+    }
+    {
+      name = "duke to home-assistant";
+      sips = [ duke.ip ];
+      dips = [ home-assistant.ip ];
+      dpts = [ 1880 8123 ];
+      proto = "tcp";
+      action = "accept";
+      log = true;
+    }
 
     {
-      name = "clients to home-assistant";
-      sips = [ "10.0.8.0/22" ]; # TODO: after bifurcation
+      name = "things to home-assistant";
+      sips = [ net.ggz.things ];
       dips = [ home-assistant.ip ];
+      action = "accept";
+      log = true;
+    }
+    {
+      name = "home-assistant to things";
+      sips = [ home-assistant.ip ];
+      dips = [ net.ggz.things ];
       action = "accept";
       log = true;
     }
@@ -184,10 +210,10 @@ in
       action = "accept";
     }
 
-    # trust10 rules
+    # things rules
     {
-      name = "trust10 to dot";
-      sips = [ net.ggz.trust10 ];
+      name = "things to dot";
+      sips = [ net.ggz.things ];
       dpts = [ 853 ];
       proto = "tcp";
       action = "drop";

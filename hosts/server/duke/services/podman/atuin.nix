@@ -1,5 +1,6 @@
 {
   config,
+  globals,
   lib,
   ...
 }:
@@ -60,6 +61,8 @@
     (config.et42.server.nginx.mkVirtualHost {
       subdomain = "atuin";
       proxyPass = "http://127.0.0.1:8888";
+      adminOnly = false;
+      allowIPs = globals.networks.rfc1918;
     })
   ];
 }
