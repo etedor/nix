@@ -1,4 +1,3 @@
-# DHCP reservations
 {
   "10.0.2.0/24" = [
     {
@@ -38,7 +37,7 @@
     }
   ];
 
-  "10.0.8.0/22" = [
+  "10.0.8.0/23" = [
     {
       hostname = "docker-home";
       mac = "1c:69:7a:00:54:c5";
@@ -58,6 +57,14 @@
       hostname = "atv-playroom";
       mac = "f0:b3:ec:7e:27:c4";
       ip = "10.0.9.18";
+    }
+  ];
+
+  "10.0.10.0/23" = [
+    {
+      hostname = "pine";
+      mac = "da:d0:45:f0:86:1f";
+      ip = "10.0.10.16";
     }
     {
       hostname = "brother";

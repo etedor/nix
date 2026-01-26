@@ -65,7 +65,21 @@ in
     {
       name = "IGMP";
       proto = "igmp";
-      iifs = [ "vlan8" ];
+      iifs = [
+        "vlan8"
+        # "vlan10"
+      ];
+      action = "accept";
+    }
+
+    {
+      name = "mDNS";
+      proto = "udp";
+      dpts = [ 5353 ];
+      iifs = [
+        "vlan8"
+        # "vlan10"  # not needed without reflection
+      ];
       action = "accept";
     }
   ];
