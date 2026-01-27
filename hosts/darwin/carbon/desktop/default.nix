@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  et42.device = {
+  et42.workflow = {
     borders.activeColor = "#ee0033";
     dock = {
       orientation = "bottom";
@@ -11,9 +11,10 @@
       ultrawideCenterWidth = 0.45;
       ultrawideRightWidth = 0.25;
     };
-    wallpaper = {
-      enable = true;
-      image = ./wallhaven-vpx8ep.jpg;
-    };
+  };
+
+  et42.device.wallpaper = {
+    enable = true;
+    image = ./wallhaven-vpx8ep.jpg;
   };
 }

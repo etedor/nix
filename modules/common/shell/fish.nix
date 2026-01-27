@@ -45,9 +45,7 @@ mkModule {
     };
   };
 
-  linux = {
-
-  };
+  linux = { };
 
   darwin = {
     environment.shells = [ pkgs.fish ];

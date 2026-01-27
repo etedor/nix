@@ -14,7 +14,7 @@
   networking.computerName = "Machina";
   networking.hostName = "machina";
 
-  et42.device.hammerspoon = {
+  et42.workflow.apps.hammerspoon = {
     padding = 10;
     ultrawideLeftWidth = 0.20;
     ultrawideCenterWidth = 0.45;

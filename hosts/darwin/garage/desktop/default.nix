@@ -1,15 +1,16 @@
 { ... }:
 
 {
-  et42.device = {
+  et42.workflow = {
     borders.activeColor = "#eaa221";
     dock = {
       orientation = "bottom";
       autohide = true;
     };
-    wallpaper = {
-      enable = true;
-      image = ./wallhaven-zy6p7v.png;
-    };
+  };
+
+  et42.device.wallpaper = {
+    enable = true;
+    image = ./wallhaven-zy6p7v.png;
   };
 }

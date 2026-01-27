@@ -10,6 +10,7 @@
     nur.url = "github:nix-community/NUR";
 
     agenix.url = "github:ryantm/agenix";
+    darwin-workflow.url = "github:etedor/nix-darwin-workflow";
     deploy-rs.url = "github:serokell/deploy-rs";
     mac-app-util.url = "github:hraban/mac-app-util";
     private.url = "git+ssh://git@github.com/etedor/nix-private";
@@ -25,6 +26,7 @@
 
       agenix,
       darwin,
+      darwin-workflow,
       deploy-rs,
       home-manager,
       mac-app-util,
@@ -104,6 +106,7 @@
               [
                 agenix.darwinModules.default
                 { environment.systemPackages = [ agenix.packages.${system}.default ]; }
+                darwin-workflow.darwinModules.default
                 mac-app-util.darwinModules.default
                 home-manager.darwinModules.home-manager
                 ./modules/darwin

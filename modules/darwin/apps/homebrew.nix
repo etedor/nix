@@ -25,7 +25,6 @@ in
     casks = [
       "1password"
       "pika"
-      "shortcat"
       "signal"
       "sonos"
       "spotify"

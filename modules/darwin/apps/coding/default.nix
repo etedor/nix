@@ -10,7 +10,6 @@ in
 {
   imports = [
     ./claude.nix
-    ./vscode
   ];
 
   environment.systemPackages = with pkgs; [
