@@ -2,12 +2,13 @@
 
 {
   et42.workflow = {
-    borders.activeColor = "#ee0033";
-    dock = {
+    apps.borders.activeColor = "#ee0033";
+    system.dock = {
       orientation = "bottom";
       autohide = true;
     };
-    hammerspoon = {
+    apps.hammerspoon = {
+      padding = 8;
       ultrawideCenterWidth = 0.45;
       ultrawideRightWidth = 0.25;
     };
