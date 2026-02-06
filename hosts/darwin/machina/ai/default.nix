@@ -8,6 +8,8 @@ let
   user0 = globals.users 0;
 in
 {
+  imports = [ ./n8n.nix ];
+
   home-manager.users.${user0.name} = {
     services.ollama = {
       enable = true;
