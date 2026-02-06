@@ -10,6 +10,7 @@
     nur.url = "github:nix-community/NUR";
 
     agenix.url = "github:ryantm/agenix";
+    claude-code.url = "github:sadjow/claude-code-nix";
     darwin-workflow.url = "github:etedor/nix-darwin-workflow";
     deploy-rs.url = "github:serokell/deploy-rs";
     mac-app-util.url = "github:hraban/mac-app-util";
@@ -25,6 +26,7 @@
       nixpkgs-unstable,
 
       agenix,
+      claude-code,
       darwin,
       darwin-workflow,
       deploy-rs,
@@ -151,7 +153,7 @@
                 inherit system;
               };
             }
-            // (if isDarwin then { inherit pkgs pkgs-unstable; } else { });
+            // (if isDarwin then { inherit pkgs pkgs-unstable; claude-code-pkg = claude-code.packages.${system}.default; } else { });
         in
         if isDarwin then
           darwin.lib.darwinSystem { inherit system modules specialArgs; }

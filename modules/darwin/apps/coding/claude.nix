@@ -1,4 +1,5 @@
 {
+  claude-code-pkg,
   globals,
   pkgs,
   pkgs-unstable,
@@ -10,8 +11,8 @@ let
 in
 {
   users.users.${user0.name}.packages = [
-    pkgs-unstable.claude-code
-    pkgs-unstable.mcp-nixos
+    claude-code-pkg
+    # pkgs-unstable.mcp-nixos  # disabled: py-key-value-aio test failures
     pkgs-unstable.uv
   ];
 
@@ -28,18 +29,18 @@ in
         source = ./statusline.sh;
       };
 
-      home.activation.configureClaude =
+      home.activation.configureClaudeMcp =
         let
-          claudeConfig = {
+          mcpConfig = {
             mcpServers = {
-              nixos.command = "mcp-nixos";
+              # nixos.command = "mcp-nixos";  # disabled
               time = {
                 command = "uvx";
                 args = [ "mcp-server-time" ];
               };
             };
           };
-          desired = builtins.toJSON claudeConfig;
+          desired = builtins.toJSON mcpConfig;
         in
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           CONFIG="$HOME/.claude.json"
@@ -51,9 +52,12 @@ in
           fi
         '';
 
-      home.activation.configureClaudeHooks =
+      home.activation.configureClaudeSettings =
         let
-          hooksConfig = {
+          settingsConfig = {
+            env = {
+              CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+            };
             hooks = {
               PostToolUse = [
                 {
@@ -74,7 +78,7 @@ in
               padding = 0;
             };
           };
-          desired = builtins.toJSON hooksConfig;
+          desired = builtins.toJSON settingsConfig;
         in
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           CONFIG="$HOME/.claude/settings.json"
