@@ -125,7 +125,7 @@ user: {
 
   "comcast-ny" = {
     hostname = "route-server.newyork.ny.ibone.comcast.net";
-    user = "rviews";
+    user = "rviewsxr";
 
     extraOptions = {
       KexAlgorithms = "+diffie-hellman-group14-sha1";
