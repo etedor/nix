@@ -221,6 +221,10 @@
   {
     name = "lifx";
     ouis = [
+      "50:c7:bf"
+      "68:ff:7b"
+      "ac:84:c6"
+      "b0:95:75"
       "d0:73:d5"
     ];
   }
@@ -335,7 +339,6 @@
   {
     name = "vlan8-trust2-sonos";
     memberOf = [
-      "test-device"
       "sonos"
     ];
     exclusive = false;
@@ -419,6 +422,7 @@
       "cafe"
       "logitech"
       "rainbird"
+      "ratgdo"
     ];
     exclusive = true;
     exclusionGroup = "vlan10";
@@ -432,11 +436,6 @@
     ssidSuffixes = [
       "Things"
     ];
-    exclusive = true;
-    exclusionGroup = "vlan10";
-  }
-  {
-    name = "vlan10";
     interface = "vlan10";
     exclusive = true;
     exclusionGroup = "vlan10";

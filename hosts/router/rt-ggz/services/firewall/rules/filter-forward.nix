@@ -98,29 +98,17 @@ in
       dpts = [ 5678 ];
       proto = "tcp";
       action = "accept";
-      log = true;
+      # log = true;
     }
     {
       name = "duke to home-assistant";
       sips = [ duke.ip ];
       dips = [ home-assistant.ip ];
-      dpts = [ 1880 8123 ];
+      dpts = [
+        1880
+        8123
+      ];
       proto = "tcp";
-      action = "accept";
-      log = true;
-    }
-
-    {
-      name = "things to home-assistant";
-      sips = [ net.ggz.things ];
-      dips = [ home-assistant.ip ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "home-assistant to things";
-      sips = [ home-assistant.ip ];
-      dips = [ net.ggz.things ];
       action = "accept";
       log = true;
     }
@@ -140,12 +128,26 @@ in
 
     # trust2 rules
     {
-      name = "trust2-upnp to trust2-upnp";
-      sips = [ net.ggz.trust2-upnp ];
-      dips = [ net.ggz.trust2-upnp ];
+      name = "clients to brother";
+      sips = net.admin ++ net.family;
+      dips = [ brother.ip ];
       action = "accept";
       log = true;
     }
+    {
+      name = "brother to clients";
+      sips = [ brother.ip ];
+      dips = net.admin ++ net.family;
+      action = "accept";
+      log = true;
+    }
+    # {
+    #   name = "trust2-upnp to trust2-upnp";
+    #   sips = [ net.ggz.trust2-upnp ];
+    #   dips = [ net.ggz.trust2-upnp ];
+    #   action = "accept";
+    #   log = true;
+    # }
     {
       name = "trust2-upnp to server";
       sips = [ net.ggz.trust2-upnp ];
@@ -173,20 +175,20 @@ in
       action = "accept";
       log = true;
     }
-    {
-      name = "family to trust1";
-      sips = net.family;
-      dips = [ net.ggz.trust1 ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "family to trust0";
-      sips = net.family;
-      dips = [ net.ggz.trust0 ];
-      action = "accept";
-      log = true;
-    }
+    # {
+    #   name = "family to trust1";
+    #   sips = net.family;
+    #   dips = [ net.ggz.trust1 ];
+    #   action = "accept";
+    #   log = true;
+    # }
+    # {
+    #   name = "family to trust0";
+    #   sips = net.family;
+    #   dips = [ net.ggz.trust0 ];
+    #   action = "accept";
+    #   log = true;
+    # }
 
     {
       name = "family to server";
@@ -229,20 +231,20 @@ in
       log = true;
     }
 
-    {
-      name = "trust1 to trust1";
-      sips = [ net.ggz.trust1 ];
-      dips = [ net.ggz.trust1 ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "trust1 to trust0";
-      sips = [ net.ggz.trust1 ];
-      dips = [ net.ggz.trust0 ];
-      action = "accept";
-      log = true;
-    }
+    # {
+    #   name = "trust1 to trust1";
+    #   sips = [ net.ggz.trust1 ];
+    #   dips = [ net.ggz.trust1 ];
+    #   action = "accept";
+    #   log = true;
+    # }
+    # {
+    #   name = "trust1 to trust0";
+    #   sips = [ net.ggz.trust1 ];
+    #   dips = [ net.ggz.trust0 ];
+    #   action = "accept";
+    #   log = true;
+    # }
 
     {
       name = "trust1 to rfc1918";
@@ -260,32 +262,18 @@ in
     }
 
     # trust0 rules
-    {
-      name = "trust0 to trust0";
-      sips = [ net.ggz.trust0 ];
-      dips = [ net.ggz.trust0 ];
-      action = "accept";
-      log = true;
-    }
+    # {
+    #   name = "trust0 to trust0";
+    #   sips = [ net.ggz.trust0 ];
+    #   dips = [ net.ggz.trust0 ];
+    #   action = "accept";
+    #   log = true;
+    # }
     {
       name = "brother to paperless";
       sips = [ brother.ip ];
       dips = [ duke.ip ];
       dpts = [ 445 ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "clients to brother";
-      sips = net.admin ++ net.family;
-      dips = [ brother.ip ];
-      action = "accept";
-      log = true;
-    }
-    {
-      name = "brother to clients";
-      sips = [ brother.ip ];
-      dips = net.admin ++ net.family;
       action = "accept";
       log = true;
     }
