@@ -13,6 +13,8 @@
     claude-code.url = "github:sadjow/claude-code-nix";
     darwin-workflow.url = "github:etedor/nix-darwin-workflow";
     deploy-rs.url = "github:serokell/deploy-rs";
+    disko.url = "github:nix-community/disko/latest";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
     mac-app-util.url = "github:hraban/mac-app-util";
     private.url = "git+ssh://git@github.com/etedor/nix-private";
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
@@ -30,6 +32,7 @@
       darwin,
       darwin-workflow,
       deploy-rs,
+      disko,
       home-manager,
       mac-app-util,
       nur,
@@ -171,8 +174,16 @@
           name = "rt-ggz";
           role = "router";
         };
+        rt-ggz2 = mkHost {
+          name = "rt-ggz2";
+          role = "router";
+        };
         rt-sea = mkHost {
           name = "rt-sea";
+          role = "router";
+        };
+        rt-sea2 = mkHost {
+          name = "rt-sea2";
           role = "router";
         };
       };

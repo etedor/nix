@@ -18,6 +18,10 @@ let
     mgmt = "192.168.0.0/24";
   };
 
+  ggz2 = {
+    mgmt = "10.1.200.0/24";
+  };
+
   sea = {
     wg0 = "10.100.0.0/31";
     wg10 = "10.100.10.0/24";
@@ -85,7 +89,7 @@ in
         travel.family
       ];
 
-      inherit ggz sea travel;
+      inherit ggz ggz2 sea travel;
     };
 
     routers = {
@@ -94,6 +98,17 @@ in
         interfaces = {
           lo0 = "10.127.0.1";
           wg0 = "10.100.0.1";
+          wg1 = "10.101.0.1";
+          xc0 = "10.1.0.1";
+        };
+      };
+      rt-ggz2 = {
+        localAs = 65001;
+        interfaces = {
+          lo0 = "10.127.1.1";
+          wg0 = "10.100.0.3";
+          wg1 = "10.101.0.3";
+          xc0 = "10.1.0.0";
         };
       };
       rt-sea = {
@@ -109,6 +124,14 @@ in
           sea-admin = [ "wg10" ];
           sea-family = [ "wg11" ];
           untrust = [ "ens3" ];
+        };
+      };
+      rt-sea2 = {
+        extIntf = "wan0";
+        localAs = 65101;
+        interfaces = {
+          wan0 = "107.174.196.133";
+          lo0 = "10.127.101.1";
         };
       };
     };

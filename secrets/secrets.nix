@@ -13,6 +13,7 @@ let
   router = [
     hosts.rt-ggz
     hosts.rt-sea
+    hosts.rt-sea2
   ];
 
   server = [

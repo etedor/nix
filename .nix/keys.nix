@@ -47,6 +47,7 @@
     # router
     rt-ggz = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGI4dXS3GneSRGa0gB773D9VsuBG/yPBdHHQkkUwURmK";
     rt-sea = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHqcrgjHPx1SbllfVSCLcj/g29HAW/qcv6i6ZYoNs99h";
+    rt-sea2 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC5Ti+DbFuHLyT/ilpwmuO0zDZShiuRvilluWyFynic/";
 
     # server
     duke = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAF4Hqb6luc7cU27HlOYM73wiSTw44lyik5iuZvBlnjg";
