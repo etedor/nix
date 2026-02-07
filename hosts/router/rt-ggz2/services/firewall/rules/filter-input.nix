@@ -9,6 +9,17 @@ in
 {
   rules = [
     {
+      name = "BFD";
+      proto = "udp";
+      dpts = [ 3784 ];
+      iifs = [
+        "wg0"
+        "xc0"
+      ];
+      action = "accept";
+    }
+
+    {
       name = "BGP";
       proto = "tcp";
       dpts = [ 179 ];

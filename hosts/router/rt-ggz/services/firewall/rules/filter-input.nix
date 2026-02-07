@@ -11,6 +11,14 @@ in
 {
   rules = [
     {
+      name = "BFD";
+      proto = "udp";
+      dpts = [ 3784 ];
+      iifs = zone.p2p;
+      action = "accept";
+    }
+
+    {
       name = "BGP";
       proto = "tcp";
       dpts = [ 179 ];

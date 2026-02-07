@@ -84,11 +84,13 @@ let
       ip = nb.ip;
       remoteAs = nb.remoteAs;
       softReconfig = nb.softReconfigInbound or true;
-      softReconfigLine = if softReconfig then " neighbor ${ip} soft-reconfiguration inbound" else "";
+      bfd = nb.bfd or true;
+      timers = nb.timers or { keepalive = 10; hold = 30; };
     in
-
     [ " neighbor ${ip} remote-as ${toString remoteAs}" ]
-    ++ (if softReconfig then [ softReconfigLine ] else [ ]);
+    ++ (if timers != null then [ " neighbor ${ip} timers ${toString timers.keepalive} ${toString timers.hold}" ] else [ ])
+    ++ (if bfd then [ " neighbor ${ip} bfd" ] else [ ])
+    ++ (if softReconfig then [ " neighbor ${ip} soft-reconfiguration inbound" ] else [ ]);
 
   mkAddressFamilyNeighbor =
     nb:
@@ -203,6 +205,7 @@ in
 
   config = lib.mkIf config.et42.router.frr.enable {
     services.frr = {
+      bfdd.enable = true;
       bgpd.enable = true;
       config =
         let

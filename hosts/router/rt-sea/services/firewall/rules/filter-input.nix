@@ -23,6 +23,14 @@ in
     }
 
     {
+      name = "bfd";
+      iifs = zone.p2p;
+      dpts = [ 3784 ];
+      action = "accept";
+      proto = "udp";
+    }
+
+    {
       name = "bgp";
       iifs = zone.p2p;
       dpts = [ 179 ];
