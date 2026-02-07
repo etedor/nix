@@ -9,6 +9,7 @@
 
   "rt-ggz" = globals.routers.rt-ggz.interfaces.lo0;
   "rt-sea" = globals.routers.rt-sea.interfaces.lo0;
+  "rt-sea2" = globals.routers.rt-sea2.interfaces.lo0;
 
   "sw-garage" = "10.0.2.32";
   "sw-living-room" = "10.0.2.33";

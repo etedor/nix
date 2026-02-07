@@ -8,7 +8,7 @@ let
   rt-ggz = globals.routers.rt-ggz;
   rt-sea = globals.routers.rt-sea;
   rt-sea2 = globals.routers.rt-sea2;
-  lo0 = rt-sea.interfaces.lo0;
+  lo0 = rt-sea2.interfaces.lo0;
 
   rt-ggz-knot = "${rt-ggz.interfaces.lo0}:5354";
   rt-sea-unbound = "${rt-sea.interfaces.lo0}:5353";
@@ -20,7 +20,10 @@ in
     listenAddress = "${lo0}:53";
 
     upstream = {
-      servers = [ rt-sea-unbound rt-sea2-unbound ];
+      servers = [
+        rt-sea2-unbound
+        rt-sea-unbound
+      ];
       timeout = "500ms";
     };
 

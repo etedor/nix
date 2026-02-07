@@ -7,11 +7,13 @@
 let
   rt-ggz = globals.routers.rt-ggz;
   rt-sea = globals.routers.rt-sea;
+  rt-sea2 = globals.routers.rt-sea2;
   things = globals.networks.ggz.things;
 
   rt-ggz-nsd = "${rt-ggz.interfaces.lo0}:5354";
   rt-ggz-unbound = "${rt-ggz.interfaces.lo0}:5353";
   rt-sea-unbound = "${rt-sea.interfaces.lo0}:5353";
+  rt-sea2-unbound = "${rt-sea2.interfaces.lo0}:5353";
 
   reverseZones = [
     "2.0.10.in-addr.arpa"
@@ -51,6 +53,7 @@ in
     upstream = {
       servers = [
         rt-sea-unbound
+        rt-sea2-unbound
         rt-ggz-unbound
       ];
       timeout = "500ms";
