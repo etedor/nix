@@ -39,6 +39,9 @@
     machina = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMedB0Yoxfex9pL3kR/kXTw4BstybyhwLCHOjtcQRcYK";
   };
 
+  # for claude code SSH diagnostics
+  users.claude = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDVGN1ZBhoXks8heaUE3n2TainlBcUxmUsQTAFjKanfR claude@nix";
+
   # for agenix and authorized_keys
   users.user0 = {
     carbon = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPyQPzZjubGGsva59VOUWMdPWIkr74JaxlgVnKN09Xwe";

@@ -91,7 +91,10 @@ let
   '';
 in
 {
-  imports = [ ./options ];
+  imports = [
+    ./claude.nix
+    ./options
+  ];
 
   environment.systemPackages = with pkgs; [
     conntrack-tools
