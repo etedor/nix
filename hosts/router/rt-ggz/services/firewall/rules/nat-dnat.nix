@@ -21,7 +21,7 @@ in
 {
   rules = [
     {
-      name = "dns redirect";
+      name = "dns redirect udp";
       inherit (iotIntercept)
         iifs
         # oifs
@@ -34,7 +34,7 @@ in
       proto = "udp";
     }
     {
-      name = "dns redirect";
+      name = "dns redirect tcp";
       inherit (iotIntercept)
         iifs
         # oifs

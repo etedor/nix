@@ -9,7 +9,7 @@ in
 {
   rules = [
     {
-      name = "BFD";
+      name = "bfd";
       proto = "udp";
       dpts = [ 3784 ];
       iifs = [
@@ -20,7 +20,7 @@ in
     }
 
     {
-      name = "BGP";
+      name = "bgp";
       proto = "tcp";
       dpts = [ 179 ];
       iifs = [
@@ -31,7 +31,7 @@ in
     }
 
     {
-      name = "DHCP";
+      name = "dhcp";
       proto = "udp";
       dpts = [
         67
@@ -46,14 +46,14 @@ in
     }
 
     {
-      name = "SSH";
+      name = "ssh";
       proto = "tcp";
       dpts = [ 22 ];
       sips = net.admin;
       action = "accept";
     }
     {
-      name = "SSH mgmt";
+      name = "ssh mgmt";
       proto = "tcp";
       dpts = [ 22 ];
       sips = [ net.ggz2.mgmt ];
@@ -61,7 +61,7 @@ in
     }
 
     {
-      name = "DNS";
+      name = "dns";
       proto = [
         "tcp"
         "udp"
