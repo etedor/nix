@@ -6,7 +6,6 @@
 
 let
   rt-ggz = globals.routers.rt-ggz;
-  rt-sea = globals.routers.rt-sea;
 
   network = import ./network.nix;
   classes = import ./classes.nix;
@@ -20,7 +19,7 @@ in
     sharedNetworkName = globals.zone;
     dnsServers = [
       rt-ggz.interfaces.lo0
-      rt-sea.interfaces.lo0
+      globals.anycast.dns
     ];
     domainName = globals.zone;
     ntpServer = globals.hosts.ntp.ip;

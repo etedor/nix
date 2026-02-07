@@ -20,7 +20,7 @@ in
     };
 
     listenAddress = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.listOf lib.types.str;
       description = "Port(s) and optional bind IP address(es) to serve DNS endpoint (TCP and UDP).";
     };
 
@@ -214,14 +214,14 @@ in
       };
     };
 
-    networking.firewall = lib.mkIf config.networking.firewall.enable {
-      allowedTCPPorts = [
-        (builtins.elemAt (lib.splitString ":" config.et42.router.dns.blocky.listenAddress) 1)
-      ];
-
-      allowedUDPPorts = [
-        (builtins.elemAt (lib.splitString ":" config.et42.router.dns.blocky.listenAddress) 1)
-      ];
-    };
+    networking.firewall = lib.mkIf config.networking.firewall.enable (
+      let
+        port = builtins.elemAt (lib.splitString ":" (builtins.head config.et42.router.dns.blocky.listenAddress)) 1;
+      in
+      {
+        allowedTCPPorts = [ port ];
+        allowedUDPPorts = [ port ];
+      }
+    );
   };
 }

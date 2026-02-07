@@ -29,6 +29,12 @@ in
           Kind = "dummy";
         };
       };
+      "00-lo53" = {
+        netdevConfig = {
+          Name = "lo53";
+          Kind = "dummy";
+        };
+      };
     };
 
     networks = {
@@ -39,6 +45,10 @@ in
           DNS = rt-sea.interfaces.lo0;
           Domains = "~.";
         };
+      };
+      "01-lo53" = {
+        name = "lo53";
+        address = [ globals.anycast.dns ];
       };
       "02-ens3" = {
         name = "ens3";

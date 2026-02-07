@@ -34,12 +34,22 @@ in
           Kind = "dummy";
         };
       };
+      "00-lo53" = {
+        netdevConfig = {
+          Name = "lo53";
+          Kind = "dummy";
+        };
+      };
     };
 
     networks = {
       "01-lo0" = {
         name = "lo0";
         address = [ rt-sea2.interfaces.lo0 ];
+      };
+      "01-lo53" = {
+        name = "lo53";
+        address = [ globals.anycast.dns ];
       };
       "02-wan0" = {
         name = "wan0";

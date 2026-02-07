@@ -93,13 +93,16 @@ let
     af:
     let
       afName = af.family;
+      maximumPaths = af.maximumPaths or null;
       redistribute = af.redistribute or [ ];
       neighbors = af.neighbors or [ ];
+      maxPathsLines =
+        if maximumPaths != null then [ "  maximum-paths ${toString maximumPaths}" ] else [ ];
       redistLines = lib.map (rd: "  redistribute ${rd.protocol} route-map ${rd.routeMap}") redistribute;
       nbRouteMapLines = lib.concatMap mkAddressFamilyNeighbor neighbors;
       indentedNbLines = lib.map (line: "  ${line}") nbRouteMapLines;
     in
-    [ " address-family ${afName}" ] ++ redistLines ++ indentedNbLines ++ [ " exit-address-family" ];
+    [ " address-family ${afName}" ] ++ maxPathsLines ++ redistLines ++ indentedNbLines ++ [ " exit-address-family" ];
 in
 {
   options.et42.router.frr = {
@@ -146,10 +149,16 @@ in
             description = "List of neighbors: { ip, remoteAs, routeMapIn?, routeMapOut?, softReconfigInbound? (default: true) }.";
           };
 
+          extraConfig = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+            description = "Extra lines to add to the router bgp block (e.g. 'bgp bestpath as-path multipath-relax').";
+          };
+
           addressFamilies = lib.mkOption {
             type = lib.types.listOf lib.types.attrs;
             default = [ ];
-            description = "List of address-family blocks: { family, redistribute?: list of { protocol, routeMap }, neighbors?: list }.";
+            description = "List of address-family blocks: { family, maximumPaths?, redistribute?: list of { protocol, routeMap }, neighbors?: list }.";
           };
         };
       };
@@ -189,11 +198,12 @@ in
                   " bgp router-id ${bgp.routerId}"
                 ];
 
+                bgpExtra = lib.map (line: " ${line}") bgp.extraConfig;
                 bgpNeighbors = lib.concatMap mkNeighbor bgp.neighbors;
                 bgpAddressFamilies = lib.concatMap (af: mkAddressFamily af) bgp.addressFamilies;
                 bgpFooter = [ "exit" ];
               in
-              bgpHeader ++ bgpNeighbors ++ bgpAddressFamilies ++ bgpFooter
+              bgpHeader ++ bgpExtra ++ bgpNeighbors ++ bgpAddressFamilies ++ bgpFooter
             else
               [ ];
 

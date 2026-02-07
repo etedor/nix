@@ -92,6 +92,10 @@ in
       inherit ggz ggz2 sea travel;
     };
 
+    anycast = {
+      dns = "10.127.255.53";
+    };
+
     routers = {
       rt-ggz = {
         localAs = 65000;

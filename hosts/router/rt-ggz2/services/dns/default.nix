@@ -40,7 +40,7 @@ in
 {
   et42.router.dns.blocky = {
     enable = true;
-    listenAddress = "${rt-ggz2.interfaces.lo0}:53";
+    listenAddress = [ "${rt-ggz2.interfaces.lo0}:53" ];
 
     upstream = {
       servers = [
@@ -77,7 +77,7 @@ in
 
   et42.router.dns.unbound = {
     enable = true;
-    listenAddress = rt-ggz2.interfaces.lo0;
+    listenAddress = [ rt-ggz2.interfaces.lo0 ];
     forwardAddrs = [
       "1.1.1.1@853#cloudflare-dns.com"
       "1.0.0.1@853#cloudflare-dns.com"

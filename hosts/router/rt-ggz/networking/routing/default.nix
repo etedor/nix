@@ -81,6 +81,7 @@ in
     bgpConfig = {
       asn = rt-ggz.localAs;
       routerId = rt-ggz.interfaces.lo0;
+      extraConfig = [ "bgp bestpath as-path multipath-relax" ];
       neighbors = [
         {
           ip = rt-sea.interfaces.wg0;
@@ -98,6 +99,7 @@ in
       addressFamilies = [
         {
           family = "ipv4 unicast";
+          maximumPaths = 2;
           redistribute = [
             {
               protocol = "connected";

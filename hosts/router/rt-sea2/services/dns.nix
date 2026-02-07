@@ -17,7 +17,7 @@ in
 {
   et42.router.dns.blocky = {
     enable = true;
-    listenAddress = "${lo0}:53";
+    listenAddress = [ "${lo0}:53" "${globals.anycast.dns}:53" ];
 
     upstream = {
       servers = [
@@ -64,6 +64,6 @@ in
 
   et42.router.dns.unbound = {
     enable = true;
-    listenAddress = lo0;
+    listenAddress = [ lo0 ];
   };
 }

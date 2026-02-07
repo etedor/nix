@@ -59,7 +59,7 @@ in
     {
       name = "dns";
       sips = net.rfc1918;
-      dips = [ rt-sea2.interfaces.lo0 ];
+      dips = [ rt-sea2.interfaces.lo0 globals.anycast.dns ];
       dpts = [
         53
         5353

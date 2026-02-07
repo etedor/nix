@@ -12,8 +12,8 @@ in
     };
 
     listenAddress = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = null;
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
       description = "Interface to use to connect to the network. If none are given the default is to listen to localhost. If an interface name is used instead of an ip address, the list of ip addresses on that interface are used.";
     };
 
@@ -41,7 +41,7 @@ in
       settings = {
         server = {
           ip-address = lib.mkIf (
-            config.et42.router.dns.unbound.listenAddress != null
+            config.et42.router.dns.unbound.listenAddress != [ ]
           ) config.et42.router.dns.unbound.listenAddress;
           port = config.et42.router.dns.unbound.listenPort;
 
