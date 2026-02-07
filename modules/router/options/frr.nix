@@ -62,6 +62,22 @@ let
       ++ [ "exit" ]
     );
 
+  rfc1918BlackholeRoutes = [
+    { network = "10.0.0.0/8"; iface = "blackhole"; }
+    { network = "172.16.0.0/12"; iface = "blackhole"; }
+    { network = "192.168.0.0/16"; iface = "blackhole"; }
+  ];
+
+  rfc1918PrefixListEntries = [
+    { name = "PL-RFC1918_V4"; seq = 5; action = "permit"; prefix = "10.0.0.0/8"; ge = 8; le = 32; }
+    { name = "PL-RFC1918_V4"; seq = 10; action = "permit"; prefix = "172.16.0.0/12"; ge = 12; le = 32; }
+    { name = "PL-RFC1918_V4"; seq = 15; action = "permit"; prefix = "192.168.0.0/16"; ge = 16; le = 32; }
+  ];
+
+  rfc1918RouteMapEntries = [
+    { name = "RM-RFC1918_V4"; seq = 10; action = "permit"; match = [ "ip address prefix-list PL-RFC1918_V4" ]; }
+  ];
+
   mkNeighbor =
     nb:
     let
@@ -110,6 +126,19 @@ in
       type = lib.types.bool;
       default = false;
       description = "Enable FRR routing with static route, prefix-list, route-map, and BGP abstractions.";
+    };
+
+    includeRfc1918Defaults = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Include RFC1918 blackhole routes, prefix lists, and route maps.";
+    };
+
+    rfc1918RouteMap = lib.mkOption {
+      type = lib.types.str;
+      default = "RM-RFC1918_V4";
+      readOnly = true;
+      description = "Name of the RFC1918 route map for host configs to reference.";
     };
 
     staticRoutes = lib.mkOption {
@@ -185,14 +214,21 @@ in
             "service integrated-vtysh-config"
           ];
 
-          prefixLists = lib.map mkPrefixList config.et42.router.frr.prefixLists;
-          staticRoutes = lib.map mkRoute config.et42.router.frr.staticRoutes;
-          routeMaps = lib.map mkRouteMap config.et42.router.frr.routeMaps;
+          cfg = config.et42.router.frr;
+          prefixLists = lib.map mkPrefixList (
+            (if cfg.includeRfc1918Defaults then rfc1918PrefixListEntries else []) ++ cfg.prefixLists
+          );
+          staticRoutes = lib.map mkRoute (
+            (if cfg.includeRfc1918Defaults then rfc1918BlackholeRoutes else []) ++ cfg.staticRoutes
+          );
+          routeMaps = lib.map mkRouteMap (
+            (if cfg.includeRfc1918Defaults then rfc1918RouteMapEntries else []) ++ cfg.routeMaps
+          );
 
           bgpConfig =
-            if config.et42.router.frr.bgpConfig.asn != 0 then
+            if cfg.bgpConfig.asn != 0 then
               let
-                bgp = config.et42.router.frr.bgpConfig;
+                bgp = cfg.bgpConfig;
                 bgpHeader = [
                   "router bgp ${toString bgp.asn}"
                   " bgp router-id ${bgp.routerId}"

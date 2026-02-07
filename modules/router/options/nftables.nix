@@ -537,6 +537,25 @@ in
   };
 
   config = lib.mkIf config.et42.router.nftables.enable {
+    boot.kernel.sysctl = {
+      "net.ipv4.conf.all.rp_filter" = 1;
+      "net.ipv4.conf.default.rp_filter" = 1;
+
+      "net.ipv4.conf.all.log_martians" = 1;
+      "net.ipv4.conf.default.log_martians" = 1;
+
+      "net.ipv4.conf.all.accept_source_route" = 0;
+      "net.ipv4.conf.default.accept_source_route" = 0;
+
+      "net.ipv4.conf.all.accept_redirects" = 0;
+      "net.ipv4.conf.default.accept_redirects" = 0;
+      "net.ipv4.conf.all.secure_redirects" = 0;
+      "net.ipv4.conf.default.secure_redirects" = 0;
+
+      "net.ipv4.conf.all.send_redirects" = 0;
+      "net.ipv4.conf.default.send_redirects" = 0;
+    };
+
     networking.firewall.enable = false;
     networking.nat.enable = false;
     services.openssh.openFirewall = false;
