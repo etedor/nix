@@ -13,14 +13,22 @@ Follow the **Explore-Plan-Code-Commit** pattern:
 
 ## Git Worktrees
 
-When working in a worktree context (additional directory ending in pattern like `nix-feat-name`):
+Worktrees live in `.worktrees/` inside the repo (globally gitignored).
+
+```bash
+# create
+git worktree add .worktrees/<name> -b <branch>
+
+# remove
+git worktree remove .worktrees/<name>
+```
 
 **CRITICAL**: Always `cd` into the worktree directory before running git commands. Bash commands execute in the original working directory by default.
 
 ```bash
 # correct - commands run in worktree context
-cd ../nix-feat-name && git status
-cd ../nix-feat-name && nix flake check
+cd .worktrees/<name> && git status
+cd .worktrees/<name> && nix flake check
 
 # incorrect - commands run in main directory
 git status
