@@ -32,6 +32,14 @@ in
 
     {
       name = "ssh";
+      iifs = zone.p2p;
+      dpts = [ 22 ];
+      action = "accept";
+      proto = "tcp";
+    }
+
+    {
+      name = "ssh";
       sips = net.admin;
       dips = [ rt-sea2.interfaces.lo0 ];
       dpts = [ 22 ];

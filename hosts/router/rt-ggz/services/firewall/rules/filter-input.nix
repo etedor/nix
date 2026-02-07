@@ -6,6 +6,7 @@
 
 let
   net = globals.networks;
+  zone = globals.routers.rt-ggz.zones;
 in
 {
   rules = [
@@ -13,7 +14,15 @@ in
       name = "BGP";
       proto = "tcp";
       dpts = [ 179 ];
-      iifs = [ "wg0" "wg1" ];
+      iifs = zone.p2p;
+      action = "accept";
+    }
+
+    {
+      name = "SSH";
+      proto = "tcp";
+      dpts = [ 22 ];
+      iifs = zone.p2p;
       action = "accept";
     }
 
