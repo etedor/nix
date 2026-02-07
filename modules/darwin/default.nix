@@ -41,6 +41,10 @@ in
         package = pkgs-unstable.vscode;
         extensionPkgs = pkgs-unstable;
         fontFamily = "'Font Awesome', 'FiraCode Nerd Font', 'monospace'";
+        extraSettings = {
+          nix.serverSettings.nil.formatting.command = [ "nixfmt" ];
+          extensions.unwantedRecommendations = [ "ms-azuretools.vscode-docker" ];
+        };
       };
     };
   };
