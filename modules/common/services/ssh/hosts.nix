@@ -28,6 +28,10 @@ user: {
     hostname = "rt-sea.${globals.zone}";
     user = user;
   };
+  "rt-sea2" = {
+    hostname = "rt-sea2.${globals.zone}";
+    user = user;
+  };
 
   "sw-garage" = {
     hostname = "sw-garage.${globals.zone}";

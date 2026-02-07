@@ -46,6 +46,10 @@ in
       "01-lo0" = {
         name = "lo0";
         address = [ rt-sea2.interfaces.lo0 ];
+        networkConfig = {
+          DNS = rt-sea2.interfaces.lo0;
+          Domains = "~.";
+        };
       };
       "01-lo53" = {
         name = "lo53";
@@ -55,6 +59,9 @@ in
         name = "wan0";
         networkConfig = {
           DHCP = "yes";
+        };
+        dhcpV4Config = {
+          UseDNS = false;
         };
       };
     };

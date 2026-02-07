@@ -49,10 +49,7 @@ in
   duke = mkNixosNode "duke" { };
   rt-ggz = mkNixosNode "rt-ggz" { };
   rt-sea = mkNixosNode "rt-sea" { remoteBuild = false; };
-  rt-sea2 = mkNixosNode "rt-sea2" {
-    hostname = "107.174.196.133";
-    remoteBuild = false;
-  };
+  rt-sea2 = mkNixosNode "rt-sea2" { remoteBuild = false; };
 
   garage = mkDarwinNode "garage" {
     hostname = "10.0.8.33"; # TODO

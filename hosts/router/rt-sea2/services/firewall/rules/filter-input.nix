@@ -55,15 +55,6 @@ in
       proto = "tcp";
     }
 
-    # TEMPORARY: allow SSH on wan0 until WG tunnels are up
-    {
-      name = "ssh wan0 temp";
-      iifs = zone.untrust;
-      dpts = [ 22 ];
-      action = "accept";
-      proto = "tcp";
-    }
-
     {
       name = "dns";
       sips = net.rfc1918;
