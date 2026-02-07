@@ -40,10 +40,17 @@ in
   "router/rt-ggz/knot-tsig-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
   "router/rt-ggz/nsd-tsig-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
   "router/rt-ggz/wg0-private-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
+  "router/rt-ggz/wg1-private-key.age".publicKeys = user0 ++ [ hosts.rt-ggz ];
 
   "router/rt-sea/wg0-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea ];
+  "router/rt-sea/wg1-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea ];
+  "router/rt-sea/wg2-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea ];
   "router/rt-sea/wg10-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea ];
   "router/rt-sea/wg11-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea ];
+
+  "router/rt-sea2/wg0-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea2 ];
+  "router/rt-sea2/wg1-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea2 ];
+  "router/rt-sea2/wg2-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea2 ];
 
   "server/duke/acme.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/navidrome.age".publicKeys = user0 ++ [ hosts.duke ];

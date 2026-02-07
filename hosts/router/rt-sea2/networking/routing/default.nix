@@ -1,11 +1,11 @@
 {
-  config,
   globals,
   ...
 }:
 
 let
   rt-ggz = globals.routers.rt-ggz;
+  rt-ggz2 = globals.routers.rt-ggz2;
   rt-sea = globals.routers.rt-sea;
   rt-sea2 = globals.routers.rt-sea2;
 
@@ -30,15 +30,6 @@ in
       {
         network = "192.168.0.0/16";
         iface = "blackhole";
-      }
-
-      {
-        network = "192.168.100.1/32";
-        iface = "wan0";
-      }
-      {
-        network = "192.168.12.1/32";
-        iface = "wan1";
       }
     ];
 
@@ -79,22 +70,30 @@ in
     ];
 
     bgpConfig = {
-      asn = rt-ggz.localAs;
-      routerId = rt-ggz.interfaces.lo0;
+      asn = rt-sea2.localAs;
+      routerId = rt-sea2.interfaces.lo0;
+
       neighbors = [
         {
-          ip = rt-sea.interfaces.wg0;
+          ip = rt-ggz.interfaces.wg1;
+          remoteAs = rt-ggz.localAs;
+          routeMapIn = null;
+          routeMapOut = null;
+        }
+        {
+          ip = rt-ggz2.interfaces.wg1;
+          remoteAs = rt-ggz2.localAs;
+          routeMapIn = null;
+          routeMapOut = null;
+        }
+        {
+          ip = rt-sea.interfaces.wg2;
           remoteAs = rt-sea.localAs;
           routeMapIn = null;
           routeMapOut = null;
         }
-        {
-          ip = rt-sea2.interfaces.wg0;
-          remoteAs = rt-sea2.localAs;
-          routeMapIn = null;
-          routeMapOut = null;
-        }
       ];
+
       addressFamilies = [
         {
           family = "ipv4 unicast";
@@ -110,14 +109,20 @@ in
           ];
           neighbors = [
             {
-              ip = rt-sea.interfaces.wg0;
-              remoteAs = rt-sea.localAs;
+              ip = rt-ggz.interfaces.wg1;
+              remoteAs = rt-ggz.localAs;
               routeMapIn = rmRfc1918;
               routeMapOut = rmRfc1918;
             }
             {
-              ip = rt-sea2.interfaces.wg0;
-              remoteAs = rt-sea2.localAs;
+              ip = rt-ggz2.interfaces.wg1;
+              remoteAs = rt-ggz2.localAs;
+              routeMapIn = rmRfc1918;
+              routeMapOut = rmRfc1918;
+            }
+            {
+              ip = rt-sea.interfaces.wg2;
+              remoteAs = rt-sea.localAs;
               routeMapIn = rmRfc1918;
               routeMapOut = rmRfc1918;
             }
@@ -125,13 +130,5 @@ in
         }
       ];
     };
-  };
-
-  systemd.services."failmon-wan0" = {
-    restartTriggers = [ config.services.frr.config ];
-  };
-
-  systemd.services."failmon-wan1" = {
-    restartTriggers = [ config.services.frr.config ];
   };
 }

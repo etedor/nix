@@ -2,11 +2,23 @@
   wireguard = {
     rt-ggz = {
       wg0 = "q0iv3xaqimX9Y5YmLH0/iGq2uHEzzVdV8V0H8RC9vH4=";
+      wg1 = "Ofl41GVWAVi60NsIPMVg8o0RYJDfOFbYuL+WfSUJAjM=";
+    };
+    rt-ggz2 = {
+      wg0 = "oFvV6HXFAdemlOrTJpSLCInJDhJlCQiclAxd0qZHSwA=";
+      wg1 = "477ARIZxm7mS5ksYtkSN+KVCHoBCZojLwhQceYMnkB8=";
     };
     rt-sea = {
       wg0 = "hewTOjDLRD5ML+d3bsHb7RFDsRt9bNFxhoMfOrd0F0A=";
+      wg1 = "0+B4E8kCsCxZgF1mqHsj9O0cGu8ylC5/EtNzi1yL0yU=";
+      wg2 = "fGL4pI3schfcqtkGVyn2LqyU6mRRaASoRKQ84fHc7ms=";
       wg10 = "niKrQNH3U7QGSsqvxL+rK5UAZTHEADkYWAk/GHy1YHc=";
       wg11 = "UTFPct/zmzcBdzP2whojDvhYyZ2Mu8vJQ02DedpqvF8=";
+    };
+    rt-sea2 = {
+      wg0 = "L8tbWcMTj6xNCjTK7756v7BZrbo1hJsaR5xO+xDtFwo=";
+      wg1 = "QH3TWgd527SWZ+JWonjJ7ZbYmc+/uSmg9vYaOJ5LDms=";
+      wg2 = "egAg/SAMlZYUsGycbLACjmliQhXiktS5reOQKa4GEGM=";
     };
     pine = {
       wg0 = "xBNt1u2PhjNwRdZbGqPUYg89ZgXtK96CdzdgGHBkzgE=";

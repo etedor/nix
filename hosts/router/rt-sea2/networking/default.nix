@@ -7,6 +7,12 @@ let
   rt-sea2 = globals.routers.rt-sea2;
 in
 {
+  imports = [
+    ./tuning.nix
+    ./routing
+    ./wireguard.nix
+  ];
+
   networking = {
     hostName = "rt-sea2";
     domain = globals.zone;

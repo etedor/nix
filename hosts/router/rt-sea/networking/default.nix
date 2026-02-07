@@ -9,7 +9,7 @@ in
 {
   imports = [
     ./tuning.nix
-    ./routing.nix
+    ./routing
     ./wireguard.nix
   ];
 

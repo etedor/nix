@@ -13,7 +13,7 @@ in
       name = "BGP";
       proto = "tcp";
       dpts = [ 179 ];
-      iifs = [ "wg0" ];
+      iifs = [ "wg0" "wg1" ];
       action = "accept";
     }
 

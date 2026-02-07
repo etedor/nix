@@ -6,12 +6,16 @@
 let
   net = globals.networks;
   rt-ggz = globals.routers.rt-ggz;
+  rt-ggz2 = globals.routers.rt-ggz2;
   rt-sea = globals.routers.rt-sea;
+  rt-sea2 = globals.routers.rt-sea2;
 
   rfc1918PL = "RFC1918_V4";
   rfc1918RM = "RFC1918_V4";
 in
 {
+  imports = [ ./pbr.nix ];
+
   et42.router.frr = {
     enable = true;
 
@@ -81,6 +85,18 @@ in
           routeMapIn = null;
           routeMapOut = null;
         }
+        {
+          ip = rt-ggz2.interfaces.wg0; # rt-ggz2 via wg1
+          remoteAs = rt-ggz2.localAs;
+          routeMapIn = null;
+          routeMapOut = null;
+        }
+        {
+          ip = rt-sea2.interfaces.wg2; # rt-sea2 via wg2
+          remoteAs = rt-sea2.localAs;
+          routeMapIn = null;
+          routeMapOut = null;
+        }
       ];
 
       addressFamilies = [
@@ -100,6 +116,18 @@ in
             {
               ip = rt-ggz.interfaces.wg0;
               remoteAs = rt-ggz.localAs;
+              routeMapIn = rfc1918RM;
+              routeMapOut = rfc1918RM;
+            }
+            {
+              ip = rt-ggz2.interfaces.wg0;
+              remoteAs = rt-ggz2.localAs;
+              routeMapIn = rfc1918RM;
+              routeMapOut = rfc1918RM;
+            }
+            {
+              ip = rt-sea2.interfaces.wg2;
+              remoteAs = rt-sea2.localAs;
               routeMapIn = rfc1918RM;
               routeMapOut = rfc1918RM;
             }

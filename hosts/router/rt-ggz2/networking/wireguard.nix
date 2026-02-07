@@ -13,7 +13,8 @@ in
   age.secrets = {
     wg0-private-key = {
       file = "${specialArgs.secretsHost}/wg0-private-key.age";
-      mode = "444";
+      mode = "0440";
+      group = "systemd-network";
     };
   };
 
@@ -35,8 +36,8 @@ in
           };
           wireguardPeers = [
             {
-              Endpoint = "${rt-sea.interfaces.ens3}:51820";
-              PublicKey = wg.publicKeys.rt-sea.wg0;
+              Endpoint = "${rt-sea.interfaces.ens3}:51821";
+              PublicKey = wg.publicKeys.rt-sea.wg1;
               AllowedIPs = [ "0.0.0.0/0" ];
             }
           ];

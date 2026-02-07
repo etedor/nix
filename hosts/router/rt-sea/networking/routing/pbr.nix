@@ -1,11 +1,10 @@
-# policy-based routing for non-RFC1918 return traffic via WG tunnels
+# policy-based routing for return traffic via WG tunnels
 #
-# tunnel IDs are stored in ct mark bits 0-3:
-# mark = tunnel ID + 1
+# tunnel IDs stored in ct mark bits 3-0:
 #   0 = no PBR (normal routing)
-#   1 = wg0
-#   2 = wg1
-#   ...
+#   1 = wg0 (rt-ggz)
+#   2 = wg1 (rt-ggz2)
+#   3 = wg2 (rt-sea2)
 {
   globals,
   lib,
@@ -14,10 +13,11 @@
 
 let
   net = globals.networks;
-  rt-sea = globals.routers.rt-sea;
-  rt-sea2 = globals.routers.rt-sea2;
 
-  pbrMapName = "VPS-RETURN";
+  pbrMapName = "RETURN";
+  nhg0 = "ONPREM-WG0";
+  nhg1 = "ONPREM-WG1";
+  nhg2 = "VPS-WG2";
 in
 {
   et42.router.nftables = {
@@ -35,14 +35,21 @@ in
         iifs = [ "wg0" ];
         sips = net.non-rfc1918;
         expr = "ct state new";
-        action = "ct mark set (ct mark & 0xfffffff0 | 1)"; # preserve all bits except 0-3
+        action = "ct mark set (ct mark & 0xfffffff0 | 1)";
       }
       {
         name = "mark-internet-via-wg1";
         iifs = [ "wg1" ];
         sips = net.non-rfc1918;
         expr = "ct state new";
-        action = "ct mark set (ct mark & 0xfffffff0 | 2)"; # preserve all bits except 0-3
+        action = "ct mark set (ct mark & 0xfffffff0 | 2)";
+      }
+      {
+        name = "mark-internet-via-wg2";
+        iifs = [ "wg2" ];
+        sips = net.non-rfc1918;
+        expr = "ct state new";
+        action = "ct mark set (ct mark & 0xfffffff0 | 3)";
       }
     ];
   };
@@ -50,22 +57,27 @@ in
   services.frr = {
     pbrd.enable = true;
     config = ''
-      nexthop-group VPS-WG0
-        nexthop ${rt-sea.interfaces.wg0}
+      nexthop-group ${nhg0}
+        nexthop 10.100.0.1
       !
-      nexthop-group VPS-WG1
-        nexthop ${rt-sea2.interfaces.wg0}
+      nexthop-group ${nhg1}
+        nexthop 10.100.0.3
+      !
+      nexthop-group ${nhg2}
+        nexthop 10.101.0.4
       !
       pbr-map ${pbrMapName} seq 10
         match mark 1
-        set nexthop-group VPS-WG0
+        set nexthop-group ${nhg0}
       !
       pbr-map ${pbrMapName} seq 20
         match mark 2
-        set nexthop-group VPS-WG1
+        set nexthop-group ${nhg1}
       !
-      interface vlan4
-        pbr-policy ${pbrMapName}
+      pbr-map ${pbrMapName} seq 30
+        match mark 3
+        set nexthop-group ${nhg2}
+      !
     '';
   };
 }

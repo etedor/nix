@@ -83,7 +83,7 @@ in
     }
     {
       name = "dnat to duke";
-      iifs = [ "wg0" ];
+      iifs = [ "wg0" "wg1" ];
       sips = net.non-rfc1918;
       dips = [ duke.ip ];
       dpts = [ 443 ];

@@ -19,8 +19,13 @@ CURL="@curl@/bin/curl"
 CONNTRACK="@conntrack@/bin/conntrack"
 VTYSH="@frr@/bin/vtysh"
 
-PUSHOVER_USER_KEY="$(grep 'USER_KEY' @pushoverPath@ | cut -d'=' -f2)"
-PUSHOVER_API_TOKEN="$(grep 'API_TOKEN' @pushoverPath@ | cut -d'=' -f2)"
+if [ -r "@pushoverPath@" ]; then
+	PUSHOVER_USER_KEY="$(grep 'USER_KEY' @pushoverPath@ | cut -d'=' -f2)"
+	PUSHOVER_API_TOKEN="$(grep 'API_TOKEN' @pushoverPath@ | cut -d'=' -f2)"
+else
+	PUSHOVER_USER_KEY=""
+	PUSHOVER_API_TOKEN=""
+fi
 
 log() {
 	local level="$1"
