@@ -13,6 +13,7 @@ in
   imports = [
     ./apps
     ./atuin.nix
+    ./claude.nix
     ./locale.nix
     ./services
     ./shell
