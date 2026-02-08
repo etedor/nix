@@ -20,7 +20,7 @@ let
     "restrict"
     "pty"
   ];
-  authorizedKey = "${keyOpts} ${keys.users.claude-ed25519}";
+  authorizedKey = "${keyOpts} ${keys.users.claude.ed25519}";
 in
 mkModule {
   linux = {

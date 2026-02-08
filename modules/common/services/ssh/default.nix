@@ -55,7 +55,7 @@ in
 mkModule {
   shared = {
     users.users.${user0.name}.openssh.authorizedKeys.keys =
-      lib.attrValues keys.users.user0 ++ [ keys.users.user0-ed25519 ];
+      lib.attrValues keys.users.user0;
 
     programs.ssh.knownHosts = lib.mapAttrs (name: key: {
       publicKey = key;
