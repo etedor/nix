@@ -24,9 +24,9 @@ in
   "common/mailgun.age".publicKeys = user0 ++ common;
   "common/pushover.age".publicKeys = user0 ++ common;
   "common/smb-user0.age".publicKeys = user0 ++ common;
-  "common/claude-ed25519-key.age".publicKeys = user0 ++ darwin;
-  "common/claude-rsa-key.age".publicKeys = user0 ++ darwin;
-  "common/user0-rsa-key.age".publicKeys = user0 ++ darwin;
+  "common/ssh-claude-ed25519.age".publicKeys = user0 ++ darwin;
+  "common/ssh-claude-rsa.age".publicKeys = user0 ++ darwin;
+  "common/ssh-user0-rsa.age".publicKeys = user0 ++ darwin;
 
   "darwin/atuin-key.age".publicKeys = user0 ++ darwin;
   "darwin/atuin-session.age".publicKeys = user0 ++ darwin;

@@ -117,16 +117,16 @@ mkModule {
   };
 
   darwin = {
-    age.secrets.claude-ed25519-key = {
-      file = "${specialArgs.secretsCommon}/claude-ed25519-key.age";
+    age.secrets.ssh-claude-ed25519 = {
+      file = "${specialArgs.secretsCommon}/ssh-claude-ed25519.age";
       owner = user0.name;
       group = "staff";
       mode = "0400";
       path = "/Users/${user0.name}/.ssh/claude_ed25519";
     };
 
-    age.secrets.claude-rsa-key = {
-      file = "${specialArgs.secretsCommon}/claude-rsa-key.age";
+    age.secrets.ssh-claude-rsa = {
+      file = "${specialArgs.secretsCommon}/ssh-claude-rsa.age";
       owner = user0.name;
       group = "staff";
       mode = "0400";
@@ -136,8 +136,8 @@ mkModule {
     home-manager.users.${user0.name}.programs.ssh.matchBlocks."claude" = {
       match = "user claude";
       identityFile = [
-        config.age.secrets.claude-ed25519-key.path
-        config.age.secrets.claude-rsa-key.path
+        config.age.secrets.ssh-claude-ed25519.path
+        config.age.secrets.ssh-claude-rsa.path
       ];
       extraOptions.IdentitiesOnly = "yes";
     };

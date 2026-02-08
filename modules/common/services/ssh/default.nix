@@ -93,8 +93,8 @@ mkModule {
       enable = true;
     };
 
-    age.secrets.user0-rsa-key = {
-      file = "${specialArgs.secretsCommon}/user0-rsa-key.age";
+    age.secrets.ssh-user0-rsa = {
+      file = "${specialArgs.secretsCommon}/ssh-user0-rsa.age";
       owner = user0.name;
       group = "staff";
       mode = "0400";
@@ -106,7 +106,7 @@ mkModule {
       programs.ssh.matchBlocks."*" = {
         identityFile = [
           "~/.ssh/id_ed25519"
-          config.age.secrets.user0-rsa-key.path
+          config.age.secrets.ssh-user0-rsa.path
         ];
         extraOptions = {
           AddKeysToAgent = "yes";
