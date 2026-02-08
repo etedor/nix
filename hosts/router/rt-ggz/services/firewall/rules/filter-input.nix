@@ -80,6 +80,15 @@ in
     }
 
     {
+      name = "tftp";
+      proto = "udp";
+      dpts = [ 69 ];
+      sips = [ net.ggz.switches ];
+      dips = [ net.ggz.tftp ];
+      action = "accept";
+    }
+
+    {
       name = "igmp";
       proto = "igmp";
       iifs = [
