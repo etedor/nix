@@ -78,6 +78,13 @@ mkModule {
       };
     };
 
+    age.secrets.ssh-user0-ed25519 = {
+      file = "${specialArgs.secretsCommon}/ssh-user0-ed25519.age";
+      owner = user0.name;
+      mode = "0400";
+      path = "/home/${user0.name}/.ssh/id_ed25519";
+    };
+
     # allow SSH key auth for sudo via forwarded agent
     security.pam.sshAgentAuth = {
       enable = true;
