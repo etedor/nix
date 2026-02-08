@@ -133,25 +133,13 @@ mkModule {
       path = "/Users/${user0.name}/.ssh/claude_rsa";
     };
 
-    home-manager.users.${user0.name}.programs.ssh.matchBlocks = {
-      # IOS + ICX: RSA key, legacy crypto
-      "claude-switch-legacy" = {
-        match = ''host "sw-living-room*,sw-office*,sw-playroom*" user claude'';
-        identityFile = config.age.secrets.claude-rsa-key.path;
-        extraOptions = {
-          IdentitiesOnly = "yes";
-          KexAlgorithms = "+diffie-hellman-group14-sha1";
-          HostKeyAlgorithms = "+ssh-rsa";
-          PubkeyAcceptedAlgorithms = "+ssh-rsa";
-        };
-      };
-
-      # NixOS + EOS: ed25519 key
-      "claude-user" = {
-        match = "user claude";
-        identityFile = config.age.secrets.claude-ed25519-key.path;
-        extraOptions.IdentitiesOnly = "yes";
-      };
+    home-manager.users.${user0.name}.programs.ssh.matchBlocks."claude" = {
+      match = "user claude";
+      identityFile = [
+        config.age.secrets.claude-ed25519-key.path
+        config.age.secrets.claude-rsa-key.path
+      ];
+      extraOptions.IdentitiesOnly = "yes";
     };
   };
 }
