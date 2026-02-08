@@ -1,8 +1,10 @@
 {
+  config,
   globals,
   lib,
   mkModule,
   pkgs,
+  specialArgs,
   ...
 }:
 
@@ -91,13 +93,24 @@ mkModule {
       enable = true;
     };
 
+    age.secrets.user0-rsa-key = {
+      file = "${specialArgs.secretsCommon}/user0-rsa-key.age";
+      owner = user0.name;
+      group = "staff";
+      mode = "0400";
+      path = "/Users/${user0.name}/.ssh/id_rsa";
+    };
+
     home-manager.users.${user0.name} = {
       # auto-load keys from keychain after reboot
       programs.ssh.matchBlocks."*" = {
+        identityFile = [
+          "~/.ssh/id_ed25519"
+          config.age.secrets.user0-rsa-key.path
+        ];
         extraOptions = {
           AddKeysToAgent = "yes";
           UseKeychain = "yes";
-          IdentityFile = "~/.ssh/id_ed25519";
         };
       };
 
