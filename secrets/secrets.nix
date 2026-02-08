@@ -26,6 +26,7 @@ in
   "common/smb-user0.age".publicKeys = user0 ++ common;
   "common/ssh-claude-ed25519.age".publicKeys = user0 ++ darwin;
   "common/ssh-claude-rsa.age".publicKeys = user0 ++ darwin;
+  "common/ssh-user0-ed25519.age".publicKeys = user0 ++ darwin;
   "common/ssh-user0-rsa.age".publicKeys = user0 ++ darwin;
 
   "darwin/atuin-key.age".publicKeys = user0 ++ darwin;

@@ -54,7 +54,8 @@ let
 in
 mkModule {
   shared = {
-    users.users.${user0.name}.openssh.authorizedKeys.keys = lib.attrValues keys.users.user0;
+    users.users.${user0.name}.openssh.authorizedKeys.keys =
+      lib.attrValues keys.users.user0 ++ [ keys.users.user0-ed25519 ];
 
     programs.ssh.knownHosts = lib.mapAttrs (name: key: {
       publicKey = key;
@@ -93,6 +94,14 @@ mkModule {
       enable = true;
     };
 
+    age.secrets.ssh-user0-ed25519 = {
+      file = "${specialArgs.secretsCommon}/ssh-user0-ed25519.age";
+      owner = user0.name;
+      group = "staff";
+      mode = "0400";
+      path = "/Users/${user0.name}/.ssh/id_ed25519";
+    };
+
     age.secrets.ssh-user0-rsa = {
       file = "${specialArgs.secretsCommon}/ssh-user0-rsa.age";
       owner = user0.name;
@@ -105,7 +114,7 @@ mkModule {
       # auto-load keys from keychain after reboot
       programs.ssh.matchBlocks."*" = {
         identityFile = [
-          "~/.ssh/id_ed25519"
+          config.age.secrets.ssh-user0-ed25519.path
           config.age.secrets.ssh-user0-rsa.path
         ];
         extraOptions = {
