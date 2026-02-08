@@ -20,7 +20,7 @@ let
     "restrict"
     "pty"
   ];
-  authorizedKey = "${keyOpts} ${keys.users.claude}";
+  authorizedKey = "${keyOpts} ${keys.users.claude-ed25519}";
 in
 mkModule {
   linux = {
@@ -117,18 +117,41 @@ mkModule {
   };
 
   darwin = {
-    age.secrets.claude-ssh-key = {
-      file = "${specialArgs.secretsCommon}/claude-ssh-key.age";
+    age.secrets.claude-ed25519-key = {
+      file = "${specialArgs.secretsCommon}/claude-ed25519-key.age";
       owner = user0.name;
       group = "staff";
       mode = "0400";
       path = "/Users/${user0.name}/.ssh/claude_ed25519";
     };
 
-    home-manager.users.${user0.name}.programs.ssh.matchBlocks."claude-user" = {
-      match = "user claude";
-      identityFile = config.age.secrets.claude-ssh-key.path;
-      extraOptions.IdentitiesOnly = "yes";
+    age.secrets.claude-rsa-key = {
+      file = "${specialArgs.secretsCommon}/claude-rsa-key.age";
+      owner = user0.name;
+      group = "staff";
+      mode = "0400";
+      path = "/Users/${user0.name}/.ssh/claude_rsa";
+    };
+
+    home-manager.users.${user0.name}.programs.ssh.matchBlocks = {
+      # IOS + ICX: RSA key, legacy crypto
+      "claude-switch-legacy" = {
+        match = ''host "sw-living-room*,sw-office*,sw-playroom*" user claude'';
+        identityFile = config.age.secrets.claude-rsa-key.path;
+        extraOptions = {
+          IdentitiesOnly = "yes";
+          KexAlgorithms = "+diffie-hellman-group14-sha1";
+          HostKeyAlgorithms = "+ssh-rsa";
+          PubkeyAcceptedAlgorithms = "+ssh-rsa";
+        };
+      };
+
+      # NixOS + EOS: ed25519 key
+      "claude-user" = {
+        match = "user claude";
+        identityFile = config.age.secrets.claude-ed25519-key.path;
+        extraOptions.IdentitiesOnly = "yes";
+      };
     };
   };
 }

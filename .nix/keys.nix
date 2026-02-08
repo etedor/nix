@@ -40,7 +40,8 @@
   };
 
   # for claude code SSH diagnostics
-  users.claude = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDVGN1ZBhoXks8heaUE3n2TainlBcUxmUsQTAFjKanfR claude@nix";
+  users.claude-ed25519 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDVGN1ZBhoXks8heaUE3n2TainlBcUxmUsQTAFjKanfR claude@nix";
+  users.claude-rsa = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDqxQ93+eqNIqA5XkbpXOcaiQ+/jjHa+B7VTjqFuALMNjhisoXOcvmQsPzmhj0hWMv2Vg3zWKScD+AM//Ly7ocPpQUlugLDtioN7UefJhub0APUtaGJh2jjk2cGnW57+fvTB+Rv19GZGUxApj76xTFPTA26kalNW4u/gZ+cwwo+jTUA6l13CZGwp6iYRBcJKpvBMhY7ua/rUjGENVKHsGCQCn/DrqUpzy/VtOqMveVnN+sbJd2ANCSpEcz26JhmglTWH30HfwUa4XNwA5k3T+yrVzvxZ/jIXGP1iipM+kiUhFD/cPyrmD61LTD8ByGTnlKUsMX6pC6jYPCXP2GBDhrKpr08LzrRP3MTWoFhmLfJb+v4TttUPIwiHVfplnm9fkBIBVfXE1WMORPq7Oq5gSk6OuVjVUVTonkgcv2zynWLCXGrk/o7mf4iNrzL0nNnM7cx2ZvtAXYLVw/bMCSy/bt7gYe+bkY4lKr5d2GmcqPnU1mgPHUUSk4OUCwL7XWj1R3ZbREuf2CkwgGGbJuJ6+/Po7EarRTxJ9bXF1zmP4V65z+3EVMSvua7rWfUnQm7DTl40yGmpOIpoUxkoXUKX95X05XWIFaiqI8rzk6uhW6FXUN7fCMeuaEmu6AHXNf3jhbeFkUMXg6KG4GaZ/T4nLcVv7/TJfcKXnO9NobDQWLXvw== claude@nix";
 
   # for agenix and authorized_keys
   users.user0 = {
