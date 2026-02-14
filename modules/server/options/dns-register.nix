@@ -101,6 +101,7 @@ in
 
     address = lib.mkOption {
       type = lib.types.str;
+      default = globals.hosts.${config.networking.hostName}.ip;
       description = "IP address for A records";
     };
 
