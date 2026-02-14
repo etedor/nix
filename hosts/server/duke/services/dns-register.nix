@@ -18,5 +18,5 @@
     tsigKeyFile = config.age.secrets.nsupdate-tsig-key.path;
   };
 
-  age.secrets.nsupdate-tsig-key.file = "${specialArgs.secretsHost}/nsupdate-tsig-key.age";
+  age.secrets.nsupdate-tsig-key.file = "${specialArgs.secretsRole}/nsupdate-tsig-key.age";
 }

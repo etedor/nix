@@ -57,7 +57,7 @@ in
   "router/rt-sea2/wg1-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea2 ];
   "router/rt-sea2/wg2-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea2 ];
 
-  "server/duke/nsupdate-tsig-key.age".publicKeys = user0 ++ [ hosts.duke ];
+  "server/nsupdate-tsig-key.age".publicKeys = user0 ++ server;
   "server/duke/acme.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/navidrome.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/icecast.age".publicKeys = user0 ++ [ hosts.duke ];
