@@ -1,6 +1,7 @@
 {
   claude-code-pkg,
   globals,
+  lib,
   pkgs,
   pkgs-unstable,
   ...
@@ -8,12 +9,28 @@
 
 let
   user0 = globals.users 0;
+
+  # hosts with claude user = NixOS hosts (routers + servers)
+  claudeHosts = builtins.attrNames globals.routers
+    ++ builtins.filter (n: !builtins.hasAttr n globals.routers) (
+      builtins.filter (n: n != "brother" && n != "home-assistant" && n != "ntp" && n != "machina")
+        (builtins.attrNames globals.hosts)
+    );
+
+  # switches from SSH config
+  sshHosts = import ../../../common/services/ssh/hosts.nix { inherit globals; } user0.name;
+  switchHosts = builtins.filter (n: lib.hasPrefix "sw-" n) (builtins.attrNames sshHosts);
+
   pythonEnv = pkgs.python3.withPackages (ps: with ps; [ netmiko ]);
   switch-cli = pkgs.writeScriptBin "switch-cli" ''
     #!${pythonEnv}/bin/python3
     ${builtins.readFile ./bin/switch-cli.py}
   '';
-  claude-run = pkgs.writeShellScriptBin "claude-run" (builtins.readFile ./bin/claude-run.sh);
+  claude-run = pkgs.writeShellScriptBin "claude-run" ''
+    CLAUDE_HOSTS="${lib.concatStringsSep " " (lib.naturalSort claudeHosts)}"
+    CLAUDE_SWITCHES="${lib.concatStringsSep " " (lib.naturalSort switchHosts)}"
+    ${builtins.readFile ./bin/claude-run.sh}
+  '';
 in
 {
   users.users.${user0.name}.packages = [
