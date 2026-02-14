@@ -16,5 +16,6 @@ case $host in
     exec switch-cli "$host" "$@" ;;
   *)
     [[ $# -gt 0 ]] || exec ssh claude@"$host" sudo -l
-    exec ssh claude@"$host" sudo "$@" ;;
+    cmd=""; for arg in "$@"; do cmd+=" $(printf '%q' "$arg")"; done
+    exec ssh claude@"$host" sudo $cmd ;;
 esac
