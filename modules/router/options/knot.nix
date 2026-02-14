@@ -143,6 +143,7 @@ in
           {
             id = "default";
             storage = "/var/lib/knot/zones";
+            journal-content = "all";
             zonefile-load = "difference-no-serial";
             serial-policy = "unixtime";
             acl = lib.optional (cfg.tsigKeyFile != null) "acl-update";
