@@ -139,11 +139,6 @@ in
             key = "xfer";
             action = "update";
           }
-          {
-            id = "acl-transfer";
-            address = cfg.updateAddresses;
-            action = "transfer";
-          }
         ];
 
         template = [
@@ -153,7 +148,7 @@ in
             journal-content = "all";
             zonefile-load = "difference-no-serial";
             serial-policy = "unixtime";
-            acl = lib.optionals (cfg.tsigKeyFile != null) [ "acl-update" "acl-transfer" ];
+            acl = lib.optionals (cfg.tsigKeyFile != null) [ "acl-update" ];
           }
         ];
 

@@ -20,6 +20,9 @@ let
 
   allSubdomains = lib.unique (nginxSubdomains ++ cfg.subdomains);
 
+  # TXT record name for tracking managed subdomains (per-registrant IP)
+  marker = "_managed-by-${builtins.replaceStrings ["."] ["-"] cfg.address}";
+
   script = pkgs.writeShellScript "dns-register" ''
     set -uo pipefail
 
@@ -28,30 +31,28 @@ let
     ZONE=${lib.escapeShellArg cfg.zone}
     PORT=${toString cfg.port}
     TTL=${toString cfg.ttl}
+    MARKER=${lib.escapeShellArg marker}
     CURRENT_SUBS=(${lib.concatMapStringsSep " " lib.escapeShellArg allSubdomains})
     SERVERS=(${lib.concatMapStringsSep " " lib.escapeShellArg cfg.servers})
     DIG=${pkgs.bind.dnsutils}/bin/dig
     NSUPDATE=${pkgs.bind.dnsutils}/bin/nsupdate
 
     for server in "''${SERVERS[@]}"; do
-      # AXFR the zone, find dynamic A records matching our IP
-      # filter by TTL to skip static zone records (higher TTL)
-      LIVE=()
-      while IFS=$'\t' read -r name ttl class type rdata; do
-        if [ "$type" = "A" ] && [ "$rdata" = "$ADDRESS" ] && [ "$ttl" = "$TTL" ]; then
-          sub="''${name%."$ZONE".}"
-          [ "$sub" != "$name" ] && LIVE+=("$sub")
-        fi
-      done < <("$DIG" AXFR @"$server" -p "$PORT" "$ZONE" +noall +answer 2>/dev/null || true)
+      # read previous managed subdomains from TXT manifest
+      PREV_SUBS=()
+      prev_raw=$("$DIG" +short TXT "$MARKER.$ZONE" @"$server" -p "$PORT" 2>/dev/null || true)
+      if [ -n "$prev_raw" ]; then
+        read -ra PREV_SUBS <<< "$(echo "$prev_raw" | tr -d '"')"
+      fi
 
-      # stale = live records with our IP that aren't in current set
+      # stale = previously managed but no longer current
       STALE=()
-      for live_sub in "''${LIVE[@]}"; do
+      for prev in "''${PREV_SUBS[@]}"; do
         found=0
         for cur in "''${CURRENT_SUBS[@]}"; do
-          if [ "$live_sub" = "$cur" ]; then found=1; break; fi
+          if [ "$prev" = "$cur" ]; then found=1; break; fi
         done
-        [ "$found" = 0 ] && STALE+=("$live_sub")
+        [ "$found" = 0 ] && STALE+=("$prev")
       done
 
       # send updates
@@ -65,6 +66,9 @@ let
           echo "update delete $sub.$ZONE. A $ADDRESS"
           echo "update add $sub.$ZONE. $TTL A $ADDRESS"
         done
+        # update manifest TXT record
+        echo "update delete $MARKER.$ZONE. TXT"
+        echo "update add $MARKER.$ZONE. $TTL TXT \"''${CURRENT_SUBS[*]}\""
         echo "send"
       } | "$NSUPDATE" -k "$KEY_FILE" || true
     done
