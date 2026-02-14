@@ -7,7 +7,7 @@
 }:
 
 let
-  cfg = config.et42.server.dnsRegister;
+  cfg = config.et42.server.iddns;
 
   # auto-derive subdomains from nginx virtualHosts matching zone
   nginxSubdomains =
@@ -23,7 +23,7 @@ let
   # TXT record name for tracking managed subdomains (per-registrant IP)
   marker = "_managed-by-${builtins.replaceStrings ["."] ["-"] cfg.address}";
 
-  script = pkgs.writeShellScript "dns-register" ''
+  script = pkgs.writeShellScript "iddns" ''
     set -uo pipefail
 
     KEY_FILE=${lib.escapeShellArg cfg.tsigKeyFile}
@@ -75,7 +75,7 @@ let
   '';
 in
 {
-  options.et42.server.dnsRegister = {
+  options.et42.server.iddns = {
     enable = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -124,8 +124,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    systemd.services.dns-register = {
-      description = "register DNS records via nsupdate";
+    systemd.services.iddns = {
+      description = "dynamic DNS registration via nsupdate";
       wants = [ "network-online.target" ];
       after = [ "network-online.target" ];
       serviceConfig = {
@@ -134,7 +134,7 @@ in
       };
     };
 
-    systemd.timers.dns-register = {
+    systemd.timers.iddns = {
       wantedBy = [ "timers.target" ];
       timerConfig = {
         OnBootSec = "30s";

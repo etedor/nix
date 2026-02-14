@@ -6,7 +6,7 @@
 }:
 
 {
-  et42.server.dnsRegister = {
+  et42.server.iddns = {
     enable = true;
     zone = globals.zone;
     tsigKeyFile = config.age.secrets.nsupdate-tsig-key.path;
