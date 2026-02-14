@@ -34,10 +34,11 @@ let
     NSUPDATE=${pkgs.bind.dnsutils}/bin/nsupdate
 
     for server in "''${SERVERS[@]}"; do
-      # AXFR the zone, find A records matching our IP
+      # AXFR the zone, find dynamic A records matching our IP
+      # filter by TTL to skip static zone records (higher TTL)
       LIVE=()
       while IFS=$'\t' read -r name ttl class type rdata; do
-        if [ "$type" = "A" ] && [ "$rdata" = "$ADDRESS" ]; then
+        if [ "$type" = "A" ] && [ "$rdata" = "$ADDRESS" ] && [ "$ttl" = "$TTL" ]; then
           sub="''${name%."$ZONE".}"
           [ "$sub" != "$name" ] && LIVE+=("$sub")
         fi
