@@ -101,6 +101,9 @@ mkModule {
       enable = true;
     };
 
+    # on fresh installs, seed keychain with passphrases:
+    #   ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+    #   ssh-add --apple-use-keychain ~/.ssh/id_rsa
     age.secrets.ssh-user0-ed25519 = {
       file = "${specialArgs.secretsCommon}/ssh-user0-ed25519.age";
       owner = user0.name;
