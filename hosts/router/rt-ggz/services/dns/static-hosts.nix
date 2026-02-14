@@ -1,18 +1,20 @@
 { globals }:
 
-{
-  "brother" = "10.0.11.16";
-  "docker-home" = "10.0.8.16";
-  "duke" = "10.0.4.32";
-  "ntp" = "10.0.2.16";
-  "opengear" = "10.0.2.17";
+let
+  # routers: name → loopback IP
+  routerHosts = builtins.mapAttrs (_: r: r.interfaces.lo0) globals.routers;
 
-  "rt-ggz" = globals.routers.rt-ggz.interfaces.lo0;
-  "rt-sea" = globals.routers.rt-sea.interfaces.lo0;
-  "rt-sea2" = globals.routers.rt-sea2.interfaces.lo0;
+  # hosts: name → IP
+  globalHosts = builtins.mapAttrs (_: h: h.ip) globals.hosts;
 
-  "sw-garage" = "10.0.2.32";
-  "sw-living-room" = "10.0.2.33";
-  "sw-office" = "10.0.2.34";
-  "sw-playroom" = "10.0.2.35";
-}
+  # non-nix devices
+  manual = {
+    "docker-home" = "10.0.8.16";
+    "opengear" = "10.0.2.17";
+    "sw-garage" = "10.0.2.32";
+    "sw-living-room" = "10.0.2.33";
+    "sw-office" = "10.0.2.34";
+    "sw-playroom" = "10.0.2.35";
+  };
+in
+routerHosts // globalHosts // manual
