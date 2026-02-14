@@ -120,7 +120,7 @@ in
 
     updateAddresses = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = lib.mapAttrsToList (_: s: s.ip) globals.servers;
+      default = lib.mapAttrsToList (_: h: h.ip) (lib.filterAttrs (_: h: h.server or false) globals.hosts);
       description = "IPs allowed to send RFC 2136 updates";
     };
   };

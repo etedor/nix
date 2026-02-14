@@ -52,6 +52,7 @@ in
       duke = {
         name = "duke.${private.zone}";
         ip = "10.0.4.32";
+        server = true;
       };
       home-assistant = {
         name = "home-assistant.${private.zone}";
@@ -67,12 +68,6 @@ in
       };
     };
 
-    # servers eligible for dynamic DNS registration
-    servers = {
-      duke = {
-        ip = "10.0.4.32";
-      };
-    };
 
     networks = {
       rfc1918 = [
