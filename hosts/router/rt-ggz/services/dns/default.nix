@@ -1,6 +1,7 @@
 {
   config,
   globals,
+  specialArgs,
   ...
 }:
 
@@ -10,7 +11,7 @@ let
   rt-sea2 = globals.routers.rt-sea2;
   things = globals.networks.ggz.things;
 
-  rt-ggz-nsd = "${rt-ggz.interfaces.lo0}:5354";
+  rt-ggz-knot = "${rt-ggz.interfaces.lo0}:5354";
   rt-ggz-unbound = "${rt-ggz.interfaces.lo0}:5353";
   rt-sea-unbound = "${rt-sea.interfaces.lo0}:5353";
   rt-sea2-unbound = "${rt-sea2.interfaces.lo0}:5353";
@@ -61,8 +62,8 @@ in
     };
 
     conditionalMapping = {
-      "in-addr.arpa" = rt-ggz-nsd;
-      "${globals.zone}" = rt-ggz-nsd;
+      "in-addr.arpa" = rt-ggz-knot;
+      "${globals.zone}" = rt-ggz-knot;
     }
     // mkArchiveMapping archiveTlds;
 
@@ -99,13 +100,21 @@ in
     ];
   };
 
-  et42.router.dns.nsd = {
+  et42.router.dns.knot = {
     enable = true;
     listenAddress = rt-ggz.interfaces.lo0;
     listenPort = 5354;
     domainName = globals.zone;
     reverseZones = reverseZones;
     staticHosts = import ./static-hosts.nix { inherit globals; };
+    tsigKeyFile = config.age.secrets.knot-tsig-key.path;
+    updateAddresses = [ globals.hosts.duke.ip ];
+  };
+
+  age.secrets.knot-tsig-key = {
+    file = "${specialArgs.secretsRole}/knot-tsig-key.age";
+    owner = "knot";
+    mode = "0400";
   };
 
   networking = {

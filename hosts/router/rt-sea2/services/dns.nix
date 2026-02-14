@@ -1,16 +1,16 @@
 {
   config,
   globals,
+  specialArgs,
   ...
 }:
 
 let
-  rt-ggz = globals.routers.rt-ggz;
   rt-sea = globals.routers.rt-sea;
   rt-sea2 = globals.routers.rt-sea2;
   lo0 = rt-sea2.interfaces.lo0;
 
-  rt-ggz-knot = "${rt-ggz.interfaces.lo0}:5354";
+  local-knot = "${lo0}:5354";
   rt-sea-unbound = "${rt-sea.interfaces.lo0}:5353";
   rt-sea2-unbound = "${rt-sea2.interfaces.lo0}:5353";
 in
@@ -28,8 +28,8 @@ in
     };
 
     conditionalMapping = {
-      "in-addr.arpa" = rt-ggz-knot;
-      "${globals.zone}" = rt-ggz-knot;
+      "in-addr.arpa" = local-knot;
+      "${globals.zone}" = local-knot;
     };
 
     denylists = {
@@ -65,5 +65,31 @@ in
   et42.router.dns.unbound = {
     enable = true;
     listenAddress = [ lo0 ];
+  };
+
+  et42.router.dns.knot = {
+    enable = true;
+    listenAddress = lo0;
+    listenPort = 5354;
+    domainName = globals.zone;
+    reverseZones = [
+      "2.0.10.in-addr.arpa"
+      "4.0.10.in-addr.arpa"
+      "8.0.10.in-addr.arpa"
+      "9.0.10.in-addr.arpa"
+      "10.0.10.in-addr.arpa"
+      "11.0.10.in-addr.arpa"
+      "16.0.10.in-addr.arpa"
+      "32.0.10.in-addr.arpa"
+    ];
+    staticHosts = import ../../rt-ggz/services/dns/static-hosts.nix { inherit globals; };
+    tsigKeyFile = config.age.secrets.knot-tsig-key.path;
+    updateAddresses = [ globals.hosts.duke.ip ];
+  };
+
+  age.secrets.knot-tsig-key = {
+    file = "${specialArgs.secretsRole}/knot-tsig-key.age";
+    owner = "knot";
+    mode = "0400";
   };
 }

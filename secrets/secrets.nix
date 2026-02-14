@@ -36,6 +36,7 @@ in
 
   "router/atuin-key.age".publicKeys = user0 ++ router;
   "router/atuin-session.age".publicKeys = user0 ++ router;
+  "router/knot-tsig-key.age".publicKeys = user0 ++ router;
 
   "server/atuin-key.age".publicKeys = user0 ++ server;
   "server/atuin-session.age".publicKeys = user0 ++ server;
@@ -56,6 +57,7 @@ in
   "router/rt-sea2/wg1-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea2 ];
   "router/rt-sea2/wg2-private-key.age".publicKeys = user0 ++ [ hosts.rt-sea2 ];
 
+  "server/duke/nsupdate-tsig-key.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/acme.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/navidrome.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/icecast.age".publicKeys = user0 ++ [ hosts.duke ];

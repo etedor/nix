@@ -8,7 +8,7 @@ let
   rt-ggz = globals.routers.rt-ggz;
   rt-ggz2 = globals.routers.rt-ggz2;
 
-  rt-ggz2-nsd = "${rt-ggz2.interfaces.lo0}:5354";
+  rt-ggz2-knot = "${rt-ggz2.interfaces.lo0}:5354";
   rt-ggz2-unbound = "${rt-ggz2.interfaces.lo0}:5353";
   rt-ggz-unbound = "${rt-ggz.interfaces.lo0}:5353";
 
@@ -52,8 +52,8 @@ in
     };
 
     conditionalMapping = {
-      "${mgmtZone}" = rt-ggz2-nsd;
-      "200.1.10.in-addr.arpa" = rt-ggz2-nsd;
+      "${mgmtZone}" = rt-ggz2-knot;
+      "200.1.10.in-addr.arpa" = rt-ggz2-knot;
     }
     // mkArchiveMapping archiveTlds;
 
@@ -84,7 +84,7 @@ in
     ];
   };
 
-  et42.router.dns.nsd = {
+  et42.router.dns.knot = {
     enable = true;
     listenAddress = rt-ggz2.interfaces.lo0;
     listenPort = 5354;
