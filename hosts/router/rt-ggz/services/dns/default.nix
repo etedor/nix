@@ -108,7 +108,6 @@ in
     reverseZones = reverseZones;
     staticHosts = import ./static-hosts.nix { inherit globals; };
     tsigKeyFile = config.age.secrets.knot-tsig-key.path;
-    updateAddresses = [ globals.hosts.duke.ip ];
   };
 
   age.secrets.knot-tsig-key = {

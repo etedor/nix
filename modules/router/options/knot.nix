@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }:
+{ lib, config, pkgs, globals, ... }:
 
 let
   cfg = config.et42.router.dns.knot;
@@ -120,7 +120,7 @@ in
 
     updateAddresses = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [ ];
+      default = lib.mapAttrsToList (_: s: s.ip) globals.servers;
       description = "IPs allowed to send RFC 2136 updates";
     };
   };

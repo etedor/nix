@@ -56,6 +56,7 @@ in
 
     servers = lib.mkOption {
       type = lib.types.listOf lib.types.str;
+      default = lib.mapAttrsToList (_: r: r.interfaces.lo0) globals.routers;
       description = "router IPs to send updates to";
     };
 

@@ -67,6 +67,13 @@ in
       };
     };
 
+    # servers eligible for dynamic DNS registration
+    servers = {
+      duke = {
+        ip = "10.0.4.32";
+      };
+    };
+
     networks = {
       rfc1918 = [
         "10.0.0.0/8"
