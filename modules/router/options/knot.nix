@@ -12,7 +12,7 @@ let
       3600       ; refresh
       1800       ; retry
       604800     ; expire
-      86400      ; minimum
+      300        ; minimum (negative cache TTL)
     )
     @ IN NS ns.${domain}.
     ns IN A ${cfg.listenAddress}

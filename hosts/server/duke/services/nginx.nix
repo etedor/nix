@@ -128,6 +128,11 @@ in
           proxyWebsockets = true;
         })
 
+        (mkVirtualHost {
+          subdomain = "test2";
+          proxyPass = "http://ntp.${z}:80";
+        })
+
         # n8n - admin base, webhook also allows telegram
         {
           "n8n.${z}" = {
