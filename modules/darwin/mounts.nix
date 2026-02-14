@@ -14,8 +14,8 @@ in
 {
   age.secrets.smb-user0 = {
     file = "${specialArgs.secretsCommon}/smb-user0.age";
-    owner = user0.name;
-    group = "staff";
+    owner = "root";
+    group = "wheel";
     mode = "0400";
   };
 
@@ -27,6 +27,7 @@ in
   };
 
   # autofs mounts on-demand and handles sleep/wake gracefully
+  # automountd can't access keychain, so credentials are templated from agenix
   environment.etc."auto_master".text = ''
     #
     # Automounter master map
@@ -38,41 +39,14 @@ in
     ${mountBase}              auto_duke       -nobrowse,nosuid
   '';
 
-  environment.etc."auto_duke".text = ''
-    # SMB mounts for duke - credentials from Keychain
-    media           -fstype=smbfs,soft,nodev,nosuid    ://${duke}/media
-    ${user0.name}   -fstype=smbfs,soft,nodev,nosuid    ://${duke}/${user0.name}
+  # template auto_duke with credentials from agenix at activation time
+  system.activationScripts.postActivation.text = ''
+    PASSWORD=$(tr -d '\n' < "${passwordFile}")
+    cat > /etc/auto_duke <<EOF
+    media           -fstype=smbfs,soft,nodev,nosuid    ://${user0.name}:$PASSWORD@${duke}/media
+    ${user0.name}   -fstype=smbfs,soft,nodev,nosuid    ://${user0.name}:$PASSWORD@${duke}/${user0.name}
+    EOF
+    chmod 600 /etc/auto_duke
+    automount -vc 2>/dev/null || true
   '';
-
-  # bootstrap keychain credentials from agenix secret (per-share entries)
-  home-manager.users.${user0.name} = {
-    home.file.".local/bin/keychain-smb-duke" = {
-      executable = true;
-      text = ''
-        #!/usr/bin/env bash
-        PASSWORD="$(tr -d '\n' < "${passwordFile}")"
-
-        # add keychain entry for each share (path is required for mount_smbfs)
-        for share in media ${user0.name}; do
-          security add-internet-password \
-            -a "${user0.name}" \
-            -s "${duke}" \
-            -p "$share" \
-            -D "Network Password" \
-            -r "smb " \
-            -w "$PASSWORD" \
-            -U \
-            ~/Library/Keychains/login.keychain-db 2>/dev/null || true
-        done
-      '';
-    };
-
-    launchd.agents."keychain-smb-duke" = {
-      enable = true;
-      config = {
-        ProgramArguments = [ "/Users/${user0.name}/.local/bin/keychain-smb-duke" ];
-        RunAtLoad = true;
-      };
-    };
-  };
 }
