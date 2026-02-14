@@ -17,7 +17,10 @@ in
 {
   et42.router.dns.blocky = {
     enable = true;
-    listenAddress = [ "${lo0}:53" "${globals.anycast.dns}:53" ];
+    listenAddress = [
+      "${lo0}:53"
+      "${globals.anycast.dns}:53"
+    ];
 
     upstream = {
       servers = [
@@ -82,7 +85,6 @@ in
       "16.0.10.in-addr.arpa"
       "32.0.10.in-addr.arpa"
     ];
-    staticHosts = import ../../rt-ggz/services/dns/static-hosts.nix { inherit globals; };
     tsigKeyFile = config.age.secrets.knot-tsig-key.path;
   };
 

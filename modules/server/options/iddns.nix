@@ -15,13 +15,12 @@ let
       vhosts = builtins.attrNames config.services.nginx.virtualHosts;
       suffix = ".${cfg.zone}";
     in
-    map (name: lib.removeSuffix suffix name)
-      (builtins.filter (lib.hasSuffix suffix) vhosts);
+    map (name: lib.removeSuffix suffix name) (builtins.filter (lib.hasSuffix suffix) vhosts);
 
   allSubdomains = lib.unique (nginxSubdomains ++ cfg.subdomains);
 
   # TXT record name for tracking managed subdomains (per-registrant IP)
-  marker = "_managed-by-${builtins.replaceStrings ["."] ["-"] cfg.address}";
+  marker = "_managed-by-${builtins.replaceStrings [ "." ] [ "-" ] cfg.address}";
 
   script = pkgs.writeShellScript "iddns" ''
     set -uo pipefail
@@ -47,9 +46,9 @@ let
 
       # stale = previously managed but no longer current
       STALE=()
-      for prev in "''${PREV_SUBS[@]}"; do
+      for prev in ''${PREV_SUBS[@]+"''${PREV_SUBS[@]}"}; do
         found=0
-        for cur in "''${CURRENT_SUBS[@]}"; do
+        for cur in ''${CURRENT_SUBS[@]+"''${CURRENT_SUBS[@]}"}; do
           if [ "$prev" = "$cur" ]; then found=1; break; fi
         done
         [ "$found" = 0 ] && STALE+=("$prev")
@@ -59,10 +58,10 @@ let
       {
         echo "server $server $PORT"
         echo "zone $ZONE"
-        for sub in "''${STALE[@]}"; do
+        for sub in ''${STALE[@]+"''${STALE[@]}"}; do
           echo "update delete $sub.$ZONE. A $ADDRESS"
         done
-        for sub in "''${CURRENT_SUBS[@]}"; do
+        for sub in ''${CURRENT_SUBS[@]+"''${CURRENT_SUBS[@]}"}; do
           echo "update delete $sub.$ZONE. A $ADDRESS"
           echo "update add $sub.$ZONE. $TTL A $ADDRESS"
         done
@@ -118,7 +117,7 @@ in
 
     subdomains = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [];
+      default = [ ];
       description = "extra subdomains to register beyond nginx vhosts";
     };
   };

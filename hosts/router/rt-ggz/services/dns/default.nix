@@ -106,7 +106,6 @@ in
     listenPort = 5354;
     domainName = globals.zone;
     reverseZones = reverseZones;
-    staticHosts = import ./static-hosts.nix { inherit globals; };
     tsigKeyFile = config.age.secrets.knot-tsig-key.path;
   };
 

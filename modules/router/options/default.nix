@@ -7,7 +7,7 @@
     ./kea.nix
     ./miniupnpd.nix
     ./nftables.nix
-    ./knot.nix
+    ./knot
     ./unbound.nix
     ./wireguard
   ];

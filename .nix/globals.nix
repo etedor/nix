@@ -68,7 +68,6 @@ in
       };
     };
 
-
     networks = {
       rfc1918 = [
         "10.0.0.0/8"
@@ -93,7 +92,12 @@ in
         travel.family
       ];
 
-      inherit ggz ggz2 sea travel;
+      inherit
+        ggz
+        ggz2
+        sea
+        travel
+        ;
     };
 
     anycast = {
@@ -110,7 +114,10 @@ in
           xc0 = "10.1.0.1";
         };
         zones = {
-          p2p = [ "wg0" "wg1" ];
+          p2p = [
+            "wg0"
+            "wg1"
+          ];
         };
       };
       rt-ggz2 = {
@@ -122,7 +129,10 @@ in
           xc0 = "10.1.0.0";
         };
         zones = {
-          p2p = [ "wg0" "wg1" ];
+          p2p = [
+            "wg0"
+            "wg1"
+          ];
         };
       };
       rt-sea = {
@@ -136,7 +146,11 @@ in
           wg2 = "10.101.0.5";
         };
         zones = {
-          p2p = [ "wg0" "wg1" "wg2" ];
+          p2p = [
+            "wg0"
+            "wg1"
+            "wg2"
+          ];
           sea-admin = [ "wg10" ];
           sea-family = [ "wg11" ];
           untrust = [ "ens3" ];
@@ -153,7 +167,11 @@ in
           wg2 = "10.101.0.4";
         };
         zones = {
-          p2p = [ "wg0" "wg1" "wg2" ];
+          p2p = [
+            "wg0"
+            "wg1"
+            "wg2"
+          ];
           untrust = [ "wan0" ];
         };
       };

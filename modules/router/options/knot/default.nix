@@ -1,4 +1,10 @@
-{ lib, config, pkgs, globals, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  globals,
+  ...
+}:
 
 let
   cfg = config.et42.router.dns.knot;
@@ -39,15 +45,13 @@ let
           "";
     in
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList
-        (
-          hostname: ip:
-          let
-            lastOctet = lib.last (lib.splitString "." ip);
-          in
-          "${lastOctet} IN PTR ${hostname}.${domain}."
-        )
-        (lib.filterAttrs (_: ip: lib.hasPrefix networkPrefix ip) hosts)
+      lib.mapAttrsToList (
+        hostname: ip:
+        let
+          lastOctet = lib.last (lib.splitString "." ip);
+        in
+        "${lastOctet} IN PTR ${hostname}.${domain}."
+      ) (lib.filterAttrs (_: ip: lib.hasPrefix "${networkPrefix}." ip) hosts)
     );
 
   # complete forward zone data
@@ -69,9 +73,7 @@ let
 
   reverseZoneFiles = map (rz: {
     name = rz;
-    file = pkgs.writeText "${rz}.zone" (
-      generateReverseZoneData cfg.domainName rz cfg.staticHosts
-    );
+    file = pkgs.writeText "${rz}.zone" (generateReverseZoneData cfg.domainName rz cfg.staticHosts);
   }) cfg.reverseZones;
 
 in
@@ -108,7 +110,7 @@ in
 
     staticHosts = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
-      default = { };
+      default = import ./static-hosts.nix { inherit globals; };
       description = "static host entries to add to the zone (hostname -> IP)";
     };
 
@@ -152,17 +154,16 @@ in
           }
         ];
 
-        zone =
-          [
-            {
-              domain = cfg.domainName;
-              file = "${cfg.domainName}.zone";
-            }
-          ]
-          ++ map (rz: {
-            domain = rz;
-            file = "${rz}.zone";
-          }) cfg.reverseZones;
+        zone = [
+          {
+            domain = cfg.domainName;
+            file = "${cfg.domainName}.zone";
+          }
+        ]
+        ++ map (rz: {
+          domain = rz;
+          file = "${rz}.zone";
+        }) cfg.reverseZones;
       };
     };
 
@@ -174,9 +175,7 @@ in
       lib.mkAfter ''
         mkdir -p /var/lib/knot/zones
         ${installCmd forwardZoneFile "${cfg.domainName}.zone"}
-        ${lib.concatStringsSep "\n" (
-          map (rz: installCmd rz.file "${rz.name}.zone") reverseZoneFiles
-        )}
+        ${lib.concatStringsSep "\n" (map (rz: installCmd rz.file "${rz.name}.zone") reverseZoneFiles)}
       '';
   };
 }
