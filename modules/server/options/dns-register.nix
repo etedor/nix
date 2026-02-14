@@ -20,24 +20,52 @@ let
 
   allSubdomains = lib.unique (nginxSubdomains ++ cfg.subdomains);
 
-  # nsupdate batch commands per subdomain (static, built at eval time)
-  updateLines = lib.concatMapStrings (sub: ''
-    update delete ${sub}.${cfg.zone}. A
-    update add ${sub}.${cfg.zone}. ${toString cfg.ttl} A ${cfg.address}
-  '') allSubdomains;
-
   script = pkgs.writeShellScript "dns-register" ''
     set -uo pipefail
 
     KEY_FILE=${lib.escapeShellArg cfg.tsigKeyFile}
+    ADDRESS=${lib.escapeShellArg cfg.address}
+    ZONE=${lib.escapeShellArg cfg.zone}
+    PORT=${toString cfg.port}
+    TTL=${toString cfg.ttl}
+    CURRENT_SUBS=(${lib.concatMapStringsSep " " lib.escapeShellArg allSubdomains})
     SERVERS=(${lib.concatMapStringsSep " " lib.escapeShellArg cfg.servers})
+    DIG=${pkgs.bind.dnsutils}/bin/dig
+    NSUPDATE=${pkgs.bind.dnsutils}/bin/nsupdate
 
     for server in "''${SERVERS[@]}"; do
-      ${pkgs.bind.dnsutils}/bin/nsupdate -k "$KEY_FILE" <<NSUPDATE || true
-    server $server ${toString cfg.port}
-    zone ${cfg.zone}
-    ${updateLines}send
-    NSUPDATE
+      # AXFR the zone, find A records matching our IP
+      LIVE=()
+      while IFS=$'\t' read -r name ttl class type rdata; do
+        if [ "$type" = "A" ] && [ "$rdata" = "$ADDRESS" ]; then
+          sub="''${name%."$ZONE".}"
+          [ "$sub" != "$name" ] && LIVE+=("$sub")
+        fi
+      done < <("$DIG" AXFR @"$server" -p "$PORT" "$ZONE" +noall +answer 2>/dev/null || true)
+
+      # stale = live records with our IP that aren't in current set
+      STALE=()
+      for live_sub in "''${LIVE[@]}"; do
+        found=0
+        for cur in "''${CURRENT_SUBS[@]}"; do
+          if [ "$live_sub" = "$cur" ]; then found=1; break; fi
+        done
+        [ "$found" = 0 ] && STALE+=("$live_sub")
+      done
+
+      # send updates
+      {
+        echo "server $server $PORT"
+        echo "zone $ZONE"
+        for sub in "''${STALE[@]}"; do
+          echo "update delete $sub.$ZONE. A $ADDRESS"
+        done
+        for sub in "''${CURRENT_SUBS[@]}"; do
+          echo "update delete $sub.$ZONE. A $ADDRESS"
+          echo "update add $sub.$ZONE. $TTL A $ADDRESS"
+        done
+        echo "send"
+      } | "$NSUPDATE" -k "$KEY_FILE" || true
     done
   '';
 in

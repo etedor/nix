@@ -132,12 +132,19 @@ in
       settings = {
         server.listen = [ "${cfg.listenAddress}@${toString cfg.listenPort}" ];
 
-        acl = lib.optional (cfg.tsigKeyFile != null) {
-          id = "acl-update";
-          address = cfg.updateAddresses;
-          key = "xfer";
-          action = "update";
-        };
+        acl = lib.optionals (cfg.tsigKeyFile != null) [
+          {
+            id = "acl-update";
+            address = cfg.updateAddresses;
+            key = "xfer";
+            action = "update";
+          }
+          {
+            id = "acl-transfer";
+            address = cfg.updateAddresses;
+            action = "transfer";
+          }
+        ];
 
         template = [
           {
@@ -146,7 +153,7 @@ in
             journal-content = "all";
             zonefile-load = "difference-no-serial";
             serial-policy = "unixtime";
-            acl = lib.optional (cfg.tsigKeyFile != null) "acl-update";
+            acl = lib.optionals (cfg.tsigKeyFile != null) [ "acl-update" "acl-transfer" ];
           }
         ];
 
