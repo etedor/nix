@@ -8,10 +8,18 @@
 
 let
   user0 = globals.users 0;
+  pythonEnv = pkgs.python3.withPackages (ps: with ps; [ netmiko ]);
+  switch-cli = pkgs.writeScriptBin "switch-cli" ''
+    #!${pythonEnv}/bin/python3
+    ${builtins.readFile ./bin/switch-cli.py}
+  '';
+  claude-run = pkgs.writeShellScriptBin "claude-run" (builtins.readFile ./bin/claude-run.sh);
 in
 {
   users.users.${user0.name}.packages = [
     claude-code-pkg
+    claude-run
+    switch-cli
     # pkgs-unstable.mcp-nixos  # disabled: py-key-value-aio test failures
     pkgs-unstable.uv
   ];
@@ -65,6 +73,12 @@ in
               && mv "$CONFIG.tmp" "$CONFIG"
           else
             echo '${desired}' > "$CONFIG"
+          fi
+
+          # remove switch MCP server (replaced by claude-run CLI)
+          if [ -f "$CONFIG" ]; then
+            ${pkgs.jq}/bin/jq 'del(.mcpServers.switch)' "$CONFIG" > "$CONFIG.tmp" \
+              && mv "$CONFIG.tmp" "$CONFIG"
           fi
         '';
 

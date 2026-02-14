@@ -73,6 +73,7 @@ mkModule {
             "${bin}/networkctl"
             "${bin}/resolvectl"
             "${bin}/ss"
+            "${bin}/tcpdump"
 
             # nft: read-only
             "${bin}/nft list *"
@@ -106,14 +107,6 @@ mkModule {
           ];
       }
     ];
-
-    security.wrappers.tcpdump = {
-      source = "${pkgs.tcpdump}/bin/tcpdump";
-      capabilities = "cap_net_raw+ep";
-      owner = "root";
-      group = "claude";
-      permissions = "u+rx,g+rx,o-rwx";
-    };
   };
 
   darwin = {
