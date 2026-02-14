@@ -2,17 +2,29 @@
   lib,
   config,
   pkgs,
+  globals,
   ...
 }:
 
 let
   cfg = config.et42.server.dnsRegister;
 
+  # auto-derive subdomains from nginx virtualHosts matching zone
+  nginxSubdomains =
+    let
+      vhosts = builtins.attrNames config.services.nginx.virtualHosts;
+      suffix = ".${cfg.zone}";
+    in
+    map (name: lib.removeSuffix suffix name)
+      (builtins.filter (lib.hasSuffix suffix) vhosts);
+
+  allSubdomains = lib.unique (nginxSubdomains ++ cfg.subdomains);
+
   # nsupdate batch commands per subdomain (static, built at eval time)
   updateLines = lib.concatMapStrings (sub: ''
     update delete ${sub}.${cfg.zone}. A
     update add ${sub}.${cfg.zone}. ${toString cfg.ttl} A ${cfg.address}
-  '') cfg.subdomains;
+  '') allSubdomains;
 
   script = pkgs.writeShellScript "dns-register" ''
     set -uo pipefail
@@ -71,7 +83,8 @@ in
 
     subdomains = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      description = "subdomains to register as A records";
+      default = [];
+      description = "extra subdomains to register beyond nginx vhosts";
     };
   };
 
