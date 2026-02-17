@@ -15,11 +15,11 @@
 
   security.acme = {
     acceptTerms = true;
-    defaults.email = "admin@${globals.zone}";
+    defaults.email = "admin@${globals.zones.home}";
 
-    certs."${globals.zone}" = {
-      domain = "${globals.zone}";
-      extraDomainNames = [ "*.${globals.zone}" ];
+    certs."${globals.zones.home}" = {
+      domain = "${globals.zones.home}";
+      extraDomainNames = [ "*.${globals.zones.home}" ];
       dnsProvider = "cloudflare";
       dnsPropagationCheck = true;
       dnsResolver = "1.1.1.1:53";

@@ -6,7 +6,7 @@
 {
   networking = {
     hostName = "duke";
-    domain = globals.zone;
+    domain = globals.zones.home;
     useDHCP = false; # managed by systemd-networkd
 
     firewall.allowedTCPPorts = [ ];

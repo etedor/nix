@@ -46,8 +46,8 @@
     consumptionDir = "/pool0/paperless/consume";
     passwordFile = config.age.secrets.paperless.path;
     settings = {
-      PAPERLESS_ALLOWED_HOSTS = "paperless.${globals.zone},127.0.0.1,localhost";
-      PAPERLESS_CSRF_TRUSTED_ORIGINS = "https://paperless.${globals.zone}";
+      PAPERLESS_ALLOWED_HOSTS = "paperless.${globals.zones.home},127.0.0.1,localhost";
+      PAPERLESS_CSRF_TRUSTED_ORIGINS = "https://paperless.${globals.zones.home}";
     };
   };
 }

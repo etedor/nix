@@ -59,7 +59,7 @@ mkModule {
 
     programs.ssh.knownHosts = lib.mapAttrs (name: key: {
       publicKey = key;
-      extraHostNames = [ "${name}.${globals.zone}" ];
+      extraHostNames = [ "${name}.${globals.zones.home}" ];
     }) keys.hosts;
 
     home-manager.users.${user0.name}.programs.ssh = {

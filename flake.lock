@@ -598,11 +598,11 @@
     },
     "private": {
       "locked": {
-        "lastModified": 1768075522,
-        "narHash": "sha256-t4b75wGe3iJLeXp8vPZv/NqnMKo3xLWgDP23r5w7YN8=",
+        "lastModified": 1771289280,
+        "narHash": "sha256-cwNd8yp1JG8iJdS7TrN6MWlhz1KaCr1WtA14L+pO4Qw=",
         "ref": "refs/heads/master",
-        "rev": "aa3c0c7d3a8b5553e105a75d21d442756fea4d17",
-        "revCount": 1,
+        "rev": "7626fb8ee3e2f5fa2ce2802b4964c61d788a185a",
+        "revCount": 2,
         "type": "git",
         "url": "ssh://git@github.com/etedor/nix-private"
       },

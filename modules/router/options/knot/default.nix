@@ -29,29 +29,34 @@ let
     domain: hosts:
     lib.concatStringsSep "\n" (lib.mapAttrsToList (name: ip: "${name} IN A ${ip}") hosts);
 
-  # PTR records for reverse zones
+  # PTR records for a single zone's hosts within a reverse domain
+  # returns a list of record strings
   generatePTRRecords =
     domain: reverseDomain: hosts:
     let
-      # extract network prefix from reverse zone
-      # e.g., "10.168.192.in-addr.arpa" -> "192.168.10"
-      networkPrefix =
-        if lib.hasSuffix "in-addr.arpa" reverseDomain then
-          let
-            parts = lib.splitString "." (lib.removeSuffix ".in-addr.arpa" reverseDomain);
-          in
-          lib.concatStringsSep "." (lib.reverseList parts)
-        else
-          "";
-    in
-    lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (
-        hostname: ip:
+      reverseParts = lib.splitString "." (lib.removeSuffix ".in-addr.arpa" reverseDomain);
+      networkPrefix = lib.concatStringsSep "." (lib.reverseList reverseParts);
+      prefixLen = builtins.length reverseParts;
+      hostPart =
+        ip:
         let
-          lastOctet = lib.last (lib.splitString "." ip);
+          octets = lib.splitString "." ip;
         in
-        "${lastOctet} IN PTR ${hostname}.${domain}."
-      ) (lib.filterAttrs (_: ip: lib.hasPrefix "${networkPrefix}." ip) hosts)
+        lib.concatStringsSep "." (lib.reverseList (lib.drop prefixLen octets));
+    in
+    lib.mapAttrsToList (
+      hostname: ip: "${hostPart ip} IN PTR ${hostname}.${domain}."
+    ) (lib.filterAttrs (_: ip: lib.hasPrefix "${networkPrefix}." ip) hosts);
+
+  # combined PTRs from all zones for a reverse domain
+  generateAllPTRs =
+    reverseDomain:
+    lib.concatStringsSep "\n" (
+      lib.concatLists (
+        lib.mapAttrsToList (
+          domain: zcfg: generatePTRRecords domain reverseDomain zcfg.staticHosts
+        ) cfg.zones
+      )
     );
 
   # complete forward zone data
@@ -61,19 +66,20 @@ let
   '';
 
   # complete reverse zone data
-  generateReverseZoneData = domain: reverseDomain: hosts: ''
+  generateReverseZoneData = reverseDomain: ''
     ${generateSOA reverseDomain}
-    ${generatePTRRecords domain reverseDomain hosts}
+    ${generateAllPTRs reverseDomain}
   '';
 
   # zone files written to nix store
-  forwardZoneFile = pkgs.writeText "${cfg.domainName}.zone" (
-    generateZoneData cfg.domainName cfg.staticHosts
-  );
+  forwardZoneFiles = lib.mapAttrsToList (domain: zcfg: {
+    name = domain;
+    file = pkgs.writeText "${domain}.zone" (generateZoneData domain zcfg.staticHosts);
+  }) cfg.zones;
 
   reverseZoneFiles = map (rz: {
     name = rz;
-    file = pkgs.writeText "${rz}.zone" (generateReverseZoneData cfg.domainName rz cfg.staticHosts);
+    file = pkgs.writeText "${rz}.zone" (generateReverseZoneData rz);
   }) cfg.reverseZones;
 
 in
@@ -97,21 +103,24 @@ in
       description = "port on which Knot should listen";
     };
 
-    domainName = lib.mkOption {
-      type = lib.types.str;
-      description = "primary DNS zone to serve";
+    zones = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.submodule {
+        options.staticHosts = lib.mkOption {
+          type = lib.types.attrsOf lib.types.str;
+          default = { };
+          description = "static host entries (hostname → IP)";
+        };
+      });
+      default = lib.mapAttrs (_: hosts: { staticHosts = hosts; }) (
+        import ./static-hosts.nix { inherit globals; }
+      );
+      description = "forward zones to serve, keyed by domain name";
     };
 
     reverseZones = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [ ];
-      description = "reverse DNS zones to serve (e.g., '1.168.192.in-addr.arpa')";
-    };
-
-    staticHosts = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
-      default = import ./static-hosts.nix { inherit globals; };
-      description = "static host entries to add to the zone (hostname -> IP)";
+      default = [ "10.in-addr.arpa" ];
+      description = "reverse DNS zones to serve";
     };
 
     tsigKeyFile = lib.mkOption {
@@ -141,6 +150,12 @@ in
             key = "xfer";
             action = "update";
           }
+        ] ++ [
+          {
+            id = "acl-deny-xfr";
+            action = "transfer";
+            deny = true;
+          }
         ];
 
         template = [
@@ -150,31 +165,30 @@ in
             journal-content = "all";
             zonefile-load = "difference-no-serial";
             serial-policy = "unixtime";
-            acl = lib.optionals (cfg.tsigKeyFile != null) [ "acl-update" ];
+            acl = lib.optionals (cfg.tsigKeyFile != null) [ "acl-update" ] ++ [ "acl-deny-xfr" ];
           }
         ];
 
-        zone = [
-          {
-            domain = cfg.domainName;
-            file = "${cfg.domainName}.zone";
-          }
-        ]
-        ++ map (rz: {
-          domain = rz;
-          file = "${rz}.zone";
-        }) cfg.reverseZones;
+        zone =
+          (lib.mapAttrsToList (domain: _: {
+            inherit domain;
+            file = "${domain}.zone";
+          }) cfg.zones)
+          ++ map (rz: {
+            domain = rz;
+            file = "${rz}.zone";
+          }) cfg.reverseZones;
       };
     };
 
     # copy zone files from nix store to knot working directory
     systemd.services.knot.preStart =
       let
-        installCmd = src: dst: "install -m 0644 -o knot -g knot ${src} /var/lib/knot/zones/${dst}";
+        installCmd = src: dst: "install -m 0640 -o knot -g knot ${src} /var/lib/knot/zones/${dst}";
       in
       lib.mkAfter ''
         mkdir -p /var/lib/knot/zones
-        ${installCmd forwardZoneFile "${cfg.domainName}.zone"}
+        ${lib.concatStringsSep "\n" (map (fz: installCmd fz.file "${fz.name}.zone") forwardZoneFiles)}
         ${lib.concatStringsSep "\n" (map (rz: installCmd rz.file "${rz.name}.zone") reverseZoneFiles)}
       '';
   };

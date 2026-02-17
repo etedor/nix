@@ -62,10 +62,10 @@
         PAPERLESS_DBENGINE = "sqlite";
         PAPERLESS_TIME_ZONE = globals.tz;
         PAPERLESS_OCR_LANGUAGE = "eng";
-        PAPERLESS_ALLOWED_HOSTS = "paperless.${globals.zone},127.0.0.1,localhost";
-        PAPERLESS_CSRF_TRUSTED_ORIGINS = "https://paperless.${globals.zone}";
+        PAPERLESS_ALLOWED_HOSTS = "paperless.${globals.zones.home},127.0.0.1,localhost";
+        PAPERLESS_CSRF_TRUSTED_ORIGINS = "https://paperless.${globals.zones.home}";
         PAPERLESS_ADMIN_USER = "admin";
-        PAPERLESS_URL = "https://paperless.${globals.zone}";
+        PAPERLESS_URL = "https://paperless.${globals.zones.home}";
         PAPERLESS_CONSUMPTION_DIR = "/usr/src/paperless/consume";
       };
 

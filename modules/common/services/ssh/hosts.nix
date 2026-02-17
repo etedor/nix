@@ -2,15 +2,15 @@
 
 user: {
   "docker-home" = {
-    hostname = "docker-home.${globals.zone}";
+    hostname = "docker-home.${globals.zones.home}";
     user = user;
   };
   "duke" = {
-    hostname = "duke.${globals.zone}";
+    hostname = "duke.${globals.zones.home}";
     user = user;
   };
   "ntp" = {
-    hostname = "ntp.${globals.zone}";
+    hostname = "ntp.${globals.zones.home}";
     user = user;
 
     extraOptions = {
@@ -21,27 +21,27 @@ user: {
     };
   };
   "rt-ggz" = {
-    hostname = "rt-ggz.${globals.zone}";
+    hostname = "rt-ggz.${globals.zones.home}";
     user = user;
   };
   "rt-sea" = {
-    hostname = "rt-sea.${globals.zone}";
+    hostname = "rt-sea.${globals.zones.home}";
     user = user;
   };
   "rt-sea2" = {
-    hostname = "rt-sea2.${globals.zone}";
+    hostname = "rt-sea2.${globals.zones.home}";
     user = user;
   };
 
   "sw-garage" = {
-    hostname = "sw-garage.${globals.zone}";
+    hostname = "sw-garage.${globals.zones.home}";
     user = user;
     extraOptions = {
       SetEnv = "TERM=xterm-256color";
     };
   };
   "sw-living-room" = {
-    hostname = "sw-living-room.${globals.zone}";
+    hostname = "sw-living-room.${globals.zones.home}";
     user = user;
 
     extraOptions = {
@@ -52,7 +52,7 @@ user: {
   };
 
   "sw-office" = {
-    hostname = "sw-office.${globals.zone}";
+    hostname = "sw-office.${globals.zones.home}";
     user = user;
 
     extraOptions = {
@@ -62,7 +62,7 @@ user: {
     };
   };
   "sw-playroom" = {
-    hostname = "sw-playroom.${globals.zone}";
+    hostname = "sw-playroom.${globals.zones.home}";
     user = user;
 
     extraOptions = {

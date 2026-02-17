@@ -11,7 +11,7 @@ let
 
   hostname = config.networking.hostName;
   dnsServer = globals.routers.${hostname}.interfaces.lo0;
-  zone = globals.zone;
+  zone = globals.zones.home;
 
   wg-mkclient = pkgs.writeShellScriptBin "wg-mkclient" ''
     #!/usr/bin/env bash

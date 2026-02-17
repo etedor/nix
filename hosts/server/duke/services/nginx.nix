@@ -6,7 +6,7 @@
 }:
 
 let
-  z = globals.zone;
+  z = globals.zones.home;
   telegram = [ "149.154.160.0/20" "91.108.4.0/22" ];
 in
 {
@@ -59,7 +59,7 @@ in
         {
           "_" = {
             forceSSL = true;
-            useACMEHost = globals.zone;
+            useACMEHost = globals.zones.home;
             locations."/" = {
               return = "444";
             };
@@ -132,7 +132,7 @@ in
         {
           "n8n.${z}" = {
             forceSSL = true;
-            useACMEHost = globals.zone;
+            useACMEHost = globals.zones.home;
             extraConfig = ''
               error_page 403 = @denied;
             '';

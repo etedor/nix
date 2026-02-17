@@ -16,12 +16,12 @@ in
     enable = true;
     inherit network classes reservations;
 
-    sharedNetworkName = globals.zone;
+    sharedNetworkName = globals.zones.home;
     dnsServers = [
       rt-ggz.interfaces.lo0
       globals.anycast.dns
     ];
-    domainName = globals.zone;
+    domainName = globals.zones.home;
     ntpServer = globals.hosts.ntp.ip;
 
     authorizedRelayAgents = [

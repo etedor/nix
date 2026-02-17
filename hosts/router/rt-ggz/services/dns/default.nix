@@ -11,45 +11,14 @@ let
   rt-sea2 = globals.routers.rt-sea2;
   things = globals.networks.ggz.things;
 
-  rt-ggz-knot = "${rt-ggz.interfaces.lo0}:5354";
   rt-ggz-unbound = "${rt-ggz.interfaces.lo0}:5353";
   rt-sea-unbound = "${rt-sea.interfaces.lo0}:5353";
   rt-sea2-unbound = "${rt-sea2.interfaces.lo0}:5353";
-
-  reverseZones = [
-    "2.0.10.in-addr.arpa"
-    "4.0.10.in-addr.arpa"
-    "8.0.10.in-addr.arpa"
-    "9.0.10.in-addr.arpa"
-    "10.0.10.in-addr.arpa"
-    "11.0.10.in-addr.arpa"
-    "16.0.10.in-addr.arpa"
-    "32.0.10.in-addr.arpa"
-  ];
-
-  archiveTlds = [
-    "today"
-    "fo"
-    "is"
-    "li"
-    "md"
-    "ph"
-    "vn"
-  ];
-  quad9 = "9.9.9.9,149.112.112.112";
-  mkArchiveMapping =
-    tlds:
-    builtins.listToAttrs (
-      map (tld: {
-        name = "archive.${tld}";
-        value = quad9;
-      }) tlds
-    );
 in
 {
   et42.router.dns.blocky = {
     enable = true;
-    listenAddress = [ "${rt-ggz.interfaces.lo0}:53" ];
+    listenAddress = [ rt-ggz.interfaces.lo0 ];
 
     upstream = {
       servers = [
@@ -58,23 +27,6 @@ in
         rt-ggz-unbound
       ];
       timeout = "500ms";
-      strategy = "parallel_best";
-    };
-
-    conditionalMapping = {
-      "in-addr.arpa" = rt-ggz-knot;
-      "${globals.zone}" = rt-ggz-knot;
-    }
-    // mkArchiveMapping archiveTlds;
-
-    denylists = {
-      default = config.et42.router.dns.blocky.lists.deny.default;
-      doh = config.et42.router.dns.blocky.lists.deny.doh;
-      local = config.et42.router.dns.blocky.lists.deny.local;
-    };
-
-    allowlists = {
-      default = config.et42.router.dns.blocky.lists.allow.default;
     };
 
     clientGroupsBlock = {
@@ -104,8 +56,6 @@ in
     enable = true;
     listenAddress = rt-ggz.interfaces.lo0;
     listenPort = 5354;
-    domainName = globals.zone;
-    reverseZones = reverseZones;
     tsigKeyFile = config.age.secrets.knot-tsig-key.path;
   };
 
@@ -117,7 +67,7 @@ in
 
   networking = {
     nameservers = [ rt-ggz.interfaces.lo0 ];
-    domain = globals.zone;
-    search = [ globals.zone ];
+    domain = globals.zones.home;
+    search = [ globals.zones.home ];
   };
 }

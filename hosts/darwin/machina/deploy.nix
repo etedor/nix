@@ -11,7 +11,7 @@
   nix.distributedBuilds = true;
   nix.buildMachines = [
     {
-      hostName = "duke.${globals.zone}";
+      hostName = "duke.${globals.zones.home}";
       systems = [ "x86_64-linux" ];
       sshUser = "nixremote";
       sshKey = "/var/root/.ssh/nix-builder";

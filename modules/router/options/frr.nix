@@ -211,7 +211,7 @@ in
         let
           header = [
             "hostname ${config.networking.hostName}"
-            "domainname ${globals.zone}"
+            "domainname ${globals.zones.home}"
             "log syslog"
             "service password-encryption"
             "service integrated-vtysh-config"
