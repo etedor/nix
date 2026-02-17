@@ -17,7 +17,7 @@
 
   networking = {
     hostName = "rt-ggz";
-    domain = globals.zone;
+    domain = globals.zones.home;
     useDHCP = false;
   };
 

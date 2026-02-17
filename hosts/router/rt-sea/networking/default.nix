@@ -15,7 +15,7 @@ in
 
   networking = {
     hostName = "rt-sea";
-    domain = globals.zone;
+    domain = globals.zones.home;
     useDHCP = false; # managed by systemd-networkd
   };
 

@@ -26,7 +26,7 @@ mkModule {
     home-manager.users.${user0.name}.programs.atuin = {
       forceOverwriteSettings = true;
       settings = {
-        sync_address = "https://atuin.${globals.zone}";
+        sync_address = "https://atuin.${globals.zones.home}";
         key_path = config.age.secrets.atuin-key.path;
         session_path = config.age.secrets.atuin-session.path;
         filter_mode = "global";

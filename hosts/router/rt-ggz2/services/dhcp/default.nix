@@ -6,11 +6,11 @@
 let
   rt-ggz2 = globals.routers.rt-ggz2;
 
+  mgmtZone = globals.zones.mgmt;
+
   network = import ./network.nix;
   classes = import ./classes.nix;
   reservations = import ./reservations.nix;
-
-  mgmtZone = "et42.management";
 in
 {
   et42.router.dhcp = {

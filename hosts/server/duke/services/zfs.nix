@@ -48,7 +48,7 @@
       enableMail = true;
 
       settings = {
-        ZED_EMAIL_ADDR = [ "admin@${globals.zone}" ];
+        ZED_EMAIL_ADDR = [ "admin@${globals.zones.home}" ];
         ZED_EMAIL_PROG = "${pkgs.msmtp}/bin/msmtp";
         ZED_EMAIL_OPTS = "@ADDRESS@";
 

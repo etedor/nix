@@ -14,6 +14,7 @@ let
   ntp = hosts.ntp;
 
   rt-sea = globals.routers.rt-sea;
+  rt-sea2 = globals.routers.rt-sea2;
 in
 {
   rules = [
@@ -54,10 +55,11 @@ in
     {
       name = "rfc1918 to dns";
       sips = net.rfc1918;
-      dips = [ rt-sea.interfaces.lo0 ];
+      dips = [ rt-sea.interfaces.lo0 rt-sea2.interfaces.lo0 ];
       dpts = [
         53
         5353
+        5354
       ];
       proto = [
         "tcp"

@@ -5,7 +5,7 @@
 }:
 
 let
-  zone = globals.zone;
+  zone = globals.zones.home;
   user0 = (globals.users 0).name;
 
   mkNixosNode =

@@ -34,8 +34,8 @@ mkModule {
           host = "smtp.mailgun.org";
           port = 587;
           auth = true;
-          from = "${config.networking.hostName}@mg.${globals.zone}";
-          user = "system@mg.${globals.zone}";
+          from = "${config.networking.hostName}@mg.${globals.zones.home}";
+          user = "system@mg.${globals.zones.home}";
           passwordeval = "cat ${config.age.secrets.mailgun.path}";
         };
       };

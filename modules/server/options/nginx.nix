@@ -46,7 +46,7 @@
         };
       in
       {
-        "${subdomain}.${globals.zone}" = {
+        "${subdomain}.${globals.zones.home}" = {
           extraConfig = ''
             proxy_buffering off;
             ${siteAccessControl}
@@ -54,7 +54,7 @@
             ${extraConfig}
           '';
           forceSSL = true;
-          useACMEHost = globals.zone;
+          useACMEHost = globals.zones.home;
 
           locations = {
             "/" = {

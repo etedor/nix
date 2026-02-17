@@ -3,6 +3,7 @@
 {
   imports = [
     ./acme.nix
+    ./iddns.nix
     ./nfs.nix
     ./nginx.nix
     ./paperless.nix

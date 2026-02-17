@@ -15,7 +15,7 @@
     enable = true;
     port = 8001;
     credentialsFile = config.age.secrets.icecast.path;
-    adminContact = "admin@${globals.zone}";
+    adminContact = "admin@${globals.zones.home}";
     adminIPs = [ "10.0.8.0/24" ]; # TODO
 
     stations = [

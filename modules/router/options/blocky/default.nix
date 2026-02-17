@@ -1,15 +1,38 @@
 {
   lib,
   config,
+  globals,
   ...
 }:
 
 let
+  cfg = config.et42.router.dns.blocky;
+  knotCfg = config.et42.router.dns.knot;
+
   allowModule = import ./lists-allow.nix;
   denyModule = import ./lists-deny.nix;
 
   mkDomainsFile =
     name: domains: builtins.toFile "blocky-${name}.txt" (builtins.concatStringsSep "\n" domains);
+
+  denyLists = denyModule { inherit mkDomainsFile; };
+  allowLists = allowModule { inherit mkDomainsFile; };
+
+  # auto-derive conditional mapping for private zones when Knot is co-located
+  knotZoneMapping = lib.optionalAttrs knotCfg.enable (
+    let
+      knotAddr = "${knotCfg.listenAddress}:${toString knotCfg.listenPort}";
+    in
+    lib.genAttrs knotCfg.reverseZones (_: knotAddr)
+    // lib.genAttrs (builtins.attrValues globals.zones) (_: knotAddr)
+  );
+
+  # archive.is TLDs — Cloudflare refuses to resolve these, use Quad9
+  archiveTlds = [ "today" "fo" "is" "li" "md" "ph" "vn" ];
+  quad9 = "9.9.9.9,149.112.112.112";
+  archiveMapping = builtins.listToAttrs (
+    map (tld: { name = "archive.${tld}"; value = quad9; }) archiveTlds
+  );
 in
 {
   options.et42.router.dns.blocky = {
@@ -21,7 +44,13 @@ in
 
     listenAddress = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      description = "Port(s) and optional bind IP address(es) to serve DNS endpoint (TCP and UDP).";
+      description = "IP addresses to serve DNS endpoint (TCP and UDP).";
+    };
+
+    listenPort = lib.mkOption {
+      type = lib.types.port;
+      default = 53;
+      description = "Port to serve DNS endpoint.";
     };
 
     upstream = lib.mkOption {
@@ -56,31 +85,26 @@ in
 
     conditionalMapping = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
-      description = "Which DNS resolver(s) should be used for queries for the particular domain (with all subdomains).";
+      default = { };
+      description = "Additional conditional DNS mappings. Private zone mappings are auto-derived when Knot is co-located.";
     };
 
     denylists = lib.mkOption {
       type = lib.types.attrsOf (lib.types.listOf lib.types.str);
-      default = { };
+      default = {
+        default = denyLists.default;
+        doh = denyLists.doh;
+        local = denyLists.local;
+      };
       description = "Denylists to include in blocky configuration.";
-      example = lib.literalExpression ''
-        {
-          default = config.et42.router.dns.blocky.lists.deny.default;
-          doh = config.et42.router.dns.blocky.lists.deny.doh;
-          local = config.et42.router.dns.blocky.lists.deny.local;
-        }
-      '';
     };
 
     allowlists = lib.mkOption {
       type = lib.types.attrsOf (lib.types.listOf lib.types.str);
-      default = { };
+      default = {
+        default = allowLists.default;
+      };
       description = "Allowlists to include in blocky configuration.";
-      example = lib.literalExpression ''
-        {
-          default = config.et42.router.dns.blocky.lists.allow.default;
-        }
-      '';
     };
 
     blockType = lib.mkOption {
@@ -95,19 +119,11 @@ in
       '';
     };
 
-    # helper function to format tlds for blocky
-    mkTLDs = lib.mkOption {
-      type = lib.types.functionTo lib.types.str;
-      default = tlds: builtins.concatStringsSep "\n" (map (tld: "/.*\\.${tld}$/") tlds);
-      description = "Helper function to format TLDs for blocky.";
-      visible = false;
-    };
-
     lists = lib.mkOption {
       type = lib.types.attrsOf lib.types.anything;
       default = {
-        allow = allowModule { inherit mkDomainsFile; };
-        deny = denyModule { inherit mkDomainsFile; };
+        allow = allowLists;
+        deny = denyLists;
       };
       description = "Predefined blocklists for blocky.";
       readOnly = true;
@@ -118,16 +134,10 @@ in
       default = {
         default = [
           "default"
-          "tlds"
+          "local"
         ];
       };
       description = "Custom client groups for blocking.";
-      example = lib.literalExpression ''
-        {
-          default = [ "default" "tlds" ];
-          iot = [ "default" "tlds" "doh" ];
-        }
-      '';
     };
 
     customDNS = lib.mkOption {
@@ -169,59 +179,48 @@ in
     };
   };
 
-  config = lib.mkIf config.et42.router.dns.blocky.enable {
+  config = lib.mkIf cfg.enable {
     services.blocky = {
       enable = true;
       settings = {
-        ports.dns = config.et42.router.dns.blocky.listenAddress;
+        ports.dns = map (addr: "${addr}:${toString cfg.listenPort}") cfg.listenAddress;
 
         caching.prefetching = true;
 
         upstreams = {
-          strategy = config.et42.router.dns.blocky.upstream.strategy;
-          timeout = config.et42.router.dns.blocky.upstream.timeout;
-          groups.default = config.et42.router.dns.blocky.upstream.servers;
+          strategy = cfg.upstream.strategy;
+          timeout = cfg.upstream.timeout;
+          groups.default = cfg.upstream.servers;
         };
 
         conditional = {
-          fallbackUpstream = config.et42.router.dns.blocky.upstream.fallback;
-          mapping = config.et42.router.dns.blocky.conditionalMapping;
+          fallbackUpstream = cfg.upstream.fallback;
+          mapping = knotZoneMapping // archiveMapping // cfg.conditionalMapping;
         };
 
         blocking = {
-          denylists = config.et42.router.dns.blocky.denylists;
-          allowlists = config.et42.router.dns.blocky.allowlists;
-          clientGroupsBlock = config.et42.router.dns.blocky.clientGroupsBlock;
-          blockType = config.et42.router.dns.blocky.blockType;
+          inherit (cfg) denylists allowlists clientGroupsBlock blockType;
         };
 
         customDNS =
           lib.mkIf
             (
-              config.et42.router.dns.blocky.customDNS.mapping != { }
-              || config.et42.router.dns.blocky.customDNS.rewrite != { }
-              || config.et42.router.dns.blocky.customDNS.zone != null
+              cfg.customDNS.mapping != { }
+              || cfg.customDNS.rewrite != { }
+              || cfg.customDNS.zone != null
             )
             {
-              customTTL = config.et42.router.dns.blocky.customDNS.customTTL;
-              filterUnmappedTypes = config.et42.router.dns.blocky.customDNS.filterUnmappedTypes;
-              rewrite = config.et42.router.dns.blocky.customDNS.rewrite;
-              mapping = config.et42.router.dns.blocky.customDNS.mapping;
+              inherit (cfg.customDNS) customTTL filterUnmappedTypes rewrite mapping;
             }
-          // lib.optionalAttrs (config.et42.router.dns.blocky.customDNS.zone != null) {
-            zone = config.et42.router.dns.blocky.customDNS.zone;
+          // lib.optionalAttrs (cfg.customDNS.zone != null) {
+            zone = cfg.customDNS.zone;
           };
       };
     };
 
-    networking.firewall = lib.mkIf config.networking.firewall.enable (
-      let
-        port = builtins.elemAt (lib.splitString ":" (builtins.head config.et42.router.dns.blocky.listenAddress)) 1;
-      in
-      {
-        allowedTCPPorts = [ port ];
-        allowedUDPPorts = [ port ];
-      }
-    );
+    networking.firewall = lib.mkIf config.networking.firewall.enable {
+      allowedTCPPorts = [ cfg.listenPort ];
+      allowedUDPPorts = [ cfg.listenPort ];
+    };
   };
 }

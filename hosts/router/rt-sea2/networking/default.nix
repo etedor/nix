@@ -15,7 +15,7 @@ in
 
   networking = {
     hostName = "rt-sea2";
-    domain = globals.zone;
+    domain = globals.zones.home;
     useDHCP = false;
   };
 

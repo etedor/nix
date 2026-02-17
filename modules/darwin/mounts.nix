@@ -8,7 +8,7 @@
 let
   user0 = globals.users 0;
   passwordFile = config.age.secrets.smb-user0.path;
-  duke = "duke.${globals.zone}";
+  duke = "duke.${globals.zones.home}";
   mountBase = "/Users/${user0.name}/Volumes/duke";
 in
 {
