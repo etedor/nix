@@ -10,7 +10,7 @@ let
   nfw = pkgs.writeShellScriptBin "nfw" (builtins.readFile ./bin/nfw.sh);
 
   hostname = config.networking.hostName;
-  dnsServer = globals.routers.${hostname}.interfaces.lo0;
+  router = globals.routers.${hostname};
   zone = globals.zones.home;
 
   wg-mkclient = pkgs.writeShellScriptBin "wg-mkclient" ''
@@ -57,14 +57,14 @@ let
     CLIENT_PUB_KEY=$(echo "$CLIENT_PRIV_KEY" | wg pubkey)
 
     SERVER_PUB_KEY=$(sudo wg show "$TUNNEL" public-key)
-    SERVER_IP=$(ip -4 addr show ens3 | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | tail -n1)
+    SERVER_IP=$(ip -4 addr show ${router.extIntf or "ens3"} | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | tail -n1)
     SERVER_PORT=$(sudo wg show "$TUNNEL" listen-port)
 
     cat >"$TEMP_CONF" <<EOF
     [Interface]
     PrivateKey = $CLIENT_PRIV_KEY
     Address = $CLIENT_IP/32
-    DNS = ${dnsServer}, ${zone}
+    DNS = ${globals.anycast.dns}, ${zone}
 
     [Peer]
     PublicKey = $SERVER_PUB_KEY

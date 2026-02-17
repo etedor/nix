@@ -70,7 +70,7 @@
         networkConfig = {
           Address = [ "10.0.4.32/24" ];
           Gateway = "10.0.4.1";
-          DNS = [ "10.127.0.1" ];
+          DNS = [ "10.127.0.1" "${globals.anycast.dns}" ];
           LinkLocalAddressing = "no";
         };
       };
