@@ -29,6 +29,22 @@ in
         source = ./statusline.sh;
       };
 
+      home.file.".claude/plugins/go-lsp/.claude-plugin/plugin.json".text = builtins.toJSON {
+        name = "go-lsp-direnv";
+        description = "gopls via direnv for nix flake dev shells";
+        version = "1.0.0";
+      };
+
+      home.file.".claude/plugins/go-lsp/.lsp.json".text = builtins.toJSON {
+        go = {
+          command = "direnv";
+          args = [ "exec" "." "gopls" "serve" ];
+          extensionToLanguage = {
+            ".go" = "go";
+          };
+        };
+      };
+
       home.activation.configureClaudeMcp =
         let
           mcpConfig = {
