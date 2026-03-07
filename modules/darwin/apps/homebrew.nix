@@ -37,6 +37,7 @@ in
       QuadStream = 1051358039;
       Scratchpad = 6504040051;
       UpNote = 1398373917;
+      TestFlight = 899247664;
       WireGuard = 1451685025;
     };
   };
