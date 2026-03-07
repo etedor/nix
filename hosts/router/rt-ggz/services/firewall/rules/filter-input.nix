@@ -27,6 +27,14 @@ in
     }
 
     {
+      name = "bgp";
+      proto = "tcp";
+      dpts = [ 179 ];
+      iifs = [ "vlan8" ];
+      action = "accept";
+    }
+
+    {
       name = "ssh";
       proto = "tcp";
       dpts = [ 22 ];
