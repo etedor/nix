@@ -3,6 +3,7 @@
 {
   imports = [
     ./acme.nix
+    ./beets
     ./iddns.nix
     ./nfs.nix
     ./nginx.nix

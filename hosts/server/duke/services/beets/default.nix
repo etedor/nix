@@ -6,11 +6,19 @@
 
 let
   user0 = globals.users 0;
+  beetsWithPlugins = pkgs.python3.pkgs.toPythonApplication (pkgs.python3.pkgs.beets.override {
+    pluginOverrides = {
+      autobpm.enable = true;
+      chroma.enable = true;
+      embedart.enable = true;
+      fetchart.enable = true;
+      lastgenre.enable = true;
+      replaygain.enable = true;
+    };
+  });
 in
 {
   environment.systemPackages = with pkgs; [
-    chromaprint
-    ffmpeg
     flac
     lame
   ];
@@ -22,7 +30,6 @@ in
         set -l url $argv[1]
         set -l query $argv[2..-1]
 
-        # get album path
         set -l album_path (beet list -a -f '$path' $query)
 
         if test -z "$album_path"
@@ -30,30 +37,22 @@ in
             return 1
         end
 
-        # clear embedded art
         beet clearart $query || return 1
-
-        # embed new art
         beet embedart -u "$url" $query || return 1
-
-        # remove existing cover files
         rm -f "$album_path"/cover.{jpg,jpeg,png,webp} 2>/dev/null
-
-        # extract new art
         beet extractart -n cover $query
       '';
     };
 
     programs.beets = {
       enable = true;
+      package = beetsWithPlugins;
 
       settings = {
-        # core settings
-        directory = "/Users/${user0.name}/Volumes/duke/media/library/music";
-        library = "/Users/${user0.name}/Volumes/duke/${user0.name}/.config/beets/musiclibrary.blb";
+        directory = "/pool0/media/library/music";
+        library = "/home/${user0.name}/.config/beets/musiclibrary.blb";
         threaded = true;
 
-        # plugins configuration
         plugins = [
           "autobpm"
           "chroma"
@@ -72,7 +71,6 @@ in
           multidisc = "1 if disctotal > 1 else 0";
         };
 
-        # path patterns
         paths = {
           default = "$albumartist_sort/$original_year. $album%aunique{}/%if{$multidisc,Disc $disc/}$track. $title";
           singleton = "Singles/$artist - $title";
@@ -80,7 +78,6 @@ in
           albumtype_soundtrack = "Soundtracks/$original_year. $album/$track. $title";
         };
 
-        # import settings
         import = {
           write = true;
           copy = false;
@@ -88,14 +85,14 @@ in
           resume = "ask";
           incremental = false;
           quiet_fallback = "skip";
+          duplicate_action = "remove";
           timid = false;
-          log = "/Users/${user0.name}/.config/beets/beet.log";
+          log = "/home/${user0.name}/.config/beets/beet.log";
         };
 
-        # plugin-specific settings
-        autobpm = {
-          auto = true;
-        };
+        match.strong_rec_thresh = 0.85;
+
+        autobpm.auto = true;
 
         embedart = {
           auto = true;
@@ -119,20 +116,14 @@ in
           auto = true;
           source = "artist";
           canonical = true;
-          whitelist = ./beets/genres.txt;
+          whitelist = ./genres.txt;
           prefer_specific = true;
           force = true;
         };
 
-        replaygain = {
-          auto = false;
-        };
+        replaygain.auto = false;
+        scrub.auto = true;
 
-        scrub = {
-          auto = true;
-        };
-
-        # character replacement rules
         replace = {
           "^\\." = "_";
           "[\\x00-\\x1f]" = "_";
@@ -146,7 +137,6 @@ in
           "\\s+$" = "";
         };
 
-        # additional settings
         art_filename = "cover";
         clutter = [
           ".DS_Store"

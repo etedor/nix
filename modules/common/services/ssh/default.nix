@@ -152,6 +152,11 @@ mkModule {
             ${colors.reset}
           '';
         };
+
+        beet = {
+          description = "SSH to duke media directory";
+          body = "ssh -t duke 'cd /pool0/media && exec fish'";
+        };
       };
     };
   };
