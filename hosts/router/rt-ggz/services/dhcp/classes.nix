@@ -8,6 +8,12 @@
     ];
   }
   {
+    name = "aqara";
+    macs = [
+      "54:ef:44:93:f9:15" # doorbell
+    ];
+  }
+  {
     name = "aurora";
     macs = [
       "2c:8d:b1:e9:f5:34"
@@ -66,12 +72,6 @@
     name = "govee";
     macs = [
       "d4:ad:fc:2c:77:56"
-    ];
-  }
-  {
-    name = "logitech";
-    macs = [
-      "44:73:d6:20:c9:52" # doorbell
     ];
   }
   {
@@ -418,9 +418,9 @@
   {
     name = "vlan10-trust1";
     memberOf = [
+      "aqara"
       "bambu-labs"
       "cafe"
-      "logitech"
       "rainbird"
       "ratgdo"
     ];

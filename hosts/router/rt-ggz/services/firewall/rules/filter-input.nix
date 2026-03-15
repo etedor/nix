@@ -101,7 +101,7 @@ in
       proto = "igmp";
       iifs = [
         "vlan8"
-        # "vlan10"
+        "vlan10"
       ];
       action = "accept";
     }
@@ -112,7 +112,7 @@ in
       dpts = [ 5353 ];
       iifs = [
         "vlan8"
-        # "vlan10"  # not needed without reflection
+        "vlan10"
       ];
       action = "accept";
     }
