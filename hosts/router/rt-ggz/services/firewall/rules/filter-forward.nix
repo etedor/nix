@@ -55,7 +55,10 @@ in
     {
       name = "rfc1918 to dns";
       sips = net.rfc1918;
-      dips = [ rt-sea.interfaces.lo0 rt-sea2.interfaces.lo0 ];
+      dips = [
+        rt-sea.interfaces.lo0
+        rt-sea2.interfaces.lo0
+      ];
       dpts = [
         53
         5353
@@ -85,7 +88,10 @@ in
     }
     {
       name = "dnat to duke";
-      iifs = [ "wg0" "wg1" ];
+      iifs = [
+        "wg0"
+        "wg1"
+      ];
       sips = net.non-rfc1918;
       dips = [ duke.ip ];
       dpts = [ 443 ];
@@ -177,13 +183,13 @@ in
       action = "accept";
       log = true;
     }
-    # {
-    #   name = "family to trust1";
-    #   sips = net.family;
-    #   dips = [ net.ggz.trust1 ];
-    #   action = "accept";
-    #   log = true;
-    # }
+    {
+      name = "family to trust1";
+      sips = net.family;
+      dips = [ net.ggz.trust1 ];
+      action = "accept";
+      log = true;
+    }
     # {
     #   name = "family to trust0";
     #   sips = net.family;
@@ -284,7 +290,7 @@ in
       name = "trust0 to any";
       sips = [ net.ggz.trust0 ];
       dips = [ "0.0.0.0/0" ];
-      action = "drop";
+      action = "accept";
       log = true;
     }
 
