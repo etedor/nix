@@ -32,6 +32,15 @@ in
   "darwin/atuin-key.age".publicKeys = user0 ++ darwin;
   "darwin/atuin-session.age".publicKeys = user0 ++ darwin;
 
+  "darwin/machina/syncthing-user0-cert.age".publicKeys = user0 ++ [ hosts.machina ];
+  "darwin/machina/syncthing-user0-key.age".publicKeys = user0 ++ [ hosts.machina ];
+  "darwin/carbon/syncthing-user0-cert.age".publicKeys = user0 ++ [ hosts.carbon ];
+  "darwin/carbon/syncthing-user0-key.age".publicKeys = user0 ++ [ hosts.carbon ];
+  "darwin/garage/syncthing-user0-cert.age".publicKeys = user0 ++ [ hosts.garage ];
+  "darwin/garage/syncthing-user0-key.age".publicKeys = user0 ++ [ hosts.garage ];
+  "darwin/garage/syncthing-user1-cert.age".publicKeys = user0 ++ [ hosts.garage ];
+  "darwin/garage/syncthing-user1-key.age".publicKeys = user0 ++ [ hosts.garage ];
+
   "darwin/carbon/wg0-config.age".publicKeys = user0 ++ [ hosts.carbon ];
 
   "router/atuin-key.age".publicKeys = user0 ++ router;
@@ -55,6 +64,11 @@ in
   "server/atuin-key.age".publicKeys = user0 ++ server;
   "server/atuin-session.age".publicKeys = user0 ++ server;
   "server/nsupdate-tsig-key.age".publicKeys = user0 ++ server;
+
+  "server/duke/syncthing-user0-cert.age".publicKeys = user0 ++ [ hosts.duke ];
+  "server/duke/syncthing-user0-key.age".publicKeys = user0 ++ [ hosts.duke ];
+  "server/duke/syncthing-user1-cert.age".publicKeys = user0 ++ [ hosts.duke ];
+  "server/duke/syncthing-user1-key.age".publicKeys = user0 ++ [ hosts.duke ];
 
   "server/duke/acme.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/navidrome.age".publicKeys = user0 ++ [ hosts.duke ];

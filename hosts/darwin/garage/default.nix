@@ -13,7 +13,7 @@ in
     ./apps
     ./desktop
     ./display.nix
-    ./mounts.nix
+    ./syncthing.nix
   ];
 
   networking.computerName = "Garage Mac Mini";

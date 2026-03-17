@@ -13,6 +13,7 @@
     ./radio
     ./restic
     ./samba.nix
+    ./syncthing.nix
     ./zfs.nix
   ];
 }

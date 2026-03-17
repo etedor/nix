@@ -16,8 +16,7 @@ in
   imports = [
     ./apps
     ./fonts.nix
-    ./mounts.nix
-    ./options/autofs.nix
+    ./syncthing.nix
     ./options/wallpaper.nix
   ];
 
