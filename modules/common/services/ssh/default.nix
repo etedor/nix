@@ -154,8 +154,23 @@ mkModule {
         };
 
         beet = {
-          description = "SSH to duke media directory";
-          body = "ssh -t duke 'cd /pool0/media && exec fish'";
+          description = "beet commands on duke";
+          body = ''
+            switch $argv[1]
+              case import
+                set -l zip (basename $argv[2])
+                set -l remote /tmp/beet-import
+                rsync -avP $argv[2] duke:$remote/ \
+                  && rm $argv[2] \
+                  && ssh -t duke "beet import '$remote/$zip'"
+              case art
+                set -l url $argv[2]
+                set -l query (printf "'%s' " $argv[3..-1])
+                ssh -t duke "beet clearart $query && beet embedart -u '$url' $query && beet extractart -n cover $query"
+              case '*'
+                ssh -t duke "beet $argv"
+            end
+          '';
         };
       };
     };

@@ -33,9 +33,9 @@ in
       '';
     };
 
-    programs.fish.interactiveShellInit = ''
-      set -x EDITOR vim
-      set -x VISUAL vim
-    '';
+    home.sessionVariables = {
+      EDITOR = "vim";
+      VISUAL = "vim";
+    };
   };
 }
