@@ -133,6 +133,10 @@ mkModule {
         };
       };
 
+      xdg.configFile."fish/completions/beet.fish".text = ''
+        complete -c beet -n "__fish_seen_subcommand_from import" -F -a "(__beet_import_complete)"
+      '';
+
       programs.fish.functions = {
         ssh = {
           wraps = "ssh";
@@ -153,22 +157,42 @@ mkModule {
           '';
         };
 
+        __beet_import_complete = {
+          description = "complete remote paths on duke for beet import";
+          body = ''
+            set -l token (commandline -ct)
+            set -l base /pool0/media/downloads/tidarr/albums
+            if test -z "$token"
+              command ssh duke "bash -c 'shopt -s nocaseglob; ls -1dp \"\$1\"/*/ 2>/dev/null' -- "(string escape -- $base)
+            else if string match -q '/*' -- $token
+              command ssh duke "bash -c 'shopt -s nocaseglob; ls -1dp \"\$1\"* 2>/dev/null' -- "(string escape -- "$token")
+            else
+              command ssh duke "bash -c 'shopt -s nocaseglob; ls -1dp \"\$1\"* 2>/dev/null' -- "(string escape -- "$base/$token")
+            end
+          '';
+        };
+
         beet = {
           description = "beet commands on duke";
           body = ''
             switch $argv[1]
               case import
-                set -l zip (basename $argv[2])
-                set -l remote /tmp/beet-import
-                rsync -avP $argv[2] duke:$remote/ \
-                  && rm $argv[2] \
-                  && ssh -t duke "beet import '$remote/$zip'"
+                if test -e "$argv[2]"
+                  set -l name (basename $argv[2])
+                  set -l remote /tmp/beet-import
+                  rsync -avP $argv[2] duke:$remote/ \
+                    && rm $argv[2] \
+                    && ssh -t duke "beet import "(string escape -- "$remote/$name")
+                else
+                  ssh -t duke "beet import "(string escape -- "$argv[2]")
+                end
               case art
-                set -l url $argv[2]
-                set -l query (printf "'%s' " $argv[3..-1])
-                ssh -t duke "beet clearart $query && beet embedart -u '$url' $query && beet extractart -n cover $query"
+                set -l url (string escape -- $argv[2])
+                set -l query (string escape -- $argv[3..-1])
+                ssh -t duke "beet clearart $query && beet embedart -u $url $query && beet extractart -n cover $query"
               case '*'
-                ssh -t duke "beet $argv"
+                set -l args (string escape -- $argv)
+                ssh -t duke "beet $args"
             end
           '';
         };
