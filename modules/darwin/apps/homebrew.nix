@@ -35,9 +35,8 @@ in
       Amperfy = 1530145038;
       Amphetamine = 937984704;
       QuadStream = 1051358039;
-      Scratchpad = 6504040051;
       UpNote = 1398373917;
-      TestFlight = 899247664;
+      Tot = 1491071483;
       WireGuard = 1451685025;
     };
   };
