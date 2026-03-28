@@ -10,6 +10,7 @@
 
     casks = [
       "elgato-stream-deck"
+      "paintbrush"
     ];
   };
 }
