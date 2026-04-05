@@ -71,11 +71,16 @@ in
           multidisc = "1 if disctotal > 1 else 0";
         };
 
+        album_fields = {
+          artist_path = "albumartist_sort or albumartist or 'Unknown Artist'";
+          yr = "original_year if original_year else year";
+        };
+
         paths = {
-          default = "$albumartist_sort/$original_year. $album%aunique{}/%if{$multidisc,Disc $disc/}$track. $title";
+          default = "$artist_path/$yr. $album%aunique{}/%if{$multidisc,Disc $disc/}$track. $title";
           singleton = "Singles/$artist - $title";
-          comp = "Compilations/$original_year. $album%aunique{}/$disc/$track. $title";
-          albumtype_soundtrack = "Soundtracks/$original_year. $album/$track. $title";
+          comp = "Compilations/$yr. $album%aunique{}/$disc/$track. $title";
+          albumtype_soundtrack = "Soundtracks/$yr. $album/$track. $title";
         };
 
         import = {

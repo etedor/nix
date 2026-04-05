@@ -177,14 +177,16 @@ mkModule {
           body = ''
             switch $argv[1]
               case import
-                if test -e "$argv[2]"
-                  set -l name (basename $argv[2])
+                set -l path $argv[-1]
+                set -l flags $argv[2..-2]
+                if test -e "$path"
+                  set -l name (basename $path)
                   set -l remote /tmp/beet-import
-                  rsync -avP $argv[2] duke:$remote/ \
-                    && rm $argv[2] \
-                    && ssh -t duke "beet import "(string escape -- "$remote/$name")
+                  rsync -avP $path duke:$remote/ \
+                    && rm $path \
+                    && ssh -t duke "beet import $flags "(string escape -- "$remote/$name")
                 else
-                  ssh -t duke "beet import "(string escape -- "$argv[2]")
+                  ssh -t duke "beet import $flags "(string escape -- "$path")
                 end
               case art
                 set -l url (string escape -- $argv[2])
