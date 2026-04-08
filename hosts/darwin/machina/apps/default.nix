@@ -9,6 +9,7 @@
     ];
 
     casks = [
+      "autodesk-fusion"
       "elgato-stream-deck"
       "paintbrush"
     ];
