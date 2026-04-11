@@ -11,6 +11,7 @@
     casks = [
       "autodesk-fusion"
       "elgato-stream-deck"
+      "orcaslicer"
       "paintbrush"
     ];
   };
