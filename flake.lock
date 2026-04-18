@@ -632,11 +632,11 @@
         "nixpkgs": "nixpkgs_12"
       },
       "locked": {
-        "lastModified": 1768841829,
-        "narHash": "sha256-p2AGTZ6tHVUZJVpmqhPJTrUdTCLTZiOcNe0jQdRuPa0=",
+        "lastModified": 1776538974,
+        "narHash": "sha256-0gScNmdGiR/jEOo8uUqVfKIRDGHP+UVFrXFfAaEz1RI=",
         "owner": "etedor",
         "repo": "quadlink",
-        "rev": "8420229d97c1f958219c10bc6afb17cf23bd9838",
+        "rev": "5bd3994f5460138b9b250d337808307604553211",
         "type": "github"
       },
       "original": {
