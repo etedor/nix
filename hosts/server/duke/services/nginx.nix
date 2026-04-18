@@ -128,6 +128,15 @@ in
           proxyWebsockets = true;
         })
 
+        # ledger sequence-smoke callback — binary runs on machina:9100
+        # TODO: replace 0.0.0.0/0 with Sequence-provided CIDRs once published
+        (mkVirtualHost {
+          subdomain = "ledger";
+          proxyPass = "http://${globals.hosts.machina.ip}:9100";
+          adminOnly = false;
+          allowIPs = [ "0.0.0.0/0" "::/0" ];
+        })
+
         # n8n - admin base, webhook also allows telegram
         {
           "n8n.${z}" = {

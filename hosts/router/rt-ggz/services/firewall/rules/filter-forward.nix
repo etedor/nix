@@ -103,7 +103,10 @@ in
       name = "duke to machina";
       sips = [ duke.ip ];
       dips = [ machina.ip ];
-      dpts = [ 5678 ];
+      dpts = [
+        5678  # n8n
+        9100  # ledger sequence-smoke callback
+      ];
       proto = "tcp";
       action = "accept";
       # log = true;
