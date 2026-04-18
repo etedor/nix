@@ -17,6 +17,8 @@
     enable = true;
     interval = 30;
     logLevel = "info";
+    enableWebui = true;
+    webuiHost = "127.0.0.1";
     openFirewall = false;
   };
 
