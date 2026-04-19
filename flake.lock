@@ -48,11 +48,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1770346435,
-        "narHash": "sha256-B6gy3AeCk9GkoyXAH2qt0bcDsX2sUuWebrspZGvtt38=",
+        "lastModified": 1776353369,
+        "narHash": "sha256-/RO9Wrz4RzMogdR/kIBoRpSLjiaATVAmlIOuuXuZIGI=",
         "owner": "sadjow",
         "repo": "claude-code-nix",
-        "rev": "13b7acb0fd769f7072e908d6aa08ae55b3f48981",
+        "rev": "69fc1a6069ff38820fbbc042cc14f93b2539297f",
         "type": "github"
       },
       "original": {
@@ -88,11 +88,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1771090902,
-        "narHash": "sha256-+OU8g9Ggdr35LAuLE3dft/rY7bGk7ZW5Iowkw5aZCSw=",
+        "lastModified": 1776564192,
+        "narHash": "sha256-mb4YLfnY3IxQwYgFpUpbqyzog9fBnFutYeGRoggKFe0=",
         "owner": "etedor",
         "repo": "nix-darwin-workflow",
-        "rev": "9b3a629d3063efc92a616f59de68e7a9efe85183",
+        "rev": "e1a88949dc7b98764528d71f2455ee9d717763f1",
         "type": "github"
       },
       "original": {
@@ -451,11 +451,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1770169770,
-        "narHash": "sha256-awR8qIwJxJJiOmcEGgP2KUqYmHG4v/z8XpL9z8FnT1A=",
+        "lastModified": 1776255774,
+        "narHash": "sha256-psVTpH6PK3q1htMJpmdz1hLF5pQgEshu7gQWgKO6t6Y=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "aa290c9891fa4ebe88f8889e59633d20cc06a5f2",
+        "rev": "566acc07c54dc807f91625bb286cb9b321b5f42a",
         "type": "github"
       },
       "original": {
