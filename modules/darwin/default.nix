@@ -34,6 +34,7 @@ in
       borders.enable = true;
       hammerspoon.enable = true;
       ice.enable = true;
+      iss.enable = true;
       shortcat.enable = true;
       vscode = {
         enable = true;
