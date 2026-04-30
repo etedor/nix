@@ -61,6 +61,8 @@ def main():
         pkey=pkey,
         **extra,
     )
+    # strip timestamp from custom prompts like "[22:29:08] sw-garage#"
+    conn.base_prompt = re.sub(r"^\[[\d:]+\]\s*", "", conn.base_prompt)
     output = conn.send_command(command)
     conn.disconnect()
     print(output)

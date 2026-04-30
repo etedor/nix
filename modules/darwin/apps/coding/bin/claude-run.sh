@@ -18,6 +18,16 @@ case $host in
     echo "  switches (sw-*): runs show commands via netmiko"
     echo "  no command: shows allowed commands (sudo -l)"
     echo "  --list: shows available targets"
+    echo ""
+    echo "examples:"
+    echo "  claude-run rt-ggz wg show all"
+    echo '  claude-run rt-ggz vtysh -c "show bgp summary"'
+    echo "  claude-run rt-ggz ip -br addr show"
+    echo "  claude-run rt-ggz nft list ruleset"
+    echo "  claude-run rt-ggz journalctl -u blocky --no-pager -n 20"
+    echo "  claude-run rt-ggz nfw | head -n50              # firewall logs (routers)"
+    echo "  claude-run rt-ggz nfw --dpt=22 | head -n20     # filtered firewall logs"
+    echo "  claude-run sw-garage show interfaces status"
     exit 0 ;;
   --list)
     list_hosts; exit 0 ;;

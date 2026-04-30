@@ -23,6 +23,8 @@
           "${bin}/wg show *"
           "${bin}/vtysh -c show *"
           "${bin}/vtysh -c list *"
+          "${bin}/nfw"
+          "${bin}/nfw *"
         ];
     }
   ];
