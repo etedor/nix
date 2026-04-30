@@ -133,7 +133,7 @@ mkModule {
         /run/current-system/sw/bin/tcpdump -c *, \
         /run/current-system/sw/bin/tcpdump --list-interfaces
 
-      claude ALL=(root) NOPASSWD,NOEXEC: CLAUDE_LOGS, CLAUDE_NETSTAT, \
+      claude ALL=(root) NOPASSWD: NOEXEC: CLAUDE_LOGS, CLAUDE_NETSTAT, \
         CLAUDE_NFT, CLAUDE_IP, CLAUDE_DNS, CLAUDE_NETWORK, CLAUDE_TIME, \
         CLAUDE_PCAP
     '';
