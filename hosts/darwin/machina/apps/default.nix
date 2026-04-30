@@ -1,8 +1,13 @@
 {
+  pkgs,
   ...
 }:
 
 {
+  environment.systemPackages = with pkgs; [
+    qmk
+  ];
+
   homebrew = {
     brews = [
       "m1ddc"
@@ -13,6 +18,7 @@
       "elgato-stream-deck"
       "orcaslicer"
       "paintbrush"
+      "via"
     ];
   };
 }
