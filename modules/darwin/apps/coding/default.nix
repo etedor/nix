@@ -13,6 +13,7 @@ in
   ];
 
   environment.systemPackages = with pkgs; [
+    gh
     treefmt
     nixfmt-rfc-style
     shfmt
