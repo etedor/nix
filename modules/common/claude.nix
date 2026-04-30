@@ -45,68 +45,98 @@ mkModule {
         PermitOpen none
     '';
 
+    # /run/current-system/sw/bin → nix store; sudo doesn't follow symlinks,
+    # so rules pin sw/bin paths. NOEXEC blocks system()/popen() chains for
+    # direct binaries; FRR/wg shell wrappers (router/claude.nix) need exec.
+    # First-flag whitelisting bounds subcommand reach but cannot prevent
+    # destructive flags appearing later in argv (e.g. --vacuum after -u);
+    # for hard guarantees, wrap in a dedicated bin.
     security.sudo.extraConfig = ''
-      Defaults:claude lecture=never
+      Defaults:claude lecture=never, logfile=/var/log/sudo-claude.log
+
+      Cmnd_Alias CLAUDE_LOGS = \
+        /run/current-system/sw/bin/journalctl, \
+        /run/current-system/sw/bin/journalctl --no-pager *, \
+        /run/current-system/sw/bin/journalctl -u *, \
+        /run/current-system/sw/bin/journalctl -k *, \
+        /run/current-system/sw/bin/journalctl -f *, \
+        /run/current-system/sw/bin/journalctl -n *, \
+        /run/current-system/sw/bin/journalctl -e *, \
+        /run/current-system/sw/bin/journalctl -r *, \
+        /run/current-system/sw/bin/journalctl --since *, \
+        /run/current-system/sw/bin/journalctl --grep *, \
+        /run/current-system/sw/bin/journalctl --list-boots
+
+      Cmnd_Alias CLAUDE_NETSTAT = \
+        /run/current-system/sw/bin/ss, \
+        /run/current-system/sw/bin/ss *
+
+      Cmnd_Alias CLAUDE_NFT = \
+        /run/current-system/sw/bin/nft list *, \
+        /run/current-system/sw/bin/nft -j list *, \
+        /run/current-system/sw/bin/nft -a list *, \
+        /run/current-system/sw/bin/nft describe *
+
+      Cmnd_Alias CLAUDE_IP = \
+        /run/current-system/sw/bin/ip addr show, \
+        /run/current-system/sw/bin/ip addr show *, \
+        /run/current-system/sw/bin/ip route show, \
+        /run/current-system/sw/bin/ip route show *, \
+        /run/current-system/sw/bin/ip route get *, \
+        /run/current-system/sw/bin/ip link show, \
+        /run/current-system/sw/bin/ip link show *, \
+        /run/current-system/sw/bin/ip neigh show, \
+        /run/current-system/sw/bin/ip neigh show *, \
+        /run/current-system/sw/bin/ip rule show, \
+        /run/current-system/sw/bin/ip rule show *, \
+        /run/current-system/sw/bin/ip -* addr show, \
+        /run/current-system/sw/bin/ip -* addr show *, \
+        /run/current-system/sw/bin/ip -* route show, \
+        /run/current-system/sw/bin/ip -* route show *, \
+        /run/current-system/sw/bin/ip -* link show, \
+        /run/current-system/sw/bin/ip -* link show *, \
+        /run/current-system/sw/bin/ip -* neigh show, \
+        /run/current-system/sw/bin/ip -* neigh show *, \
+        /run/current-system/sw/bin/ip -* rule show, \
+        /run/current-system/sw/bin/ip -* rule show *
+
+      Cmnd_Alias CLAUDE_DNS = \
+        /run/current-system/sw/bin/resolvectl status, \
+        /run/current-system/sw/bin/resolvectl status *, \
+        /run/current-system/sw/bin/resolvectl statistics, \
+        /run/current-system/sw/bin/resolvectl query *, \
+        /run/current-system/sw/bin/resolvectl dns, \
+        /run/current-system/sw/bin/resolvectl domain
+
+      Cmnd_Alias CLAUDE_NETWORK = \
+        /run/current-system/sw/bin/networkctl, \
+        /run/current-system/sw/bin/networkctl status, \
+        /run/current-system/sw/bin/networkctl status *, \
+        /run/current-system/sw/bin/networkctl list, \
+        /run/current-system/sw/bin/networkctl list *, \
+        /run/current-system/sw/bin/networkctl lldp, \
+        /run/current-system/sw/bin/networkctl lldp *
+
+      Cmnd_Alias CLAUDE_TIME = \
+        /run/current-system/sw/bin/chronyc tracking, \
+        /run/current-system/sw/bin/chronyc sources, \
+        /run/current-system/sw/bin/chronyc sources *, \
+        /run/current-system/sw/bin/chronyc activity, \
+        /run/current-system/sw/bin/chronyc clients, \
+        /run/current-system/sw/bin/chronyc serverstats
+
+      Cmnd_Alias CLAUDE_PCAP = \
+        /run/current-system/sw/bin/tcpdump -i *, \
+        /run/current-system/sw/bin/tcpdump -ni *, \
+        /run/current-system/sw/bin/tcpdump -nni *, \
+        /run/current-system/sw/bin/tcpdump -nn *, \
+        /run/current-system/sw/bin/tcpdump -c *, \
+        /run/current-system/sw/bin/tcpdump --list-interfaces
+
+      claude ALL=(root) NOPASSWD,NOEXEC: CLAUDE_LOGS, CLAUDE_NETSTAT, \
+        CLAUDE_NFT, CLAUDE_IP, CLAUDE_DNS, CLAUDE_NETWORK, CLAUDE_TIME, \
+        CLAUDE_PCAP
     '';
-
-    # NixOS symlinks /run/current-system/sw/bin → nix store;
-    # sudo doesn't resolve these, so rules must use sw/bin paths.
-    security.sudo.extraRules = [
-      {
-        users = [ "claude" ];
-        commands =
-          let
-            # NOEXEC safe on direct binaries; NixOS shell wrappers
-            # (wg, vtysh) need exec() — see router/claude.nix
-            mkCmd = cmd: {
-              command = cmd;
-              options = [
-                "NOPASSWD"
-                "NOEXEC"
-              ];
-            };
-            bin = "/run/current-system/sw/bin";
-          in
-          map mkCmd [
-            "${bin}/chronyc"
-            "${bin}/journalctl"
-            "${bin}/networkctl"
-            "${bin}/resolvectl"
-            "${bin}/ss"
-            "${bin}/tcpdump"
-
-            # nft: read-only
-            "${bin}/nft list *"
-            "${bin}/nft -a list *"
-            "${bin}/nft -j list *"
-            "${bin}/nft describe *"
-
-            # ip: show/get only — bare + wildcard variants
-            # needed since sudoers * won't match empty args
-            "${bin}/ip addr show"
-            "${bin}/ip addr show *"
-            "${bin}/ip route show"
-            "${bin}/ip route show *"
-            "${bin}/ip route get *"
-            "${bin}/ip link show"
-            "${bin}/ip link show *"
-            "${bin}/ip neigh show"
-            "${bin}/ip neigh show *"
-            "${bin}/ip rule show"
-            "${bin}/ip rule show *"
-            "${bin}/ip -* addr show"
-            "${bin}/ip -* addr show *"
-            "${bin}/ip -* route show"
-            "${bin}/ip -* route show *"
-            "${bin}/ip -* link show"
-            "${bin}/ip -* link show *"
-            "${bin}/ip -* neigh show"
-            "${bin}/ip -* neigh show *"
-            "${bin}/ip -* rule show"
-            "${bin}/ip -* rule show *"
-          ];
-      }
-    ];
   };
 
   darwin = {

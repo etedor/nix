@@ -7,25 +7,21 @@
 {
   users.users.claude.extraGroups = [ "frrvty" ];
 
-  security.sudo.extraRules = [
-    {
-      users = [ "claude" ];
-      commands =
-        let
-          # no NOEXEC — NixOS shell wrappers need exec()
-          mkCmd = cmd: {
-            command = cmd;
-            options = [ "NOPASSWD" ];
-          };
-          bin = "/run/current-system/sw/bin";
-        in
-        map mkCmd [
-          "${bin}/wg show *"
-          "${bin}/vtysh -c show *"
-          "${bin}/vtysh -c list *"
-          "${bin}/nfw"
-          "${bin}/nfw *"
-        ];
-    }
-  ];
+  # NixOS shell wrappers (vtysh, wg) need exec() — no NOEXEC.
+  # nfw is a read-only journalctl filter (modules/router/bin/nfw.sh).
+  security.sudo.extraConfig = ''
+    Cmnd_Alias CLAUDE_FRR = \
+      /run/current-system/sw/bin/vtysh -c show *, \
+      /run/current-system/sw/bin/vtysh -c list *
+
+    Cmnd_Alias CLAUDE_WG = \
+      /run/current-system/sw/bin/wg show, \
+      /run/current-system/sw/bin/wg show *
+
+    Cmnd_Alias CLAUDE_NFW = \
+      /run/current-system/sw/bin/nfw, \
+      /run/current-system/sw/bin/nfw *
+
+    claude ALL=(root) NOPASSWD: CLAUDE_FRR, CLAUDE_WG, CLAUDE_NFW
+  '';
 }
