@@ -1,6 +1,7 @@
 {
   claude-code-pkg,
   globals,
+  lib,
   pkgs,
   pkgs-unstable,
   ...
@@ -8,10 +9,34 @@
 
 let
   user0 = globals.users 0;
+
+  # hosts with claude user = NixOS hosts (routers + servers)
+  claudeHosts = builtins.attrNames globals.routers
+    ++ builtins.filter (n: !builtins.hasAttr n globals.routers) (
+      builtins.filter (n: n != "brother" && n != "home-assistant" && n != "ntp" && n != "machina")
+        (builtins.attrNames globals.hosts)
+    );
+
+  # switches from SSH config
+  sshHosts = import ../../../common/services/ssh/hosts.nix { inherit globals; } user0.name;
+  switchHosts = builtins.filter (n: lib.hasPrefix "sw-" n) (builtins.attrNames sshHosts);
+
+  pythonEnv = pkgs.python3.withPackages (ps: with ps; [ netmiko ]);
+  switch-cli = pkgs.writeScriptBin "switch-cli" ''
+    #!${pythonEnv}/bin/python3
+    ${builtins.readFile ./bin/switch-cli.py}
+  '';
+  claude-run = pkgs.writeShellScriptBin "claude-run" ''
+    CLAUDE_HOSTS="${lib.concatStringsSep " " (lib.naturalSort claudeHosts)}"
+    CLAUDE_SWITCHES="${lib.concatStringsSep " " (lib.naturalSort switchHosts)}"
+    ${builtins.readFile ./bin/claude-run.sh}
+  '';
 in
 {
   users.users.${user0.name}.packages = [
     claude-code-pkg
+    claude-run
+    switch-cli
     # pkgs-unstable.mcp-nixos  # disabled: py-key-value-aio test failures
     pkgs-unstable.uv
   ];
@@ -65,6 +90,12 @@ in
               && mv "$CONFIG.tmp" "$CONFIG"
           else
             echo '${desired}' > "$CONFIG"
+          fi
+
+          # remove switch MCP server (replaced by claude-run CLI)
+          if [ -f "$CONFIG" ]; then
+            ${pkgs.jq}/bin/jq 'del(.mcpServers.switch)' "$CONFIG" > "$CONFIG.tmp" \
+              && mv "$CONFIG.tmp" "$CONFIG"
           fi
         '';
 

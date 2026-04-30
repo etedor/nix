@@ -108,8 +108,43 @@ nixos-rebuild dry-build --flake .#<hostname>
 ## Hosts
 
 - **Darwin:** carbon, garage, machina
-- **NixOS routers:** rt-ggz, rt-sea
+- **NixOS routers:** rt-ggz, rt-sea, rt-sea2
 - **NixOS servers:** duke
+
+## Remote Diagnostics
+
+`claude-run` executes read-only commands on NixOS hosts and managed switches via a dedicated `claude` SSH user. Run `claude-run` with no args to list targets, or `claude-run --help` for examples.
+
+```bash
+# list available targets
+claude-run
+
+# NixOS hosts — allowed commands (sudo -l)
+claude-run rt-ggz
+
+# routing
+claude-run rt-ggz vtysh -c "show bgp summary"
+claude-run rt-ggz ip route show
+
+# interfaces and WireGuard
+claude-run rt-ggz ip -br addr show
+claude-run rt-ggz wg show all
+
+# firewall
+claude-run rt-ggz nft list ruleset
+claude-run rt-ggz nfw | head -n50
+claude-run rt-ggz nfw --dpt=22 --chain=input | head -n20
+
+# DNS and services
+claude-run rt-ggz resolvectl status
+claude-run rt-ggz journalctl -u blocky --no-pager -n 20
+
+# switches (show commands only)
+claude-run sw-garage show version
+claude-run sw-garage show mac address-table
+```
+
+`nfw` streams firewall logs — use `| head -nN` or a timeout to bound output.
 
 ## Workflow
 
