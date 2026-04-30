@@ -1,5 +1,7 @@
 {
+  config,
   globals,
+  specialArgs,
   ...
 }:
 
@@ -7,6 +9,21 @@ let
   user0 = globals.users 0;
 in
 {
+  age.secrets.smb-user0 = {
+    file = "${specialArgs.secretsCommon}/smb-user0.age";
+    owner = "root";
+    mode = "0400";
+  };
+
+  system.activationScripts.samba-users = {
+    deps = [ "users" ];
+    text = ''
+      PASSWORD=$(cat ${config.age.secrets.smb-user0.path} | tr -d '\n')
+      printf '%s\n%s\n' "$PASSWORD" "$PASSWORD" | \
+        ${config.services.samba.package}/bin/smbpasswd -a -s ${user0.name}
+    '';
+  };
+
   services.samba = {
     enable = true;
     settings = {
