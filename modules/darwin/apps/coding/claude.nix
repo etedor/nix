@@ -31,6 +31,11 @@ let
     CLAUDE_SWITCHES="${lib.concatStringsSep " " (lib.naturalSort switchHosts)}"
     ${builtins.readFile ./bin/claude-run.sh}
   '';
+  cols-hook = pkgs.writeShellApplication {
+    name = "claude-cols-hook";
+    runtimeInputs = [ pkgs.jq ];
+    text = builtins.readFile ./bin/claude-cols-hook.sh;
+  };
 in
 {
   users.users.${user0.name}.packages = [
@@ -114,6 +119,36 @@ in
                       type = "command";
                       command = "$HOME/.claude/hooks/format-file.sh";
                       timeout = 30;
+                    }
+                  ];
+                }
+              ];
+              SessionStart = [
+                {
+                  hooks = [
+                    {
+                      type = "command";
+                      command = "${cols-hook}/bin/claude-cols-hook SessionStart";
+                    }
+                  ];
+                }
+              ];
+              UserPromptSubmit = [
+                {
+                  hooks = [
+                    {
+                      type = "command";
+                      command = "${cols-hook}/bin/claude-cols-hook UserPromptSubmit";
+                    }
+                  ];
+                }
+              ];
+              PostCompact = [
+                {
+                  hooks = [
+                    {
+                      type = "command";
+                      command = "${cols-hook}/bin/claude-cols-hook PostCompact";
                     }
                   ];
                 }
