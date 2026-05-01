@@ -27,13 +27,6 @@ mkModule {
         interactiveShellInit = ''
           set fish_greeting
           starship init fish | source
-
-          # publish terminal width for Claude Code hooks
-          mkdir -p $HOME/.cache/claude-code 2>/dev/null
-          echo $COLUMNS > $HOME/.cache/claude-code/cols
-          function __claude_save_cols --on-signal WINCH
-              echo $COLUMNS > $HOME/.cache/claude-code/cols
-          end
         '';
       };
 
