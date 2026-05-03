@@ -71,6 +71,7 @@ in
   "server/duke/syncthing-user1-key.age".publicKeys = user0 ++ [ hosts.duke ];
 
   "server/duke/acme.age".publicKeys = user0 ++ [ hosts.duke ];
+  "server/duke/ledger.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/navidrome.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/icecast.age".publicKeys = user0 ++ [ hosts.duke ];
   "server/duke/paperless.age".publicKeys = user0 ++ [ hosts.duke ];

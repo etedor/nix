@@ -133,18 +133,18 @@ in
           proxyWebsockets = true;
         })
 
-        # ledger — binary runs on machina:9100. The bare app is RFC1918-only
-        # (admin + family); only the Sequence callback path is reachable
-        # from the open internet (the bearer signature check on the
-        # ledger side is the auth fence).
+        # ledger — daemon runs on duke (this host) via services.ledger.
+        # The bare app is RFC1918-only (admin + family); only the Sequence
+        # callback path is reachable from the open internet (the bearer
+        # signature check on the ledger side is the auth fence).
         (mkVirtualHost {
           subdomain = "ledger";
-          proxyPass = "http://${globals.hosts.machina.ip}:9100";
+          proxyPass = "http://127.0.0.1:9100";
           adminOnly = false;
           allowIPs = globals.networks.admin ++ globals.networks.family;
           extraLocations = {
             "/sequence/amount/" = {
-              proxyPass = "http://${globals.hosts.machina.ip}:9100";
+              proxyPass = "http://127.0.0.1:9100";
               extraConfig = "allow all;";
             };
           };

@@ -105,7 +105,6 @@ in
       dips = [ machina.ip ];
       dpts = [
         5678  # n8n
-        9100  # ledger sequence-smoke callback
       ];
       proto = "tcp";
       action = "accept";

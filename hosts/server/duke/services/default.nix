@@ -5,6 +5,7 @@
     ./acme.nix
     ./beets
     ./iddns.nix
+    ./ledger.nix
     ./nfs.nix
     ./nginx.nix
     ./paperless.nix

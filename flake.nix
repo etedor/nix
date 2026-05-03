@@ -15,6 +15,7 @@
     deploy-rs.url = "github:serokell/deploy-rs";
     disko.url = "github:nix-community/disko/latest";
     disko.inputs.nixpkgs.follows = "nixpkgs";
+    ledger.url = "git+ssh://git@github.com/etedor/ledger";
     mac-app-util.url = "github:hraban/mac-app-util";
     private.url = "git+ssh://git@github.com/etedor/nix-private";
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
