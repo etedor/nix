@@ -28,7 +28,7 @@ in
       "signal"
       "sonos"
       "spotify"
-      "wireshark"
+      "wireshark-app"
     ];
 
     masApps = {
