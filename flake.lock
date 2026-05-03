@@ -88,11 +88,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1776564192,
-        "narHash": "sha256-mb4YLfnY3IxQwYgFpUpbqyzog9fBnFutYeGRoggKFe0=",
+        "lastModified": 1777785597,
+        "narHash": "sha256-8Y3vtaT5jwSnz/6CVb+38yuAQf83O8SbfUpGhqhklN8=",
         "owner": "etedor",
         "repo": "nix-darwin-workflow",
-        "rev": "e1a88949dc7b98764528d71f2455ee9d717763f1",
+        "rev": "e7489f6c5eb465523790afed9136c62c1b7703cf",
         "type": "github"
       },
       "original": {
