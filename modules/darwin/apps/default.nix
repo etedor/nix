@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./brave.nix
+    ./chromium.nix
     ./coding
     ./discord.nix
     ./firefox.nix

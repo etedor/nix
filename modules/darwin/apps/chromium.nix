@@ -1,9 +1,15 @@
 { ... }:
 
 {
-  homebrew.casks = [ "brave-browser" ];
+  homebrew.casks = [ "ungoogled-chromium" ];
 
-  system.defaults.CustomUserPreferences."com.brave.Browser" = {
+  system.defaults.CustomUserPreferences."org.chromium.Chromium" = {
+    # extensions: declare the minimal set, force-installed and auto-updated
+    ExtensionInstallForcelist = [
+      "ddkjiahejlhfcafbddmgiahcphecmpfh;https://clients2.google.com/service/update2/crx" # ublock origin lite
+      "aeblfdkhhhdcdjpifhhbdiojplfjncoa;https://clients2.google.com/service/update2/crx" # 1password
+    ];
+
     # autofill
     AutofillAddressEnabled = false;
     AutofillCreditCardEnabled = false;
