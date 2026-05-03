@@ -133,39 +133,34 @@ in
           proxyWebsockets = true;
         })
 
-        # ledger sequence-smoke callback — binary runs on machina:9100
-        # TODO: replace 0.0.0.0/0 with Sequence-provided CIDRs once published
+        # ledger — binary runs on machina:9100. The bare app is RFC1918-only
+        # (admin + family); only the Sequence callback path is reachable
+        # from the open internet (the bearer signature check on the
+        # ledger side is the auth fence).
         (mkVirtualHost {
           subdomain = "ledger";
           proxyPass = "http://${globals.hosts.machina.ip}:9100";
           adminOnly = false;
-          allowIPs = [ "0.0.0.0/0" "::/0" ];
+          allowIPs = globals.networks.admin ++ globals.networks.family;
+          extraLocations = {
+            "/sequence/amount/" = {
+              proxyPass = "http://${globals.hosts.machina.ip}:9100";
+              extraConfig = "allow all;";
+            };
+          };
         })
 
-        # n8n - admin base, webhook also allows telegram
-        {
-          "n8n.${z}" = {
-            forceSSL = true;
-            useACMEHost = globals.zones.home;
-            extraConfig = ''
-              error_page 403 = @denied;
-            '';
-
-            locations."@denied" = {
-              return = "444";
-            };
-
-            locations."/" = {
-              proxyPass = "http://10.0.8.32:5678"; # TODO: use globals.hosts reference
-              proxyWebsockets = true;
-              extraConfig = ''
-                ${lib.concatMapStrings (ip: "allow ${ip};\n") globals.networks.admin}
-                deny all;
-              '';
-            };
-
-            locations."/webhook/" = {
-              proxyPass = "http://10.0.8.32:5678"; # TODO: use globals.hosts reference
+        # n8n — admin only on the bare app; /webhook/ also allows
+        # telegram CIDRs so bot integrations can reach the trigger URL.
+        # TODO: replace 10.0.8.32 with globals.hosts reference
+        (mkVirtualHost {
+          subdomain = "n8n";
+          proxyPass = "http://10.0.8.32:5678";
+          proxyWebsockets = true;
+          # adminOnly defaults to true → allowIPs = globals.networks.admin
+          extraLocations = {
+            "/webhook/" = {
+              proxyPass = "http://10.0.8.32:5678";
               proxyWebsockets = true;
               extraConfig = ''
                 ${lib.concatMapStrings (ip: "allow ${ip};\n") (globals.networks.admin ++ telegram)}
@@ -173,7 +168,7 @@ in
               '';
             };
           };
-        }
+        })
       ];
     };
 
