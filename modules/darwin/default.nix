@@ -33,7 +33,7 @@ in
     apps = {
       borders.enable = true;
       hammerspoon.enable = true;
-      ice.enable = true;
+      thaw.enable = true;
       iss.enable = true;
       shortcat.enable = true;
       vscode = {
