@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  homebrew.casks = [ "ungoogled-chromium" ];
+  homebrew.casks = [ "chromium" ];
 
   system.defaults.CustomUserPreferences."org.chromium.Chromium" = {
     # extensions: declare the minimal set, force-installed and auto-updated
@@ -28,7 +28,8 @@
     BrowserSignin = 0;
     SyncDisabled = true;
 
-    # ui
+    # ui — suppress "make me default" prompts for browser and PDF
+    AlwaysOpenPdfExternally = false;
     BookmarkBarEnabled = false;
     DefaultBrowserSettingEnabled = false;
     HideWebStoreIcon = true;
