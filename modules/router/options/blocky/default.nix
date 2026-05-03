@@ -27,11 +27,16 @@ let
     // lib.genAttrs (builtins.attrValues globals.zones) (_: knotAddr)
   );
 
-  # archive.is TLDs — Cloudflare refuses to resolve these, use Quad9
+  # archive.* TLDs — historically poisoned against Cloudflare resolvers
+  # (ECS dispute since 2019, fluctuates); Quad9 secondary 149.112.112.112
+  # was returning NXDOMAIN as of 2026-05; OpenDNS pinned to wan1 on rt-ggz
+  # which is unreliable. AdGuard "unfiltered" anycast pair — same network
+  # primary+secondary, DoT to keep transit encrypted, and the unfiltered
+  # tier guarantees no category filter touches archive.*.
   archiveTlds = [ "today" "fo" "is" "li" "md" "ph" "vn" ];
-  quad9 = "9.9.9.9,149.112.112.112";
+  adguardUnfiltered = "tcp-tls:94.140.14.140,tcp-tls:94.140.14.141";
   archiveMapping = builtins.listToAttrs (
-    map (tld: { name = "archive.${tld}"; value = quad9; }) archiveTlds
+    map (tld: { name = "archive.${tld}"; value = adguardUnfiltered; }) archiveTlds
   );
 in
 {
