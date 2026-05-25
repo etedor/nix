@@ -34,6 +34,13 @@
         genre = "Public Radio";
       }
       {
+        name = "kcrw";
+        url = "https://streams.kcrw.com/kcrw_aac";
+        fullName = "KCRW 89.9 FM";
+        description = "Santa Monica's Public Radio";
+        genre = "Public Radio";
+      }
+      {
         name = "indiepop";
         url = "http://ice3.somafm.com/indiepop-128-aac";
         fullName = "Indie Pop Rocks!";
