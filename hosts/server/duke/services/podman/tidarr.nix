@@ -8,7 +8,7 @@
 {
   virtualisation.quadlet.containers.tidarr = {
     containerConfig = {
-      image = "docker.io/cstaelen/tidarr:0.4.6";
+      image = "docker.io/cstaelen/tidarr:1.2.3";
 
       networks = [ "10-bulk" ];
 
