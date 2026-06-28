@@ -124,6 +124,16 @@ let
             }
           ];
 
+        ratingConditions = lib.optionals (playlistConfig ? excludeRating) [
+          {
+            isNot = {
+              rating = playlistConfig.excludeRating;
+            };
+          }
+        ];
+
+        allConditions = bpmConditions ++ ratingConditions;
+
         playlistContent = {
           name = playlistConfig.name;
           comment = playlistConfig.comment;
@@ -132,9 +142,9 @@ let
           limit = playlistConfig.limit;
         }
         // (
-          if bpmConditions != [ ] then
+          if allConditions != [ ] then
             {
-              all = bpmConditions ++ [ { any = artistConditions; } ];
+              all = allConditions ++ [ { any = artistConditions; } ];
             }
           else
             { any = artistConditions; }

@@ -15,11 +15,13 @@
   experimental-pop = {
     name = "Experimental Pop";
     comment = "";
+    excludeRating = 1;
     artists = [
-      "feeble little horse"
+      "Eartheater"
       "FKA twigs"
       "Grimes"
       "Magdalena Bay"
+      "Night Tapes"
       "Pearly Drops"
       "Purity Ring"
       "Underscores"
