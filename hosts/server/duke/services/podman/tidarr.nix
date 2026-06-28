@@ -21,8 +21,8 @@
       };
 
       volumes = [
-        "tidarr_config:/home/app/standalone/shared"
-        "/pool0/media/downloads/tidarr:/home/app/standalone/library"
+        "tidarr_config:/shared"
+        "/pool0/media/downloads/tidarr:/music"
       ];
 
       publishPorts = [
