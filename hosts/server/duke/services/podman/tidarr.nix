@@ -16,8 +16,6 @@
         PUID = "1000";
         PGID = "1000";
         TZ = globals.tz;
-        REACT_APP_TIDAL_COUNTRY_CODE = "US";
-        REACT_APP_TIDARR_DEFAULT_QUALITY_FILTER = "all";
       };
 
       volumes = [
