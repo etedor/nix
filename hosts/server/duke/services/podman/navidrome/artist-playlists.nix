@@ -19,8 +19,10 @@
     artists = [
       "Eartheater"
       "FKA twigs"
+      "Gelli Haha"
       "Grimes"
       "Magdalena Bay"
+      "My Body"
       "Night Tapes"
       "Pearly Drops"
       "Purity Ring"
