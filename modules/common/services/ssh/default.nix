@@ -161,7 +161,7 @@ mkModule {
           description = "complete remote paths on duke for beet import";
           body = ''
             set -l token (commandline -ct)
-            set -l base /pool0/media/downloads/tidarr/albums
+            set -l base /pool0/media/downloads/tidarr
             if test -z "$token"
               command ssh duke "bash -c 'shopt -s nocaseglob; ls -1dp \"\$1\"/*/ 2>/dev/null' -- "(string escape -- $base)
             else if string match -q '/*' -- $token

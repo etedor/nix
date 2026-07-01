@@ -12,14 +12,18 @@
     limit = 0;
   };
 
-  experimental-pop = {
-    name = "Experimental Pop";
+  ephemeral = {
+    name = "Ephemeral";
     comment = "";
+    excludeRating = 1;
     artists = [
-      "feeble little horse"
+      "Eartheater"
       "FKA twigs"
+      "Gelli Haha"
       "Grimes"
       "Magdalena Bay"
+      "My Body"
+      "Night Tapes"
       "Pearly Drops"
       "Purity Ring"
       "Underscores"

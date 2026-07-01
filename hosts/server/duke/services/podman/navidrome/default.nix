@@ -33,7 +33,7 @@ in
     group = "1000";
   };
 
-  systemd.services.podman-navidrome.preStart = "${setupPlaylistsDir}";
+  systemd.services.navidrome.preStart = "${setupPlaylistsDir}";
 
   virtualisation.quadlet.containers.navidrome = {
     containerConfig = {
