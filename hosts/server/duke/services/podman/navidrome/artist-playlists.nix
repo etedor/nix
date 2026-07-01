@@ -12,8 +12,8 @@
     limit = 0;
   };
 
-  experimental-pop = {
-    name = "Experimental Pop";
+  ephemeral = {
+    name = "Ephemeral";
     comment = "";
     excludeRating = 1;
     artists = [
