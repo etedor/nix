@@ -37,12 +37,12 @@ let
     text = builtins.readFile ./bin/claude-cols-hook.sh;
   };
 
-  # marketplace plugin sources — pinned by commit SHA
+  # plugin sources — pinned by commit SHA
   superpowers-src = pkgs.fetchFromGitHub {
     owner = "obra";
-    repo = "superpowers-marketplace";
-    rev = "8ef3bc633963b209ab448576641ed2383c354d44";
-    sha256 = "00xk1qspk8v38dvbns0dngj3cjq0hif3hsfl488hl0i1hz7bxz0g";
+    repo = "superpowers";
+    rev = "f268f7c953744036f0fa7e9d4b73535c04e57cb8"; # v6.1.0
+    sha256 = "0gksqggagakdpvzx41d6lsrp3mkmlbrkwpanljpz8k5f7rnmpwc2";
   };
   ponytail-src = pkgs.fetchFromGitHub {
     owner = "DietrichGebert";
@@ -50,11 +50,6 @@ let
     rev = "16f6cbf4b87792938e47b0f8c650b6d80fcbc98c";
     sha256 = "0slyas4xzy5p89vmdskj33fqcjxk5f0isxjk655kqglwl4l5sv6m";
   };
-
-  # extract a plugin subdirectory from a marketplace src as its own store dir
-  pluginFromSrc = src: name: pkgs.runCommand "${name}-plugin" { } ''
-    cp -r ${src}/${name} $out
-  '';
 
   # local go-lsp plugin (was inline home.file JSON)
   go-lsp-plugin = pkgs.runCommand "go-lsp-plugin" { } ''
@@ -106,7 +101,7 @@ in
 
         plugins = [
           go-lsp-plugin
-          (pluginFromSrc superpowers-src "superpowers")
+          superpowers-src
           ponytail-src
         ];
 
