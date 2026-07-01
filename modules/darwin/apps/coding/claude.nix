@@ -146,16 +146,6 @@ in
                 ];
               }
             ];
-            PostCompact = [
-              {
-                hooks = [
-                  {
-                    type = "command";
-                    command = "${cols-hook}/bin/claude-cols-hook PostCompact";
-                  }
-                ];
-              }
-            ];
           };
         };
       };
