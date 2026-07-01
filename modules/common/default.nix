@@ -48,7 +48,6 @@ in
         "/home/${user0.name}/.ssh/id_ed25519"
       ];
       nix.gc.dates = "Sun *-*-* 01:00:00";
-      system.rebuild.enableNg = true;
       system.autoUpgrade = {
         enable = true;
         dates = "02:00";

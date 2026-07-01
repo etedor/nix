@@ -15,10 +15,10 @@ in
   environment.systemPackages = with pkgs; [
     gh
     treefmt
-    nixfmt-rfc-style
+    nixfmt
     shfmt
     stylua
-    nodePackages.prettier
+    prettier
     black
   ];
 

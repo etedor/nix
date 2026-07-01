@@ -65,7 +65,7 @@ mkModule {
     home-manager.users.${user0.name}.programs.ssh = {
       enable = true;
       enableDefaultConfig = false;
-      matchBlocks = sshHosts;
+      settings = sshHosts;
     };
   };
 
@@ -122,15 +122,13 @@ mkModule {
 
     home-manager.users.${user0.name} = {
       # auto-load keys from keychain after reboot
-      programs.ssh.matchBlocks."*" = {
-        identityFile = [
+      programs.ssh.settings."*" = {
+        IdentityFile = [
           config.age.secrets.ssh-user0-ed25519.path
           config.age.secrets.ssh-user0-rsa.path
         ];
-        extraOptions = {
-          AddKeysToAgent = "yes";
-          UseKeychain = "yes";
-        };
+        AddKeysToAgent = "yes";
+        UseKeychain = "yes";
       };
 
       xdg.configFile."fish/completions/beet.fish".text = ''

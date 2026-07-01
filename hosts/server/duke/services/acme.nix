@@ -23,7 +23,7 @@
       dnsProvider = "cloudflare";
       dnsPropagationCheck = true;
       dnsResolver = "1.1.1.1:53";
-      credentialsFile = config.age.secrets.acme.path;
+      environmentFile = config.age.secrets.acme.path;
     };
   };
 }

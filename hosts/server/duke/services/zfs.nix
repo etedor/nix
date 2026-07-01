@@ -9,6 +9,8 @@
   boot = {
     supportedFilesystems = [ "zfs" ];
     zfs.extraPools = [ "pool0" ];
+    zfs.forceImportRoot = true; # preserve pre-26.11 default; silences warning
+
   };
   networking.hostId = "73d97024";
 
