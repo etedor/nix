@@ -107,6 +107,7 @@ in
 
         settings = {
           env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+          tui = "fullscreen";
           statusLine = {
             type = "command";
             command = "$HOME/.claude/statusline.sh";
