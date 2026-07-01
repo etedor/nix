@@ -15,7 +15,7 @@ in
   environment.systemPackages = with pkgs; [
     gh
     treefmt
-    nixfmt-rfc-style
+    nixfmt
     shfmt
     stylua
     prettier

@@ -156,13 +156,12 @@ mkModule {
       path = "/Users/${user0.name}/.ssh/claude_rsa";
     };
 
-    home-manager.users.${user0.name}.programs.ssh.matchBlocks."claude" = {
-      match = "user claude";
-      identityFile = [
+    home-manager.users.${user0.name}.programs.ssh.settings."Match user claude" = {
+      IdentityFile = [
         config.age.secrets.ssh-claude-ed25519.path
         config.age.secrets.ssh-claude-rsa.path
       ];
-      extraOptions.IdentitiesOnly = "yes";
+      IdentitiesOnly = "yes";
     };
   };
 }

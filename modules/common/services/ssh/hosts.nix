@@ -2,139 +2,111 @@
 
 user: {
   "docker-home" = {
-    hostname = "docker-home.${globals.zones.home}";
-    user = user;
+    HostName = "docker-home.${globals.zones.home}";
+    User = user;
   };
   "duke" = {
-    hostname = "duke.${globals.zones.home}";
-    user = user;
+    HostName = "duke.${globals.zones.home}";
+    User = user;
   };
   "ntp" = {
-    hostname = "ntp.${globals.zones.home}";
-    user = user;
-
-    extraOptions = {
-      KexAlgorithms = "+diffie-hellman-group14-sha1";
-      HostKeyAlgorithms = "+ssh-rsa";
-      PubkeyAcceptedAlgorithms = "+ssh-rsa";
-      Ciphers = "+aes256-cbc";
-    };
+    HostName = "ntp.${globals.zones.home}";
+    User = user;
+    KexAlgorithms = "+diffie-hellman-group14-sha1";
+    HostKeyAlgorithms = "+ssh-rsa";
+    PubkeyAcceptedAlgorithms = "+ssh-rsa";
+    Ciphers = "+aes256-cbc";
   };
   "rt-ggz" = {
-    hostname = "rt-ggz.${globals.zones.home}";
-    user = user;
+    HostName = "rt-ggz.${globals.zones.home}";
+    User = user;
   };
   "rt-sea" = {
-    hostname = "rt-sea.${globals.zones.home}";
-    user = user;
+    HostName = "rt-sea.${globals.zones.home}";
+    User = user;
   };
   "rt-sea2" = {
-    hostname = "rt-sea2.${globals.zones.home}";
-    user = user;
+    HostName = "rt-sea2.${globals.zones.home}";
+    User = user;
   };
 
   "sw-garage" = {
-    hostname = "sw-garage.${globals.zones.home}";
-    user = user;
-    extraOptions = {
-      SetEnv = "TERM=xterm-256color";
-    };
+    HostName = "sw-garage.${globals.zones.home}";
+    User = user;
+    SetEnv.TERM = "xterm-256color";
   };
   "sw-living-room" = {
-    hostname = "sw-living-room.${globals.zones.home}";
-    user = user;
-
-    extraOptions = {
-      KexAlgorithms = "+diffie-hellman-group14-sha1";
-      HostKeyAlgorithms = "+ssh-rsa";
-      PubkeyAcceptedAlgorithms = "+ssh-rsa";
-    };
+    HostName = "sw-living-room.${globals.zones.home}";
+    User = user;
+    KexAlgorithms = "+diffie-hellman-group14-sha1";
+    HostKeyAlgorithms = "+ssh-rsa";
+    PubkeyAcceptedAlgorithms = "+ssh-rsa";
   };
 
   "sw-office" = {
-    hostname = "sw-office.${globals.zones.home}";
-    user = user;
-
-    extraOptions = {
-      KexAlgorithms = "+diffie-hellman-group14-sha1";
-      HostKeyAlgorithms = "+ssh-rsa";
-      PubkeyAcceptedAlgorithms = "+ssh-rsa";
-    };
+    HostName = "sw-office.${globals.zones.home}";
+    User = user;
+    KexAlgorithms = "+diffie-hellman-group14-sha1";
+    HostKeyAlgorithms = "+ssh-rsa";
+    PubkeyAcceptedAlgorithms = "+ssh-rsa";
   };
   "sw-playroom" = {
-    hostname = "sw-playroom.${globals.zones.home}";
-    user = user;
-
-    extraOptions = {
-      KexAlgorithms = "+diffie-hellman-group14-sha1";
-      HostKeyAlgorithms = "+ssh-rsa";
-      PubkeyAcceptedAlgorithms = "+ssh-rsa";
-    };
+    HostName = "sw-playroom.${globals.zones.home}";
+    User = user;
+    KexAlgorithms = "+diffie-hellman-group14-sha1";
+    HostKeyAlgorithms = "+ssh-rsa";
+    PubkeyAcceptedAlgorithms = "+ssh-rsa";
   };
 
   # https://en.wikiversity.org/wiki/Cisco_IOS/Configure_public_RSA_key_authentication
   # split your key in 72 characters lines: fold -b -w 72 ~/.ssh/id_rsa.pub
   # and copy output removing ssh-rsa and last part: user@host
   "sw-management" = {
-    hostname = "192.168.0.1";
-    user = user;
-
-    extraOptions = {
-      KexAlgorithms = "+diffie-hellman-group14-sha1";
-      HostKeyAlgorithms = "+ssh-rsa";
-      PubkeyAcceptedAlgorithms = "+ssh-rsa";
-    };
+    HostName = "192.168.0.1";
+    User = user;
+    KexAlgorithms = "+diffie-hellman-group14-sha1";
+    HostKeyAlgorithms = "+ssh-rsa";
+    PubkeyAcceptedAlgorithms = "+ssh-rsa";
   };
   "opengear.ma" = {
-    hostname = "192.168.0.16";
-    user = user;
+    HostName = "192.168.0.16";
+    User = user;
   };
   "ntp.ma" = {
-    hostname = "192.168.0.17";
-    user = user;
-
-    extraOptions = {
-      KexAlgorithms = "+diffie-hellman-group14-sha1";
-      HostKeyAlgorithms = "+ssh-rsa";
-      PubkeyAcceptedAlgorithms = "+ssh-rsa";
-      Ciphers = "+aes256-cbc";
-    };
+    HostName = "192.168.0.17";
+    User = user;
+    KexAlgorithms = "+diffie-hellman-group14-sha1";
+    HostKeyAlgorithms = "+ssh-rsa";
+    PubkeyAcceptedAlgorithms = "+ssh-rsa";
+    Ciphers = "+aes256-cbc";
   };
   "rt-ggz.ma" = {
-    hostname = "192.168.0.32";
-    user = user;
+    HostName = "192.168.0.32";
+    User = user;
   };
   "sw-core.ma" = {
-    hostname = "192.168.0.33";
-    user = user;
-    extraOptions = {
-      SetEnv = "TERM=xterm-256color";
-    };
+    HostName = "192.168.0.33";
+    User = user;
+    SetEnv.TERM = "xterm-256color";
   };
   "sw-garage.ma" = {
-    hostname = "sw-garage.ma";
-    user = user;
-
-    extraOptions = {
-      KexAlgorithms = "+diffie-hellman-group14-sha1";
-      HostKeyAlgorithms = "+ssh-rsa";
-      PubkeyAcceptedAlgorithms = "+ssh-rsa";
-    };
+    HostName = "sw-garage.ma";
+    User = user;
+    KexAlgorithms = "+diffie-hellman-group14-sha1";
+    HostKeyAlgorithms = "+ssh-rsa";
+    PubkeyAcceptedAlgorithms = "+ssh-rsa";
   };
 
   "og-lab-white" = {
-    hostname = "172.16.253.24";
-    user = user;
+    HostName = "172.16.253.24";
+    User = user;
   };
 
   "comcast-ny" = {
-    hostname = "route-server.newyork.ny.ibone.comcast.net";
-    user = "rviewsxr";
-
-    extraOptions = {
-      KexAlgorithms = "+diffie-hellman-group14-sha1";
-      HostKeyAlgorithms = "+ssh-rsa";
-      PubkeyAcceptedAlgorithms = "+ssh-rsa";
-    };
+    HostName = "route-server.newyork.ny.ibone.comcast.net";
+    User = "rviewsxr";
+    KexAlgorithms = "+diffie-hellman-group14-sha1";
+    HostKeyAlgorithms = "+ssh-rsa";
+    PubkeyAcceptedAlgorithms = "+ssh-rsa";
   };
 }
