@@ -42,7 +42,6 @@ in
     claude-code-pkg
     claude-run
     switch-cli
-    # pkgs-unstable.mcp-nixos  # disabled: py-key-value-aio test failures
     pkgs-unstable.uv
   ];
 
@@ -79,7 +78,10 @@ in
         let
           mcpConfig = {
             mcpServers = {
-              # nixos.command = "mcp-nixos";  # disabled
+              nixos = {
+                command = "uvx";
+                args = [ "mcp-nixos" ];
+              };
               time = {
                 command = "uvx";
                 args = [ "mcp-server-time" ];
