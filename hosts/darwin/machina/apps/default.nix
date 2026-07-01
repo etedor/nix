@@ -16,7 +16,7 @@
     casks = [
       "autodesk-fusion"
       "elgato-stream-deck"
-      "orcaslicer"
+      "orcaslicer@nightly"
       "paintbrush"
       "via"
     ];
