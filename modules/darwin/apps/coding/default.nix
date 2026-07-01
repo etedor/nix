@@ -18,7 +18,7 @@ in
     nixfmt-rfc-style
     shfmt
     stylua
-    nodePackages.prettier
+    prettier
     black
   ];
 

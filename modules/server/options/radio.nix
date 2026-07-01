@@ -10,8 +10,8 @@ let
   liquidsoap_user = config.services.liquidsoap.user or "liquidsoap";
   liquidsoap_group = config.services.liquidsoap.group or "liquidsoap";
 
-  icecast_user = config.services.icecast.user or "icecast";
-  icecast_group = config.services.icecast.group or "icecast";
+  icecast_user = "icecast";
+  icecast_group = "icecast";
 
   mkLiquidsoapTemplate =
     station:
@@ -79,7 +79,7 @@ let
         <relay-password>#{source_password}</relay-password>
       </authentication>
       <paths>
-        <logdir>${config.services.icecast.logDir}</logdir>
+        <logdir>/var/log/icecast</logdir>
         <adminroot>${pkgs.icecast}/share/icecast/admin</adminroot>
         <webroot>${pkgs.icecast}/share/icecast/web</webroot>
         <alias source="/" dest="/status.xsl"/>

@@ -3,10 +3,10 @@
 
   inputs = {
     darwin.inputs.nixpkgs.follows = "nixpkgs";
-    darwin.url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
+    darwin.url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-25.11-darwin"; # -darwin branch ensures packages work on both nixos and macOS hosts
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-26.05-darwin"; # -darwin branch ensures packages work on both nixos and macOS hosts
     nur.url = "github:nix-community/NUR";
 
     agenix.url = "github:ryantm/agenix";
