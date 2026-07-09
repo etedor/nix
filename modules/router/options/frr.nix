@@ -257,6 +257,12 @@ in
         "network-online.target"
       ];
       wants = [ "network-online.target" ];
+
+      # keep bgpd/bfdd scheduled under load so watchfrr can't restart them and flap BGP
+      serviceConfig = {
+        CPUWeight = 10000;
+        OOMScoreAdjust = -500;
+      };
     };
   };
 }

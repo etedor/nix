@@ -61,7 +61,8 @@ in
           so-rcvbuf = "1m";
           use-caps-for-id = false;
 
-          verbosity = 3;
+          # operational info only; higher levels log per-query and flood CPU/journald
+          verbosity = 1;
 
           private-address = [
             "10.0.0.0/8"

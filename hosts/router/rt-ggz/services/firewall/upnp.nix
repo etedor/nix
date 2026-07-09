@@ -8,6 +8,9 @@ let
 
   extIntf = "wan0";
   intIntf = [ "vlan8" ];
+
+  # UPnP control ports are restricted to the permitted subnet; others hit default deny
+  upnpSrc = [ net.ggz.trust2-upnp ];
 in
 {
   et42.router.miniupnpd = {
@@ -34,6 +37,7 @@ in
     {
       name = "upnp ssdp";
       iifs = intIntf;
+      sips = upnpSrc;
       proto = "udp";
       dpts = [ 1900 ];
       action = "accept";
@@ -41,6 +45,7 @@ in
     {
       name = "upnp http";
       iifs = intIntf;
+      sips = upnpSrc;
       proto = "tcp";
       dpts = [ 2869 ];
       action = "accept";
@@ -48,6 +53,7 @@ in
     {
       name = "nat-pmp";
       iifs = intIntf;
+      sips = upnpSrc;
       proto = "udp";
       dpts = [ 5351 ];
       action = "accept";
