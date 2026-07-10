@@ -72,6 +72,11 @@
     # lowest possible wake-up latency.
     "idle=poll"
 
+    # forbid the NVMe from entering deep APST power states; the DRAM-less
+    # drive's multi-second wake-ups from them stall I/O long enough to hang
+    # the box, and deep CPU idle is already disabled above.
+    "nvme_core.default_ps_max_latency_us=0"
+
     # time-stamp counter is trustworthy across frequency changes;
     # prevents timekeeping drift warnings.
     "tsc=reliable"
