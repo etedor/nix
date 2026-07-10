@@ -17,14 +17,6 @@ mkModule {
         extraConfig = "SystemMaxUse=256M";
       };
     };
-
-    # RAM-backed journal namespace for chatty services; opt in per-host with
-    # LogNamespace = "volatile", read via `journalctl --namespace=volatile`
-    environment.etc."systemd/journald@volatile.conf".text = ''
-      [Journal]
-      Storage=volatile
-      RuntimeMaxUse=64M
-    '';
   };
 
   darwin = {
