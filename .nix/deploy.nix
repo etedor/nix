@@ -13,9 +13,12 @@ let
     {
       remoteBuild ? true,
       hostname ? "${name}.${zone}",
+      # deploy-rs default (30s); routers widen this to survive networkd/sshd
+      # restarts during activation (the confirm handshake must reconnect)
+      confirmTimeout ? 30,
     }:
     {
-      inherit hostname;
+      inherit hostname confirmTimeout;
       sshOpts = [ "-A" ]; # forward SSH agent for sudo auth
       profiles.system = {
         sshUser = user0;
@@ -47,9 +50,15 @@ let
 in
 {
   duke = mkNixosNode "duke" { };
-  rt-ggz = mkNixosNode "rt-ggz" { };
-  rt-sea = mkNixosNode "rt-sea" { remoteBuild = false; };
-  rt-sea2 = mkNixosNode "rt-sea2" { remoteBuild = false; };
+  rt-ggz = mkNixosNode "rt-ggz" { confirmTimeout = 120; };
+  rt-sea = mkNixosNode "rt-sea" {
+    remoteBuild = false;
+    confirmTimeout = 120;
+  };
+  rt-sea2 = mkNixosNode "rt-sea2" {
+    remoteBuild = false;
+    confirmTimeout = 120;
+  };
 
   garage = mkDarwinNode "garage" {
     hostname = "10.0.8.33"; # TODO
