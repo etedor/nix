@@ -223,6 +223,10 @@ in
       };
     };
 
+    # query log is high-volume, ephemeral by nature: keep it off disk (RAM
+    # namespace defined in modules/common/services/journald.nix)
+    systemd.services.blocky.serviceConfig.LogNamespace = "volatile";
+
     networking.firewall = lib.mkIf config.networking.firewall.enable {
       allowedTCPPorts = [ cfg.listenPort ];
       allowedUDPPorts = [ cfg.listenPort ];
