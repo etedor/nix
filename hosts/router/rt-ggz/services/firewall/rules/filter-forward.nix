@@ -288,11 +288,12 @@ in
       log = true;
     }
 
+    # trust0 has no internet egress — LAN reach only via explicit accepts above
     {
       name = "trust0 to any";
       sips = [ net.ggz.trust0 ];
       dips = [ "0.0.0.0/0" ];
-      action = "accept";
+      action = "drop";
       log = true;
     }
 
