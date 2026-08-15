@@ -51,6 +51,29 @@ let
     sha256 = "0slyas4xzy5p89vmdskj33fqcjxk5f0isxjk655kqglwl4l5sv6m";
   };
 
+  # ASD-STE100 simplified technical english skill plugin
+  simple-english-src = pkgs.fetchFromGitHub {
+    owner = "AminBlg";
+    repo = "SimpleEnglish";
+    rev = "59bf6702197a5aadc96d197ea17f290d8d50dcd3";
+    sha256 = "sha256-QmlV9OZ4CNxI+pV7jDcn4n3Zet1+9W7h5oTNCUQ/vrY=";
+  };
+
+  # ASD-STE100 linter (unofficial, MIT/OpenSTE wordset) — provides `vale mcp`
+  vale-ste = pkgs.buildGoModule {
+    pname = "vale-ste";
+    version = "0-unstable-2026-08-15";
+    src = pkgs.fetchFromGitHub {
+      owner = "stuffbucket";
+      repo = "vale";
+      rev = "d96df3eb63f174b6933e29f3d97d4f17e74ab7c3";
+      sha256 = "sha256-OQJMFhflZkzdWoFAI9z/JIPbNR5Cgutu89CEzjYVUq4=";
+    };
+    vendorHash = "sha256-l3YB3z+9IiuG0B6KERpmnZ3GgT/zNVQ4XtffG4zS1Jg=";
+    subPackages = [ "cmd/vale" ];
+    meta.description = "ASD-STE100 simplified technical english linter";
+  };
+
   # local go-lsp plugin (was inline home.file JSON)
   go-lsp-plugin = pkgs.runCommand "go-lsp-plugin" { } ''
     mkdir -p $out/.claude-plugin
@@ -97,17 +120,29 @@ in
             command = "uvx";
             args = [ "mcp-server-time" ];
           };
+          # ASD-STE100 deterministic linter (OpenSTE wordset)
+          ste-vale = {
+            command = "${vale-ste}/bin/vale";
+            args = [ "mcp" ];
+          };
+          # ASD-STE100 issue 9 vocabulary/rules lookup (read-only, AGPL, run not vendored)
+          ste-vocab = {
+            command = "uvx";
+            args = [ "--from" "biz-dfch-asdste100mcp" "asdste100-mcp" ];
+          };
         };
 
         plugins = [
           go-lsp-plugin
           superpowers-src
           ponytail-src
+          simple-english-src
         ];
 
         settings = {
           env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
           tui = "fullscreen";
+          outputStyle = "Terse";
           statusLine = {
             type = "command";
             command = "$HOME/.claude/statusline.sh";
@@ -159,6 +194,8 @@ in
         executable = true;
         source = ./statusline.sh;
       };
+
+      home.file.".claude/output-styles/terse.md".source = ./output-styles/terse.md;
 
       # one-time cleanup: strip legacy mcpServers from ~/.claude.json
       # (MCP servers now live in ~/.mcp.json via programs.claude-code)
