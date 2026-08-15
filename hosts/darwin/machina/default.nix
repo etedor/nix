@@ -19,6 +19,6 @@
     ultrawideLeftWidth = 0.20;
     ultrawideCenterWidth = 0.45;
     ultrawideRightWidth = 0.35;
-    enableInputToggle = true;
+    enableMonitorControl = true;
   };
 }
