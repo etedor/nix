@@ -111,6 +111,9 @@ in
         enable = true;
         package = claude-code-pkg;
 
+        # global ~/.claude/CLAUDE.md
+        context = ./claude-context.md;
+
         mcpServers = {
           nixos = {
             command = "uvx";
