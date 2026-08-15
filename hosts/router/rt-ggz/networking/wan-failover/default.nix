@@ -93,6 +93,11 @@ let
       mon1,
       mon2,
       gateway ? "",
+      # sensitivity: consecutive misses to declare DOWN, hits to declare UP,
+      # seconds between probes. defaults preserve the original 2/2/5 behavior.
+      missThreshold ? 2,
+      hitThreshold ? 2,
+      pingInterval ? 5,
     }:
     {
       description = "${iface} failover monitor";
@@ -117,7 +122,12 @@ let
         Type = "simple";
         User = "root";
         Group = "frrvty";
-        ExecStart = "${failMon} ${iface} ${toString distance} ${mon1} ${mon2} \"${gateway}\"";
+        ExecStart = "${failMon} ${iface} ${toString distance} ${mon1} ${mon2} \"${gateway}\" ${toString missThreshold} ${toString hitThreshold} ${toString pingInterval}";
+        # stable log identifier so `journalctl -u`/`-t failmon-${iface}` always matches
+        # (was the store-hash basename, which changes every rebuild)
+        SyslogIdentifier = "failmon-${iface}";
+        StandardOutput = "journal";
+        StandardError = "journal";
         Restart = "always";
         RestartSec = "5s";
         CapabilityBoundingSet = "CAP_NET_ADMIN CAP_NET_RAW";
@@ -148,6 +158,10 @@ in
       mon1 = w1Mon1;
       mon2 = w1Mon2;
       gateway = w1Gateway;
+      # LTE flaps briefly and often — require 30s continuous loss before DOWN
+      # and 30s stable before UP, so short flaps neither fail over nor page
+      missThreshold = 6;
+      hitThreshold = 6;
     };
 
     "usemon-${w1IF}" = {

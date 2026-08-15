@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PING_INTERVAL=5
-MISS_THRESHOLD=2
-HIT_THRESHOLD=2
-
 IFACE="$1"
 DISTANCE="$2"
 TARGET1="$3"
 TARGET2="$4"
 GATEWAY="$5"
+# per-interface sensitivity (defaults match the historical 2/2/5)
+MISS_THRESHOLD="${6:-2}"
+HIT_THRESHOLD="${7:-2}"
+PING_INTERVAL="${8:-5}"
 
 STATE_DIR=/run/wan-failmon
 STATE_FILE=$STATE_DIR/$IFACE.state
