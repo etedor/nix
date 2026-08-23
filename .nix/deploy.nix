@@ -62,6 +62,7 @@ in
   rt-sea2 = mkNixosNode "rt-sea2" {
     remoteBuild = false;
     confirmTimeout = 120;
+    substituteOnDestination = true;
   };
 
   garage = mkDarwinNode "garage" {
