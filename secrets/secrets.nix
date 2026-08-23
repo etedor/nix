@@ -32,6 +32,8 @@ in
   "darwin/atuin-key.age".publicKeys = user0 ++ darwin;
   "darwin/atuin-session.age".publicKeys = user0 ++ darwin;
 
+  "darwin/fastmail.age".publicKeys = user0 ++ darwin;
+
   "darwin/machina/syncthing-user0-cert.age".publicKeys = user0 ++ [ hosts.machina ];
   "darwin/machina/syncthing-user0-key.age".publicKeys = user0 ++ [ hosts.machina ];
   "darwin/carbon/syncthing-user0-cert.age".publicKeys = user0 ++ [ hosts.carbon ];
