@@ -53,7 +53,7 @@ A single local upstream means there is no `parallel_best` race and no cross-rout
 
 **rt-ggz** (and rt-ggz2 when deployed) also **serves and advertises** `10.127.255.53` — Blocky binds the anycast address, and the `/32` is originated into BGP the same way rt-sea/rt-sea2 do it today. From the home network rt-ggz's advertisement is preferred (locally originated / lower cost), so home clients resolve on-prem; the VPSes continue to serve roaming/VPN clients and act as anycast backup. **Losing all VPSes leaves the anycast fully served on-prem.**
 
-**Anycast health-gating (recommended):** each provider advertises the `/32` **only while its own Blocky + Unbound are healthy**, and withdraws it on failure. Without this, a "resolver dead but router still up" state black-holes the anycast (the route stays advertised while nothing answers). With it, that state fails over to the next-nearest provider. Mechanism: a small health probe (query the local Blocky for a known name) gates the loopback route / FRR advertisement of the `/32`.
+**Anycast health-gating:** each provider advertises the `/32` **only while it can actually resolve**, and withdraws it on failure. Without this, a "resolver dead (or WAN path dead) but router still up" state black-holes the anycast — the route stays advertised while nothing answers. With it, that state fails over to the next-nearest provider. The mechanism is specified in [Anycast health-gating mechanism](#anycast-health-gating-mechanism) below.
 
 ### 3. Resolution methods — keep as-is (already correct)
 
@@ -73,6 +73,59 @@ Cloudflare seeing queries is acceptable per the threat model (adversary is the I
 ### Client-facing resolver
 
 Clients use the **anycast `10.127.255.53` as primary**, `10.127.0.1` (rt-ggz Blocky) as secondary. With rt-ggz as a health-gated anycast provider, the anycast resolves on-prem when healthy and fails over automatically (to a VPS) when rt-ggz's resolver is down — giving both local performance and automatic failover from a single VIP. Internal `et42.net` resolution is unchanged: every Unbound conditional-forwards it to rt-ggz's authoritative NSD.
+
+## Anycast health-gating mechanism
+
+Each anycast provider advertises its `/32` only while it can actually resolve, and withdraws it otherwise so anycast re-converges to the next-nearest provider. Because the `/32` rides `redistribute connected` from the `lo53` dummy interface, the entire control surface is `ip addr add/del 10.127.255.53/32 dev lo53` — no FRR interaction.
+
+### Why a custom monitor (not pure systemd)
+
+systemd natively expresses the **teardown** half but deliberately not the **recovery** half:
+
+- `BindsTo = [ "blocky.service" "unbound.service" ]` + `After =` composes as **AND** — the unit is stopped the moment *either* daemon goes inactive. Correct teardown.
+- But a unit stopped by `BindsTo` propagation is **not** auto-restarted when the dependency returns: the stop is an explicit propagated job, and `Restart=` only acts on *implicit* exits ([systemd#2824](https://github.com/systemd/systemd/issues/2824)). `Upholds=` is the only native recovery knob, and it composes as **OR** across two dependencies — so one daemon's `Upholds` fights the other daemon's `BindsTo` teardown when exactly one is down.
+
+So a small poll loop owns the whole decision — teardown *and* recovery in one place, no directional conflict, and it can probe the actual data path (which unit-state can't).
+
+### Health signal = liveness AND path
+
+One poll every ~3–5 s computes `healthy = live AND path`:
+
+- **`live`** — `systemctl is-active --quiet blocky && systemctl is-active --quiet unbound`. Catches daemon death/wedge. DNS-free.
+- **`path`** — a direct query to the router's *real upstream*, testing the exact resource production needs (this is what catches a per-vantage-point path failure — e.g. rt-ggz→Comcast→Cloudflare broken while a VPS's path is fine):
+  - **rt-ggz / rt-ggz2** (Cloudflare DoT): `kdig +tls +tls-hostname=cloudflare-dns.com +timeout=2 @1.1.1.1 cloudflare.com A` — try `@1.1.1.1` and `@1.0.0.1`; healthy if either returns `NOERROR`.
+  - **rt-sea / rt-sea2** (roots): `kdig +timeout=2 @<root-ip> . NS` for a few root IPs; healthy if any returns `NOERROR`.
+
+Probing the real upstream adds **no dependency** the router doesn't already require to function, and no node's health depends on another of our nodes (no self-hosted canary). `forward-first` on rt-ggz means the probe only trips on true WAN-wide breakage: if just the Cloudflare path is bad but general internet is fine, Unbound falls back to roots and still answers.
+
+### Invariant: the probe resolves zero names
+
+The gate must detect the **failed→live** transition while the local resolver is down and the anycast is withdrawn, so every probe target is a **literal IP** — no lookup, no circular dependency on the service being gated:
+
+- `@1.1.1.1` / `@1.0.0.1` are literal. `+tls-hostname=cloudflare-dns.com` is SNI + certificate-name validation metadata, **not** a resolved name.
+- Root IPs are extracted at runtime from the hints package, not hardcoded:
+  ```bash
+  awk '$4=="A"{print $5}' ${pkgs.dns-root-data}/root.hints | shuf | head -3
+  ```
+  This is a Nix-store **file read**, not a DNS query, so the bootstrap property holds. It is also a single source of truth that tracks IANA — e.g. b-root is `170.247.170.2` (renumbered 2023); a hardcoded list would silently go stale.
+
+### Hysteresis and action
+
+- **Hysteresis** (e.g. 3–4 consecutive fails over ~15–20 s → withdraw; 2–3 consecutive oks → restore) filters transient blips and normal deploy/reload restarts, so the `/32` never flaps the BGP mesh.
+- **Action** on the debounced result: `ip addr add 10.127.255.53/32 dev lo53` (advertise) / `ip addr del …` (withdraw). Idempotent.
+
+### Supporting config and caveats
+
+- **`IPFreeBind = true`** on Blocky (`systemd.services.blocky.serviceConfig.IPFreeBind = true;`) so its listener bound to `10.127.255.53` survives the address coming and going. Required on every provider — all of them bind the anycast IP specifically.
+- **Probe egress must match production.** rt-ggz policy-routes/marks DNS egress; bind the probe to the same source/fwmark, or it tests a divergent path.
+- **Interpret rcode, not exit code.** `kdig` exits 0 even on `SERVFAIL`; grep the response header `status:` for `NOERROR`/`NXDOMAIN`.
+- **Tool:** `kdig` (`knot-dnsutils`) — speaks both DoT (`+tls`) and plain `:53`.
+
+### Floor
+
+Clients keep the **never-gated unicast secondary** (`10.127.0.1`, rt-ggz.lo0). The gate decides *advertisement* only — it never touches real client resolution. So even a simultaneous global outage of every provider's probe target (withdrawing all `/32`s) leaves clients resolving via the unicast secondary.
+
+Factor all of this into one `modules/router` option (e.g. `et42.router.anycastHealth`) consumed identically by rt-ggz, rt-ggz2, rt-sea, rt-sea2; the host's role selects the probe (CF-DoT vs roots).
 
 ## Evidence — performance of the chosen path
 
@@ -99,17 +152,20 @@ Forwarding home cache-misses through the VPS roots pays a structural ~12–14 ms
 ## Components & representative changes
 
 - **All routers, Blocky:** `upstream.servers = [ <local unbound only> ]`.
-- **rt-ggz (+ rt-ggz2 later):** add anycast provider — bind Blocky to `globals.anycast.dns`, originate the `/32` into BGP (mirror rt-sea's config), firewall-allow DNS to the anycast IP, and add health-gating for the advertisement.
+- **rt-ggz (+ rt-ggz2 later):** add anycast provider — bind Blocky to `globals.anycast.dns`, add the `lo53` dummy carrying the `/32`, originate it via `redistribute connected` (mirror rt-sea), firewall-allow DNS to the anycast IP.
+- **Health-gate module** (`modules/router`, shared): the poll loop, role-based `kdig` probe, hysteresis, `ip addr add/del` on `lo53`, `IPFreeBind` on Blocky, and `${pkgs.dns-root-data}/root.hints` for root IPs. See [Anycast health-gating mechanism](#anycast-health-gating-mechanism).
 - **rt-ggz / rt-ggz2 Unbound:** unchanged (Cloudflare DoT + `forward-first`).
 - **rt-sea / rt-sea2 Unbound:** unchanged (roots).
-- **Client resolver order:** anycast primary, rt-ggz loopback secondary (DHCP + `modules/router` `networking.nameservers`).
-- Factor the shared anycast-provider + health-gating into a `modules/router` option so rt-ggz, rt-ggz2, rt-sea, rt-sea2 all consume one implementation.
+- **Client resolver order:** anycast primary, rt-ggz loopback secondary (DHCP + `modules/router` `networking.nameservers`). The loopback secondary is the never-gated floor.
+- Factor the shared anycast-provider + health-gate into one `modules/router` option so rt-ggz, rt-ggz2, rt-sea, rt-sea2 all consume one implementation; role selects the probe.
 
 ## Testing / verification
 
 - **Latency regression:** re-run the cache-miss benchmark; confirm home resolution unchanged (~12 ms mean).
 - **Failure simulation:** withdraw a VPS's anycast + stop its Blocky; query rt-ggz Blocky with 100 random names → **zero `SERVFAIL`**. Repeat with *both* VPSes down.
-- **Anycast failover:** stop rt-ggz's Blocky; confirm the `/32` is withdrawn (`vtysh show ip route 10.127.255.53`) and clients fail over to a VPS.
+- **Anycast failover (daemon):** stop rt-ggz's Blocky; confirm the `/32` is withdrawn (`vtysh show ip route 10.127.255.53`) after the fail hysteresis, and clients fail over to a VPS.
+- **Anycast failover (path):** black-hole rt-ggz's route to `1.1.1.1`/`1.0.0.1` (and roots) while leaving daemons up; confirm the probe's `path` check fails → `/32` withdrawn → failover. Restore the route → `/32` re-advertised after the ok hysteresis.
+- **Bootstrap invariant:** with the local resolver stopped (anycast withdrawn), confirm the probe still runs and detects recovery — i.e. it resolves no names (targets are literal IPs / a store-file read).
 - **Privacy check:** `tcpdump` `wan0` during a burst of lookups → only `:853` to Cloudflare; **no cleartext `:53`** to roots/authoritatives on the home WAN.
 
 ## Out of scope
@@ -121,5 +177,6 @@ Forwarding home cache-misses through the VPS roots pays a structural ~12–14 ms
 
 ## Open decisions
 
-1. **Anycast health-gating now or phased?** Recommended now — it's the difference between "router down" and "resolver down" failover. The two core changes (decouple + on-prem provider) fix the reported incident without it.
+1. **Health-gating sequencing.** The mechanism is fully specified above; the only open call is whether to ship it with the two core changes (decouple + on-prem provider) or immediately after. The core changes fix the reported incident on their own; gating adds "resolver/path down but router up" failover.
 2. **Client primary = anycast (recommended) vs rt-ggz loopback.** Anycast-primary gives single-VIP automatic failover once rt-ggz is a health-gated provider.
+3. **Probe depth.** v1 probes the real upstream (CF-DoT reachability / root reachability). A stricter variant would test full recursion to an authoritative leaf; deferred unless upstream-reachable-but-recursion-broken proves to be a real failure mode.
