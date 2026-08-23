@@ -64,6 +64,12 @@ in
             Kind = "dummy";
           };
         };
+        "00-lo53" = {
+          netdevConfig = {
+            Name = "lo53";
+            Kind = "dummy";
+          };
+        };
       };
 
       networks = {
@@ -73,6 +79,13 @@ in
             Address = [ "${rt-ggz.interfaces.lo0}/32" ];
             LinkLocalAddressing = "no";
           };
+          linkConfig.RequiredForOnline = "no";
+        };
+
+        "00-lo53" = {
+          matchConfig.Name = "lo53";
+          # address managed by the anycast-health gate (see services/dns/default.nix)
+          networkConfig.LinkLocalAddressing = "no";
           linkConfig.RequiredForOnline = "no";
         };
 

@@ -7,23 +7,20 @@
 
 let
   rt-ggz = globals.routers.rt-ggz;
-  rt-sea = globals.routers.rt-sea;
-  rt-sea2 = globals.routers.rt-sea2;
   things = globals.networks.ggz.things;
 
   rt-ggz-unbound = "${rt-ggz.interfaces.lo0}:5353";
-  rt-sea-unbound = "${rt-sea.interfaces.lo0}:5353";
-  rt-sea2-unbound = "${rt-sea2.interfaces.lo0}:5353";
 in
 {
   et42.router.dns.blocky = {
     enable = true;
-    listenAddress = [ rt-ggz.interfaces.lo0 ];
+    listenAddress = [
+      rt-ggz.interfaces.lo0
+      globals.anycast.dns
+    ];
 
     upstream = {
       servers = [
-        rt-sea-unbound
-        rt-sea2-unbound
         rt-ggz-unbound
       ];
       timeout = "500ms";
@@ -63,6 +60,12 @@ in
     file = "${specialArgs.secretsRole}/knot-tsig-key.age";
     owner = "knot";
     mode = "0400";
+  };
+
+  # advertise the anycast VIP only while rt-ggz can resolve via Cloudflare DoT
+  et42.router.anycastHealth = {
+    enable = true;
+    probe = "cloudflare-dot";
   };
 
   networking = {
