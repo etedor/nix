@@ -48,7 +48,9 @@ in
       };
       "01-lo53" = {
         name = "lo53";
-        address = [ globals.anycast.dns ];
+        # address is managed by the anycast-health gate (see services/dns.nix)
+        networkConfig.LinkLocalAddressing = "no";
+        linkConfig.RequiredForOnline = "no";
       };
       "02-ens3" = {
         name = "ens3";
