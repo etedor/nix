@@ -15,7 +15,14 @@
   ];
   boot.initrd.kernelModules = [ "nvme" ];
 
-  # fileSystems."/" and swapDevices are provided by ./disko.nix
+  fileSystems."/" = {
+    device = "/dev/vda2";
+    fsType = "ext4";
+  };
+
+  swapDevices = [
+    { device = "/dev/vda3"; }
+  ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
