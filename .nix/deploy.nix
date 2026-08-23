@@ -16,9 +16,12 @@ let
       # deploy-rs default (30s); routers widen this to survive networkd/sshd
       # restarts during activation (the confirm handshake must reconnect)
       confirmTimeout ? 30,
+      # have the target pull cacheable paths from its own substituters instead
+      # of receiving the full closure push (needed when the push path is impaired)
+      substituteOnDestination ? false,
     }:
     {
-      inherit hostname confirmTimeout;
+      inherit hostname confirmTimeout substituteOnDestination;
       sshOpts = [ "-A" ]; # forward SSH agent for sudo auth
       profiles.system = {
         sshUser = user0;
@@ -54,6 +57,7 @@ in
   rt-sea = mkNixosNode "rt-sea" {
     remoteBuild = false;
     confirmTimeout = 120;
+    substituteOnDestination = true;
   };
   rt-sea2 = mkNixosNode "rt-sea2" {
     remoteBuild = false;
