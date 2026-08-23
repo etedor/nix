@@ -23,6 +23,7 @@ let
       pkgs.coreutils
     ];
     text = ''
+      # no -e: the poll loop must survive a single command's nonzero exit; risky commands guard themselves
       set -uo pipefail
 
       ADDR="${cfg.address}"
@@ -32,7 +33,7 @@ let
       FAIL_THRESHOLD=${toString cfg.failThreshold}
       OK_THRESHOLD=${toString cfg.okThreshold}
 
-      have_addr() { ip -4 addr show dev "$DEV" 2>/dev/null | grep -qw "$ADDR"; }
+      have_addr() { ip -4 addr show dev "$DEV" 2>/dev/null | grep -qF "$ADDR/32"; }
       add_addr()  { ip addr add "$ADDR/32" dev "$DEV" 2>/dev/null || true; }
       del_addr()  { ip addr del "$ADDR/32" dev "$DEV" 2>/dev/null || true; }
 
@@ -51,7 +52,7 @@ let
       # root reachability; root IPs read from the hints file (store read, not DNS)
       probe_roots() {
         local ips ip
-        ips=$(awk '$4=="A"{print $5}' "${rootHints}" | shuf | head -3)
+        ips=$(awk '$3=="A"{print $4}' "${rootHints}" | shuf | head -3)
         for ip in $ips; do
           if kdig +timeout=2 +retry=0 "@$ip" . NS 2>/dev/null | grep -q "status: NOERROR"; then
             return 0
