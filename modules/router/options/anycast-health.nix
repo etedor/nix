@@ -16,7 +16,7 @@ let
   gate = pkgs.writeShellApplication {
     name = "anycast-health";
     runtimeInputs = [
-      pkgs.knot-dnsutils
+      pkgs.knot-dns
       pkgs.iproute2
       pkgs.systemd
       pkgs.gawk

@@ -6,7 +6,7 @@
 
 **Architecture:** Three changes from the spec: (1) each router's Blocky forwards only to its own local Unbound (decouple); (2) rt-ggz binds + advertises the anycast `/32` like the VPSes already do; (3) a shared `modules/router` health-gate service advertises the anycast `/32` only while the router can actually resolve (unit-liveness AND a direct `kdig` probe to its real upstream), withdrawing it via `redistribute connected` otherwise. Resolution methods are unchanged (rt-ggz → Cloudflare DoT, VPS → roots).
 
-**Tech Stack:** NixOS flake, systemd-networkd, FRR (BGP/zebra `redistribute connected`), Blocky, Unbound, agenix, deploy-rs. Probe tool: `kdig` (`knot-dnsutils`). Root IPs from `pkgs.dns-root-data`.
+**Tech Stack:** NixOS flake, systemd-networkd, FRR (BGP/zebra `redistribute connected`), Blocky, Unbound, agenix, deploy-rs. Probe tool: `kdig` (`knot-dns`). Root IPs from `pkgs.dns-root-data`.
 
 ## Global Constraints
 
@@ -59,7 +59,7 @@ nixos-rebuild dry-build --flake .#<hostname>
 - Modify: `modules/router/options/default.nix:3-13`
 
 **Interfaces:**
-- Consumes: `globals.anycast.dns` (the VIP string, `10.127.255.53`); `pkgs.dns-root-data` (`/root.hints`); `pkgs.knot-dnsutils` (`kdig`).
+- Consumes: `globals.anycast.dns` (the VIP string, `10.127.255.53`); `pkgs.dns-root-data` (`/root.hints`); `pkgs.knot-dns` (`kdig`).
 - Produces: option `et42.router.anycastHealth = { enable; address; device; probe; interval; failThreshold; okThreshold; }` where `probe ∈ { "cloudflare-dot", "roots" }`. When enabled: `systemd.services.anycast-health` (the gate) and `systemd.services.blocky.serviceConfig.IPFreeBind = true`.
 
 - [ ] **Step 1: Write the module**
@@ -85,7 +85,7 @@ let
   gate = pkgs.writeShellApplication {
     name = "anycast-health";
     runtimeInputs = [
-      pkgs.knot-dnsutils
+      pkgs.knot-dns
       pkgs.iproute2
       pkgs.systemd
       pkgs.gawk
@@ -270,7 +270,7 @@ Expected: no error about `anycast-health.nix` (option `et42.router.anycastHealth
 
 Run (proves `kdig` DoT to Cloudflare returns NOERROR from this network — sanity for the probe logic):
 ```bash
-nix shell nixpkgs#knot-dnsutils -c \
+nix shell nixpkgs#knot-dns -c \
   kdig +tls +tls-hostname=cloudflare-dns.com +timeout=2 @1.1.1.1 cloudflare.com A | grep "status:"
 ```
 Expected: a line containing `status: NOERROR`.
