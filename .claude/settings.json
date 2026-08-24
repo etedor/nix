@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && nix flake check || exit 2",
-            "timeout": 120
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && out=$(nix flake check --all-systems 2>&1); rc=$?; echo \"$out\" | grep -v \"unknown flake output 'deploy'\"; [ $rc -eq 0 ] || exit 2",
+            "timeout": 300
           }
         ]
       }
