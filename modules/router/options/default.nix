@@ -1,6 +1,7 @@
 { ... }:
 {
   imports = [
+    ./anycast-health.nix
     ./blocky
     ./cake.nix
     ./frr.nix

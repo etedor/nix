@@ -7,11 +7,9 @@
 
 let
   rt-sea = globals.routers.rt-sea;
-  rt-sea2 = globals.routers.rt-sea2;
   lo0 = rt-sea.interfaces.lo0;
 
   rt-sea-unbound = "${rt-sea.interfaces.lo0}:5353";
-  rt-sea2-unbound = "${rt-sea2.interfaces.lo0}:5353";
 in
 {
   et42.router.dns.blocky = {
@@ -24,7 +22,6 @@ in
     upstream = {
       servers = [
         rt-sea-unbound
-        rt-sea2-unbound
       ];
       timeout = "500ms";
     };
@@ -58,5 +55,11 @@ in
     file = "${specialArgs.secretsRole}/knot-tsig-key.age";
     owner = "knot";
     mode = "0400";
+  };
+
+  # advertise the anycast VIP only while this VPS can recurse from roots
+  et42.router.anycastHealth = {
+    enable = true;
+    probe = "roots";
   };
 }
